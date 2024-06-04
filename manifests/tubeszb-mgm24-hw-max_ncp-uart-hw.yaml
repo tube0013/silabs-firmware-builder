@@ -9,7 +9,7 @@ gbl:
   baudrate: 115200
 
 configuration:
-  SL_RAIL_UTIL_PTI_MODE: RAIL_PTI_MODE_DISABLED # enabled in original fw
+  SL_RAIL_UTIL_PTI_MODE: RAIL_PTI_MODE_DISABLED # enabled in original fws
   SL_IOSTREAM_USART_VCOM_BAUDRATE: 115200
   SL_IOSTREAM_USART_VCOM_FLOW_CONTROL_TYPE: usartHwFlowControlCtsAndRts
 
