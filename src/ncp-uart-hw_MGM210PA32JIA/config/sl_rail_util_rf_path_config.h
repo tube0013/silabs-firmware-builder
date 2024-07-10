@@ -40,7 +40,7 @@
 // <RAIL_ANTENNA_0=> Path 0
 // <RAIL_ANTENNA_1=> Path 1
 // <i> Default: RAIL_ANTENNA_1
-#define SL_RAIL_UTIL_RF_PATH_INT_RF_PATH_MODE  RAIL_ANTENNA_1
+#define SL_RAIL_UTIL_RF_PATH_INT_RF_PATH_MODE  RAIL_ANTENNA_0
 // </h>
 
 // <<< end of configuration section >>>

@@ -95,38 +95,6 @@
 // [TIMER3]$
 
 // $[USART0]
-// USART0 CTS on PC03
-#ifndef USART0_CTS_PORT                         
-#define USART0_CTS_PORT                          gpioPortC
-#endif
-#ifndef USART0_CTS_PIN                          
-#define USART0_CTS_PIN                           3
-#endif
-
-// USART0 RTS on PC02
-#ifndef USART0_RTS_PORT                         
-#define USART0_RTS_PORT                          gpioPortC
-#endif
-#ifndef USART0_RTS_PIN                          
-#define USART0_RTS_PIN                           2
-#endif
-
-// USART0 RX on PA06
-#ifndef USART0_RX_PORT                          
-#define USART0_RX_PORT                           gpioPortA
-#endif
-#ifndef USART0_RX_PIN                           
-#define USART0_RX_PIN                            6
-#endif
-
-// USART0 TX on PA05
-#ifndef USART0_TX_PORT                          
-#define USART0_TX_PORT                           gpioPortA
-#endif
-#ifndef USART0_TX_PIN                           
-#define USART0_TX_PIN                            5
-#endif
-
 // [USART0]$
 
 // $[USART1]
@@ -154,22 +122,6 @@
 // [I2C0]$
 
 // $[PTI]
-// PTI DFRAME on PC05
-#ifndef PTI_DFRAME_PORT                         
-#define PTI_DFRAME_PORT                          gpioPortC
-#endif
-#ifndef PTI_DFRAME_PIN                          
-#define PTI_DFRAME_PIN                           5
-#endif
-
-// PTI DOUT on PC04
-#ifndef PTI_DOUT_PORT                           
-#define PTI_DOUT_PORT                            gpioPortC
-#endif
-#ifndef PTI_DOUT_PIN                            
-#define PTI_DOUT_PIN                             4
-#endif
-
 // [PTI]$
 
 // $[MODEM]
