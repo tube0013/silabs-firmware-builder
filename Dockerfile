@@ -51,6 +51,12 @@ RUN \
     && tar -C /opt -xf gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2 \
     && rm gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2
 
+# Gecko SDK 4.4.4
+RUN \
+    curl -o gecko_sdk_4.4.4.zip -L https://github.com/SiliconLabs/gecko_sdk/releases/download/v4.4.4/gecko-sdk.zip \
+    && unzip -q -d gecko_sdk_4.4.4 gecko_sdk_4.4.4.zip \
+    && rm gecko_sdk_4.4.4.zip
+
 # Gecko SDK 4.4.2
 RUN \
     curl -o gecko_sdk_4.4.2.zip -L https://github.com/SiliconLabs/gecko_sdk/releases/download/v4.4.2/gecko-sdk.zip \
