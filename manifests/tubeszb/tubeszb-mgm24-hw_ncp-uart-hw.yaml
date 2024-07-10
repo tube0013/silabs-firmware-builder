@@ -11,10 +11,6 @@ gbl:
 add_components:
 - id: zigbee_mfglib
 
-slcp_defines:
-  EMBER_ADDRESS_TABLE_SIZE: 16
-  EMBER_MULTICAST_TABLE_SIZE: 16
-
 configuration:
   SL_RAIL_UTIL_PTI_MODE: RAIL_PTI_MODE_DISABLED # enabled in original tubeszb fw
   SL_IOSTREAM_USART_VCOM_BAUDRATE: 115200
