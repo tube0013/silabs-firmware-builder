@@ -8,6 +8,13 @@ gbl:
   dynamic: ["ezsp_version"]
   baudrate: 115200
 
+add_components:
+- id: zigbee_mfglib
+
+slcp_defines:
+  EMBER_ADDRESS_TABLE_SIZE: 16
+  EMBER_MULTICAST_TABLE_SIZE: 16
+
 configuration:
   SL_RAIL_UTIL_PTI_MODE: RAIL_PTI_MODE_DISABLED # enabled in original tubeszb fw
   SL_IOSTREAM_USART_VCOM_BAUDRATE: 115200
@@ -33,8 +40,6 @@ c_defines:
 
   SL_IOSTREAM_USART_VCOM_RX_BUFFER_SIZE: 64
   
-  EMBER_ADDRESS_TABLE_SIZE: 16
-  EMBER_MULTICAST_TABLE_SIZE: 16
   EMBER_APS_UNICAST_MESSAGE_COUNT: 32
   EMBER_BROADCAST_TABLE_SIZE: 64
   EMBER_NEIGHBOR_TABLE_SIZE: 26
