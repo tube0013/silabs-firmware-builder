@@ -45,7 +45,7 @@ RUN \
     && tar -C /opt -xf arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi.tar.xz \
     && rm arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi.tar.xz
 
- GCC Embedded Toolchain 10.3-2021.10 (for earlier Gecko SDKs)
+# GCC Embedded Toolchain 10.3-2021.10 (for earlier Gecko SDKs)
 RUN \
     curl -O https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-rm/10.3-2021.10/gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2 \
     && tar -C /opt -xf gcc-arm-none-eabi-10.3-2021.10-x86_64-linux.tar.bz2 \
