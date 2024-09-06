@@ -1,5 +1,5 @@
 name: TubesZB MGM12 2022 Zigbee
-device: ncp-uart-hw_MGM12P32F1024GE
+device: MGM12P32F1024GE
 base_project: src/ncp-uart-hw_MGM12P32F1024GE
 filename: "{manifest_name}_{ezsp_version}"
 
