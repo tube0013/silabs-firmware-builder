@@ -16,7 +16,7 @@ quality: production
 readme:
 - {path: readme.md}
 - {path: readme.md}
-sdk: {id: gecko_sdk, version: 4.4.3}
+sdk: {id: gecko_sdk, version: 4.4.4}
 toolchain_settings: []
 component:
 - {id: MGM240PB32VNN}

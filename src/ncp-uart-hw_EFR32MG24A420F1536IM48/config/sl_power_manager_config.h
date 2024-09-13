@@ -1,6 +1,6 @@
 /***************************************************************************//**
  * @file
- * @brief Packet Trace Information configuration file.
+ * @brief Power Manager configuration file.
  *******************************************************************************
  * # License
  * <b>Copyright 2020 Silicon Laboratories Inc. www.silabs.com</b>
@@ -28,39 +28,37 @@
  *
  ******************************************************************************/
 
-#ifndef SL_RAIL_UTIL_PTI_CONFIG_H
-#define SL_RAIL_UTIL_PTI_CONFIG_H
-
-#include "rail_types.h"
-
 // <<< Use Configuration Wizard in Context Menu >>>
-// <h> PTI Configuration
 
-// <o SL_RAIL_UTIL_PTI_MODE> PTI mode
-// <RAIL_PTI_MODE_UART=> UART
-// <RAIL_PTI_MODE_UART_ONEWIRE=> UART onewire
-// <RAIL_PTI_MODE_SPI=> SPI
-// <RAIL_PTI_MODE_DISABLED=> Disabled
-// <i> Default: RAIL_PTI_MODE_UART
-#define SL_RAIL_UTIL_PTI_MODE           RAIL_PTI_MODE_DISABLED
+#ifndef SL_POWER_MANAGER_CONFIG_H
+#define SL_POWER_MANAGER_CONFIG_H
 
-// <o SL_RAIL_UTIL_PTI_BAUD_RATE_HZ> PTI Baud Rate (Hertz)
-// <147800-20000000:1>
-// <i> Default: 1600000
-#define SL_RAIL_UTIL_PTI_BAUD_RATE_HZ   1600000
+// <h>Power Manager Configuration
+
+// <q SL_POWER_MANAGER_CUSTOM_HF_OSCILLATOR_IRQ_HANDLER> Enable custom IRQ handler for external HF oscillator.
+// <i> Enable if CMU_IRQHandler/HFXO0_IRQHandler is needed from your application.
+// <i> The function sl_power_manager_irq_handler() will have to be called from you custom handler if this is enabled.
+// <i> Default: 0
+#define SL_POWER_MANAGER_CUSTOM_HF_OSCILLATOR_IRQ_HANDLER  0
+
+// <q SL_POWER_MANAGER_CONFIG_VOLTAGE_SCALING_FAST_WAKEUP> Enable fast wakeup (disable voltage scaling in EM2/3 mode)
+// <i> Enable or disable voltage scaling in EM2/3 modes (when available). This decreases wakeup time by about 30 us.
+// <i> Deprecated. It is replaced by the function sl_power_manager_em23_voltage_scaling_enable_fast_wakeup()
+// <i> Default: 0
+#define SL_POWER_MANAGER_CONFIG_VOLTAGE_SCALING_FAST_WAKEUP   0
+
+// <e SL_POWER_MANAGER_DEBUG> Enable debugging feature
+// <i> Enable or disable debugging features (trace the different modules that have requirements).
+// <i> Default: 0
+#define SL_POWER_MANAGER_DEBUG  0
+
+// <o SL_POWER_MANAGER_DEBUG_POOL_SIZE> Maximum numbers of requirements that can be logged
+// <i> Default: 10
+#define SL_POWER_MANAGER_DEBUG_POOL_SIZE  10
+// </e>
 
 // </h>
+
+#endif /* SL_POWER_MANAGER_CONFIG_H */
+
 // <<< end of configuration section >>>
-
-// <<< sl:start pin_tool >>>
-// <pti signal=DOUT,(DFRAME),(DCLK)> SL_RAIL_UTIL_PTI
-// $[PTI_SL_RAIL_UTIL_PTI]
-#ifndef SL_RAIL_UTIL_PTI_PERIPHERAL             
-#define SL_RAIL_UTIL_PTI_PERIPHERAL              PTI
-#endif
-
-// [PTI_SL_RAIL_UTIL_PTI]$
-
-// <<< sl:end pin_tool >>>
-
-#endif // SL_RAIL_UTIL_PTI_CONFIG_H
