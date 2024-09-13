@@ -59,6 +59,18 @@
 // $[PRS.ASYNCH11]
 // [PRS.ASYNCH11]$
 
+// $[PRS.ASYNCH12]
+// [PRS.ASYNCH12]$
+
+// $[PRS.ASYNCH13]
+// [PRS.ASYNCH13]$
+
+// $[PRS.ASYNCH14]
+// [PRS.ASYNCH14]$
+
+// $[PRS.ASYNCH15]
+// [PRS.ASYNCH15]$
+
 // $[PRS.SYNCH0]
 // [PRS.SYNCH0]$
 
@@ -94,17 +106,20 @@
 // $[TIMER3]
 // [TIMER3]$
 
+// $[TIMER4]
+// [TIMER4]$
+
 // $[USART0]
 // [USART0]$
 
-// $[USART1]
-// [USART1]$
-
-// $[USART2]
-// [USART2]$
-
 // $[I2C1]
 // [I2C1]$
+
+// $[EUSART1]
+// [EUSART1]$
+
+// $[KEYSCAN]
+// [KEYSCAN]$
 
 // $[LETIMER0]
 // [LETIMER0]$
@@ -118,8 +133,23 @@
 // $[ACMP1]
 // [ACMP1]$
 
+// $[VDAC0]
+// [VDAC0]$
+
+// $[VDAC1]
+// [VDAC1]$
+
+// $[PCNT0]
+// [PCNT0]$
+
+// $[HFXO0]
+// [HFXO0]$
+
 // $[I2C0]
 // [I2C0]$
+
+// $[EUSART0]
+// [EUSART0]$
 
 // $[PTI]
 // [PTI]$

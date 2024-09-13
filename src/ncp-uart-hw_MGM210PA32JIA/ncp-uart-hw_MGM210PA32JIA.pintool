@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="ASCII"?>
+<<<<<<<< HEAD:src/ncp-uart-hw_MGM210PA32JIA/ncp-uart-hw_MGM210PA32JIA.pintool
 <device:XMLDevice xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:device="http://www.silabs.com/ss/hwconfig/document/device.ecore" name="pin_tool.EFR32MG21A010F1024IM32" partId="mcu.arm.efr32.mg21.efr32mg21a010f1024im32" contextId="com.silabs.sdk.stack.super:4.4.4._-295637083">
+========
+<device:XMLDevice xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:device="http://www.silabs.com/ss/hwconfig/document/device.ecore" name="pin_tool.MGM240PB32VNN" partId="mcu.arm.efr32.mg24.mgm240pb32vnn" contextId="com.silabs.sdk.stack.super:4.4.3._1653746718">
+>>>>>>>> main:src/bootloader-uart-xmodem_MGM240PB32VNN/bootloader-uart-xmodem_MGM240PB32VNN.pintool
   <mode name="DefaultMode">
     <property object="DefaultMode" propertyId="mode.diagramLocation" value="100, 100"/>
   </mode>

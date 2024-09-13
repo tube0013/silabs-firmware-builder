@@ -1,6 +1,6 @@
 # Silicon Labs Project Configuration Tools: slcp, v0, Component selection file.
-project_name: ncp-uart-hw
-label: ncp-uart-hw
+project_name: ncp-uart-hw_EFR32MG24A420F1536IM48
+label: ncp-uart-hw_EFR32MG24A420F1536IM48
 author: Silicon Laboratories, Inc.
 description: This network coprocessor (NCP) application supports communication with
   a host application over a UART interface with hardware flow control. This NCP application
@@ -22,16 +22,19 @@ package: Zigbee
 quality: production
 readme:
 - {path: readme.html}
+- {path: readme.html}
 source:
 - {path: main.c}
 - {path: app.c}
 tag: [prebuilt_demo]
+<<<<<<<< HEAD:src/ncp-uart-hw_MGM210PA32JIA/ncp-uart-hw_MGM210PA32JIA.slcp
 sdk: {id: gecko_sdk, version: 4.4.4}
+========
+sdk: {id: gecko_sdk, version: 4.4.3}
+>>>>>>>> main:src/ncp-uart-hw_EFR32MG24A420F1536IM48/ncp-uart-hw_EFR32MG24A420F1536IM48.slcp
 toolchain_settings: []
 component:
-- {id: EFR32MG21A010F1024IM32}
-- {id: brd4001a}
-- {id: brd4179b}
+- {id: EFR32MG24A420F1536IM48}
 - instance: [vcom]
   id: iostream_usart
 - {id: iostream_vuart}
@@ -41,13 +44,11 @@ component:
 - {id: zigbee_debug_extended}
 - {id: zigbee_debug_print}
 - {id: zigbee_gp}
-- {id: zigbee_mfglib}
 - {id: zigbee_ncp_uart_hardware}
 - {id: zigbee_pro_stack}
 - {id: zigbee_r22_support}
 - {id: zigbee_security_link_keys}
 - {id: zigbee_source_route}
-- {id: zigbee_token_interface}
 - {id: zigbee_zll}
 define:
 - {name: EMBER_CUSTOM_MAC_FILTER_TABLE_SIZE, value: '15'}

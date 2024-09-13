@@ -1,6 +1,6 @@
 /***************************************************************************//**
  * @file
- * @brief Board Control
+ * @brief DEVICE_INIT_DCDC Config
  *******************************************************************************
  * # License
  * <b>Copyright 2022 Silicon Laboratories Inc. www.silabs.com</b>
@@ -28,17 +28,34 @@
  *
  ******************************************************************************/
 
-#ifndef SL_BOARD_CONTROL_CONFIG_H
-#define SL_BOARD_CONTROL_CONFIG_H
+#ifndef SL_DEVICE_INIT_DCDC_CONFIG_H
+#define SL_DEVICE_INIT_DCDC_CONFIG_H
 
 // <<< Use Configuration Wizard in Context Menu >>>
 
-// <q SL_BOARD_ENABLE_VCOM> Enable Virtual COM UART
+// <q SL_DEVICE_INIT_DCDC_ENABLE> Enable DC/DC Converter
+// <i>
+// <i> Default: 1
+#define SL_DEVICE_INIT_DCDC_ENABLE         1
+
+// <q SL_DEVICE_INIT_DCDC_BYPASS> Set DC/DC Converter in Bypass Mode
+// <i>
 // <i> Default: 0
-#define SL_BOARD_ENABLE_VCOM                    1
+#define SL_DEVICE_INIT_DCDC_BYPASS         0
+
+// <q SL_DEVICE_INIT_DCDC_PFMX_IPKVAL_OVERRIDE> Override for DCDC PFMX Mode Peak Current Setting
+// <i>
+// <i> Default: 1
+#define SL_DEVICE_INIT_DCDC_PFMX_IPKVAL_OVERRIDE  1
+
+// <o SL_DEVICE_INIT_DCDC_PFMX_IPKVAL> DCDC PFMX Mode Peak Current Setting <0-15>
+// <i>
+// <i> Default: DCDC_PFMXCTRL_IPKVAL_DEFAULT
+#define SL_DEVICE_INIT_DCDC_PFMX_IPKVAL    9
 
 // <<< end of configuration section >>>
 
+<<<<<<<< HEAD:src/ncp-uart-hw_EFR32MG24A420F1536IM48/config/legacy_common_ash_config.h
 // <<< sl:start pin_tool >>>
 
 // <gpio> SL_BOARD_ENABLE_VCOM
@@ -54,3 +71,6 @@
 // <<< sl:end pin_tool >>>
 
 #endif // SL_BOARD_CONTROL_CONFIG_H
+========
+#endif // SL_DEVICE_INIT_DCDC_CONFIG_H
+>>>>>>>> main:src/ncp-uart-hw_EFR32MG24A420F1536IM48/config/sl_device_init_dcdc_config.h

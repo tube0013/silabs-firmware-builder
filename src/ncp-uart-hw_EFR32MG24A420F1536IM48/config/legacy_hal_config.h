@@ -1,9 +1,9 @@
 /***************************************************************************//**
  * @file
- * @brief Board Control
+ * @brief Legacy Host ASH configuration file.
  *******************************************************************************
  * # License
- * <b>Copyright 2022 Silicon Laboratories Inc. www.silabs.com</b>
+ * <b>Copyright 2021 Silicon Laboratories Inc. www.silabs.com</b>
  *******************************************************************************
  *
  * SPDX-License-Identifier: Zlib
@@ -28,16 +28,20 @@
  *
  ******************************************************************************/
 
-#ifndef SL_BOARD_CONTROL_CONFIG_H
-#define SL_BOARD_CONTROL_CONFIG_H
-
 // <<< Use Configuration Wizard in Context Menu >>>
 
-// <q SL_BOARD_ENABLE_VCOM> Enable Virtual COM UART
-// <i> Default: 0
-#define SL_BOARD_ENABLE_VCOM                    1
+#ifndef LEGACY_NCP_ASH_CONFIG_H
+#define LEGACY_NCP_ASH_CONFIG_H
+
+// <o LEGACY_NCP_ASH_SERIAL_PORT> The USART used for ASH communications in COM_Port_t format, as defined in platform/service/legacy_hal/inc/serial.h (see defined names for USART ports) <-1..3:1>
+// <i> Default: (-1)
+// <i> The default value of -1 causes the ASH code to try to use the USART assigned to the "VCOM" instance of SL_IOSTREAM_USART. Otherwise the value is passed to Legacy HAL, which attempts to find an instance of SL_IOSTREAM_USART which uses that USART.
+#define LEGACY_NCP_ASH_SERIAL_PORT    (-1)
+
+#endif /* LEGACY_NCP_ASH_CONFIG_H */
 
 // <<< end of configuration section >>>
+<<<<<<<< HEAD:src/ncp-uart-hw_EFR32MG24A420F1536IM48/config/legacy_hal_config.h
 
 // <<< sl:start pin_tool >>>
 
@@ -54,3 +58,5 @@
 // <<< sl:end pin_tool >>>
 
 #endif // SL_BOARD_CONTROL_CONFIG_H
+========
+>>>>>>>> main:src/ncp-uart-hw_MGM12P32F1024GE/config/legacy_common_ash_config.h
