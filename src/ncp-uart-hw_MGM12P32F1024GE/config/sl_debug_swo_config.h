@@ -89,20 +89,11 @@
 // <<< sl:start pin_tool >>>
 // <dbg signal=SWV> SL_DEBUG
 // $[DBG_SL_DEBUG]
-#ifndef SL_DEBUG_PERIPHERAL                     
-#define SL_DEBUG_PERIPHERAL                      DBG
-#endif
+#define SL_DEBUG_PERIPHERAL                     DBG
 
-// DBG SWV on PF2
-#ifndef SL_DEBUG_SWV_PORT                       
-#define SL_DEBUG_SWV_PORT                        gpioPortF
-#endif
-#ifndef SL_DEBUG_SWV_PIN                        
-#define SL_DEBUG_SWV_PIN                         2
-#endif
-#ifndef SL_DEBUG_SWV_LOC                        
-#define SL_DEBUG_SWV_LOC                         0
-#endif
+#define SL_DEBUG_SWV_PORT                       gpioPortF
+#define SL_DEBUG_SWV_PIN                        2
+#define SL_DEBUG_SWV_LOC                        0
 // [DBG_SL_DEBUG]$
 // <<< sl:end pin_tool >>>
 

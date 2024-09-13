@@ -89,17 +89,10 @@
 // <<< sl:start pin_tool >>>
 // <gpio signal=SWV> SL_DEBUG
 // $[GPIO_SL_DEBUG]
-#ifndef SL_DEBUG_PERIPHERAL                     
-#define SL_DEBUG_PERIPHERAL                      GPIO
-#endif
+#define SL_DEBUG_PERIPHERAL                     GPIO
 
-// GPIO SWV on PA03
-#ifndef SL_DEBUG_SWV_PORT                       
-#define SL_DEBUG_SWV_PORT                        gpioPortA
-#endif
-#ifndef SL_DEBUG_SWV_PIN                        
-#define SL_DEBUG_SWV_PIN                         3
-#endif
+#define SL_DEBUG_SWV_PORT                       gpioPortA
+#define SL_DEBUG_SWV_PIN                        3
 // [GPIO_SL_DEBUG]$
 // <<< sl:end pin_tool >>>
 

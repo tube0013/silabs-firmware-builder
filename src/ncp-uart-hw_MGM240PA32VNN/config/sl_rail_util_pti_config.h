@@ -55,10 +55,23 @@
 // <<< sl:start pin_tool >>>
 // <pti signal=DOUT,(DFRAME),(DCLK)> SL_RAIL_UTIL_PTI
 // $[PTI_SL_RAIL_UTIL_PTI]
-#ifndef SL_RAIL_UTIL_PTI_PERIPHERAL             
-#define SL_RAIL_UTIL_PTI_PERIPHERAL              PTI
-#endif
+#warning "RAIL PTI peripheral not configured"
+#define SL_RAIL_UTIL_PTI_PERIPHERAL         PTI
 
+// SL_RAIL_UTIL_PTI_DOUT_* needed for UART_ONEWIRE and UART and SPI modes
+// #define SL_RAIL_UTIL_PTI_DOUT_PORT         gpioPortB
+// #define SL_RAIL_UTIL_PTI_DOUT_PIN          12
+// #define SL_RAIL_UTIL_PTI_DOUT_LOC          6
+
+// SL_RAIL_UTIL_PTI_DFRAME_* needed for UART and SPI modes only
+// #define SL_RAIL_UTIL_PTI_DFRAME_PORT       gpioPortB
+// #define SL_RAIL_UTIL_PTI_DFRAME_PIN        13
+// #define SL_RAIL_UTIL_PTI_DFRAME_LOC        6
+
+// SL_RAIL_UTIL_PTI_DCLK_* needed for SPI mode only
+// #define SL_RAIL_UTIL_PTI_DCLK_PORT         gpioPortA
+// #define SL_RAIL_UTIL_PTI_DCLK_PIN          0
+// #define SL_RAIL_UTIL_PTI_DCLK_LOC          0
 // [PTI_SL_RAIL_UTIL_PTI]$
 
 // <<< sl:end pin_tool >>>
