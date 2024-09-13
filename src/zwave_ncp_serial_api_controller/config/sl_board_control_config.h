@@ -1,6 +1,6 @@
 /***************************************************************************//**
  * @file
- * @brief DEVICE_INIT_DCDC Config
+ * @brief Board Control
  *******************************************************************************
  * # License
  * <b>Copyright 2022 Silicon Laboratories Inc. www.silabs.com</b>
@@ -28,49 +28,57 @@
  *
  ******************************************************************************/
 
-#ifndef SL_DEVICE_INIT_DCDC_CONFIG_H
-#define SL_DEVICE_INIT_DCDC_CONFIG_H
+#ifndef SL_BOARD_CONTROL_CONFIG_H
+#define SL_BOARD_CONTROL_CONFIG_H
 
 // <<< Use Configuration Wizard in Context Menu >>>
 
-// <q SL_DEVICE_INIT_DCDC_ENABLE> Enable DC/DC Converter
-// <i>
-// <i> Default: 1
-#define SL_DEVICE_INIT_DCDC_ENABLE         1
-
-// <q SL_DEVICE_INIT_DCDC_BYPASS> Set DC/DC Converter in Bypass Mode
-// <i>
+// <q SL_BOARD_ENABLE_VCOM> Enable Virtual COM UART
 // <i> Default: 0
-#define SL_DEVICE_INIT_DCDC_BYPASS         0
+#define SL_BOARD_ENABLE_VCOM                    1
 
-// <q SL_DEVICE_INIT_DCDC_PFMX_IPKVAL_OVERRIDE> Override for DCDC PFMX Mode Peak Current Setting
-// <i>
-// <i> Default: 1
-#define SL_DEVICE_INIT_DCDC_PFMX_IPKVAL_OVERRIDE  1
+// <q SL_BOARD_ENABLE_DISPLAY> Enable Display
+// <i> Default: 0
+#define SL_BOARD_ENABLE_DISPLAY                 0
 
-// <o SL_DEVICE_INIT_DCDC_PFMX_IPKVAL> DCDC PFMX Mode Peak Current Setting <0-15>
-// <i>
-// <i> Default: DCDC_PFMXCTRL_IPKVAL_DEFAULT
-#define SL_DEVICE_INIT_DCDC_PFMX_IPKVAL    9
+// <q SL_BOARD_ENABLE_SENSOR_RHT> Enable Relative Humidity and Temperature sensor
+// <i> Default: 0
+#define SL_BOARD_ENABLE_SENSOR_RHT              0
 
 // <<< end of configuration section >>>
 
-<<<<<<<< HEAD:src/ncp-uart-hw_EFR32MG24A420F1536IM48/config/legacy_common_ash_config.h
 // <<< sl:start pin_tool >>>
 
 // <gpio> SL_BOARD_ENABLE_VCOM
 // $[GPIO_SL_BOARD_ENABLE_VCOM]
 #ifndef SL_BOARD_ENABLE_VCOM_PORT               
-#define SL_BOARD_ENABLE_VCOM_PORT                gpioPortD
+#define SL_BOARD_ENABLE_VCOM_PORT                gpioPortA
 #endif
 #ifndef SL_BOARD_ENABLE_VCOM_PIN                
-#define SL_BOARD_ENABLE_VCOM_PIN                 4
+#define SL_BOARD_ENABLE_VCOM_PIN                 5
 #endif
 // [GPIO_SL_BOARD_ENABLE_VCOM]$
+
+// <gpio> SL_BOARD_ENABLE_DISPLAY
+// $[GPIO_SL_BOARD_ENABLE_DISPLAY]
+#ifndef SL_BOARD_ENABLE_DISPLAY_PORT            
+#define SL_BOARD_ENABLE_DISPLAY_PORT             gpioPortD
+#endif
+#ifndef SL_BOARD_ENABLE_DISPLAY_PIN             
+#define SL_BOARD_ENABLE_DISPLAY_PIN              15
+#endif
+// [GPIO_SL_BOARD_ENABLE_DISPLAY]$
+
+// <gpio> SL_BOARD_ENABLE_SENSOR_RHT
+// $[GPIO_SL_BOARD_ENABLE_SENSOR_RHT]
+#ifndef SL_BOARD_ENABLE_SENSOR_RHT_PORT         
+#define SL_BOARD_ENABLE_SENSOR_RHT_PORT          gpioPortD
+#endif
+#ifndef SL_BOARD_ENABLE_SENSOR_RHT_PIN          
+#define SL_BOARD_ENABLE_SENSOR_RHT_PIN           15
+#endif
+// [GPIO_SL_BOARD_ENABLE_SENSOR_RHT]$
 
 // <<< sl:end pin_tool >>>
 
 #endif // SL_BOARD_CONTROL_CONFIG_H
-========
-#endif // SL_DEVICE_INIT_DCDC_CONFIG_H
->>>>>>>> main:src/ncp-uart-hw_EFR32MG24A420F1536IM48/config/sl_device_init_dcdc_config.h

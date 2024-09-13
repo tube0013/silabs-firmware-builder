@@ -1,9 +1,9 @@
 /***************************************************************************//**
  * @file
- * @brief Board Control
+ * @brief USTIMER configuration file.
  *******************************************************************************
  * # License
- * <b>Copyright 2022 Silicon Laboratories Inc. www.silabs.com</b>
+ * <b>Copyright 2018 Silicon Laboratories Inc. www.silabs.com</b>
  *******************************************************************************
  *
  * SPDX-License-Identifier: Zlib
@@ -27,30 +27,29 @@
  * 3. This notice may not be removed or altered from any source distribution.
  *
  ******************************************************************************/
+#ifndef __SILICON_LABS_USTIMER_CONFIG_H__
+#define __SILICON_LABS_USTIMER_CONFIG_H__
 
-#ifndef SL_BOARD_CONTROL_CONFIG_H
-#define SL_BOARD_CONTROL_CONFIG_H
-
-// <<< Use Configuration Wizard in Context Menu >>>
-
-// <q SL_BOARD_ENABLE_VCOM> Enable Virtual COM UART
-// <i> Default: 0
-#define SL_BOARD_ENABLE_VCOM                    0
-
-// <<< end of configuration section >>>
+/***************************************************************************//**
+ * @addtogroup ustimer
+ * @{
+ ******************************************************************************/
 
 // <<< sl:start pin_tool >>>
-
-// <gpio> SL_BOARD_ENABLE_VCOM
-// $[GPIO_SL_BOARD_ENABLE_VCOM]
-#ifndef SL_BOARD_ENABLE_VCOM_PORT               
-#define SL_BOARD_ENABLE_VCOM_PORT                gpioPortD
+// <timer> USTIMER
+// $[TIMER_USTIMER]
+#ifndef USTIMER_PERIPHERAL                      
+#define USTIMER_PERIPHERAL                       TIMER0
 #endif
-#ifndef SL_BOARD_ENABLE_VCOM_PIN                
-#define SL_BOARD_ENABLE_VCOM_PIN                 4
+#ifndef USTIMER_PERIPHERAL_NO                   
+#define USTIMER_PERIPHERAL_NO                    0
 #endif
-// [GPIO_SL_BOARD_ENABLE_VCOM]$
+// [TIMER_USTIMER]$
 
 // <<< sl:end pin_tool >>>
 
-#endif // SL_BOARD_CONTROL_CONFIG_H
+#define USTIMER_TIMER USTIMER_PERIPHERAL_NO
+
+/** @} (end addtogroup ustimer) */
+
+#endif /* __SILICON_LABS_USTIMER_CONFIG_H__ */

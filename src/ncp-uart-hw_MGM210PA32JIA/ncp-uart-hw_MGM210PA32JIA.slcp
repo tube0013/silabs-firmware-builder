@@ -1,6 +1,6 @@
 # Silicon Labs Project Configuration Tools: slcp, v0, Component selection file.
-project_name: ncp-uart-hw_MGM210PA32JIA
-label: ncp-uart-hw_MGM210PA32JIA
+project_name: ncp-uart-hw_EFR32MG24A420F1536IM48
+label: ncp-uart-hw_EFR32MG24A420F1536IM48
 author: Silicon Laboratories, Inc.
 description: This network coprocessor (NCP) application supports communication with
   a host application over a UART interface with hardware flow control. This NCP application
@@ -27,10 +27,14 @@ source:
 - {path: main.c}
 - {path: app.c}
 tag: [prebuilt_demo]
+<<<<<<<< HEAD:src/ncp-uart-hw_MGM210PA32JIA/ncp-uart-hw_MGM210PA32JIA.slcp
+sdk: {id: gecko_sdk, version: 4.4.4}
+========
 sdk: {id: gecko_sdk, version: 4.4.3}
+>>>>>>>> main:src/ncp-uart-hw_EFR32MG24A420F1536IM48/ncp-uart-hw_EFR32MG24A420F1536IM48.slcp
 toolchain_settings: []
 component:
-- {id: MGM210PA32JIA}
+- {id: EFR32MG24A420F1536IM48}
 - instance: [vcom]
   id: iostream_usart
 - {id: iostream_vuart}
