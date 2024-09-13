@@ -1,6 +1,6 @@
 /***************************************************************************//**
  * @file
- * @brief Legacy Host ASH configuration file.
+ * @brief Legacy HAL configuration file.
  *******************************************************************************
  * # License
  * <b>Copyright 2021 Silicon Laboratories Inc. www.silabs.com</b>
@@ -30,33 +30,18 @@
 
 // <<< Use Configuration Wizard in Context Menu >>>
 
-#ifndef LEGACY_NCP_ASH_CONFIG_H
-#define LEGACY_NCP_ASH_CONFIG_H
+#ifndef LEGACY_HAL_CONFIG_H
+#define LEGACY_HAL_CONFIG_H
 
-// <o LEGACY_NCP_ASH_SERIAL_PORT> The USART used for ASH communications in COM_Port_t format, as defined in platform/service/legacy_hal/inc/serial.h (see defined names for USART ports) <-1..3:1>
-// <i> Default: (-1)
-// <i> The default value of -1 causes the ASH code to try to use the USART assigned to the "VCOM" instance of SL_IOSTREAM_USART. Otherwise the value is passed to Legacy HAL, which attempts to find an instance of SL_IOSTREAM_USART which uses that USART.
-#define LEGACY_NCP_ASH_SERIAL_PORT    (-1)
+// <q LEGACY_HAL_TRANSLATE_BUTTON_INTERRUPT> Translate button interrupt callback
+// <i> When the Simple Button component is included, it provides a callback for
+// <i> buttons configured in interrupt mode. When this option is 1, Legacy HAL
+// <i> will try to consume that callback and translate it to "halButtonIsr",
+// <i> the legacy callback. If anything else in the application consumes the
+// <i> Simple button callback, it will override Legacy HAL's version.
+// <i> Default: 1
+#define LEGACY_HAL_TRANSLATE_BUTTON_INTERRUPT    (1)
 
-#endif /* LEGACY_NCP_ASH_CONFIG_H */
+#endif /* LEGACY_HAL_CONFIG_H */
 
 // <<< end of configuration section >>>
-<<<<<<<< HEAD:src/ncp-uart-hw_EFR32MG24A420F1536IM48/config/legacy_hal_config.h
-
-// <<< sl:start pin_tool >>>
-
-// <gpio> SL_BOARD_ENABLE_VCOM
-// $[GPIO_SL_BOARD_ENABLE_VCOM]
-#ifndef SL_BOARD_ENABLE_VCOM_PORT               
-#define SL_BOARD_ENABLE_VCOM_PORT                gpioPortD
-#endif
-#ifndef SL_BOARD_ENABLE_VCOM_PIN                
-#define SL_BOARD_ENABLE_VCOM_PIN                 4
-#endif
-// [GPIO_SL_BOARD_ENABLE_VCOM]$
-
-// <<< sl:end pin_tool >>>
-
-#endif // SL_BOARD_CONTROL_CONFIG_H
-========
->>>>>>>> main:src/ncp-uart-hw_MGM12P32F1024GE/config/legacy_common_ash_config.h
