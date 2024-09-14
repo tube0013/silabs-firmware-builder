@@ -96,6 +96,16 @@
 // <i> The number of entries that the binding table can hold.
 #define EMBER_BINDING_TABLE_SIZE   32
 
+// <o EMBER_ADDRESS_TABLE_SIZE> Binding Table Size <1-127>
+// <i> Default: 3
+// <i> The number of entries that the binding table can hold.
+#define EMBER_ADDRESS_TABLE_SIZE   16
+
+// <o EMBER_ROUTE_TABLE_SIZE> Route Table Size <1-255>
+// <i> Default: 3
+// <i> The number of entries that the Route table can hold.
+#define EMBER_ROUTE_TABLE_SIZE   16
+
 // </h>
 
 // <<< end of configuration section >>>
