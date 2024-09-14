@@ -10,6 +10,7 @@ gbl:
 
 add_components:
 - id: zigbee_mfglib
+- id: zigbee_token_interface
 
 slcp_defines:
   EMBER_ROUTE_TABLE_SIZE: 254 
