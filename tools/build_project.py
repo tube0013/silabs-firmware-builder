@@ -78,11 +78,6 @@ def log_tree(dir_path: pathlib.Path, prefix: str = ""):
         LOGGER.info(line)
 
 
-def log_subprocess_output(pipe, prefix: str = "subprocess"):
-    for line in iter(pipe.readline, b""):
-        LOGGER.info("[%s] %r", prefix, line)
-
-
 def evaluate_f_string(f_string: str, variables: dict[str, typing.Any]) -> str:
     """
     Evaluates an `f`-string with the given locals.
@@ -271,6 +266,18 @@ def zap_set_cluster_attribute(
             "skip_if_missing": False,
         }
     ]
+
+
+def subprocess_run_verbose(command: list[str], prefix: str) -> None:
+    with subprocess.Popen(
+        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    ) as proc:
+        for line in proc.stdout:
+            LOGGER.info("[%s] %r", prefix, line.decode("utf-8").strip())
+
+    if proc.returncode != 0:
+        LOGGER.error("[%s] Error: %s", prefix, proc.returncode)
+        sys.exit(1)
 
 
 def main():
@@ -544,7 +551,7 @@ def main():
     LOGGER.info(f"Generating project for {manifest['device']}")
 
     # fmt: off
-    slc_result = subprocess.Popen(
+    subprocess_run_verbose(
         SLC
         + [
             "generate",
@@ -557,19 +564,9 @@ def main():
             "--sdk", sdk,
             "--output-type", args.build_system,
         ],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT
+        "slc generate"
     )
     # fmt: on
-
-    with slc_result.stdout:
-        log_subprocess_output(slc_result.stdout, "SLC generate")
-
-    slc_result_returncode = slc_result.wait()
-
-    if slc_result_returncode != 0:
-        LOGGER.error("[SLC generate] Error: %s", slc_result_returncode)
-        sys.exit(1)
 
     log_tree(args.build_dir)
 
@@ -697,7 +694,7 @@ def main():
     makefile.write_text(makefile_contents)
 
     # fmt: off
-    subprocess.run(
+    subprocess_run_verbose(
         [   
             "make",
             "-C", args.build_dir,
@@ -707,7 +704,7 @@ def main():
             f"POST_BUILD_EXE={args.postbuild}",
             "VERBOSE=1",
         ],
-        check=True,
+        "make"
     )
     # fmt: on
 
