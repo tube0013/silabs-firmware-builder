@@ -17,7 +17,7 @@ import argparse
 import contextlib
 import subprocess
 import multiprocessing
-from datetime import datetime
+from datetime import datetime, timezone
 
 from ruamel.yaml import YAML
 
@@ -35,6 +35,20 @@ TREE_BRANCH = "│   "
 # pointers:
 TREE_TEE = "├── "
 TREE_LAST = "└── "
+
+DEFAULT_JSON_CONFIG = [
+    # Fix a few paths by default
+    {
+        "file": "config/zcl/zcl_config.zap",
+        "jq": '(.package[] | select(.type == "zcl-properties")).path = "template:{sdk}/app/zcl/zcl-zap.json"',
+        "skip_if_missing": True,
+    },
+    {
+        "file": "config/zcl/zcl_config.zap",
+        "jq": '(.package[] | select(.type == "gen-templates-json")).path = "template:{sdk}/protocol/zigbee/app/framework/gen-template/gen-templates.json"',
+        "skip_if_missing": True,
+    },
+]
 
 
 def tree(dir_path: pathlib.Path, prefix: str = ""):
@@ -69,12 +83,20 @@ def log_subprocess_output(pipe, prefix: str = "subprocess"):
         LOGGER.info("[%s] %r", prefix, line)
 
 
-def evaulate_f_string(f_string: str, variables: dict[str, typing.Any]) -> str:
+def evaluate_f_string(f_string: str, variables: dict[str, typing.Any]) -> str:
     """
     Evaluates an `f`-string with the given locals.
     """
 
     return eval("f" + repr(f_string), variables)
+
+
+def expand_template(value: typing.Any, env: dict[str, typing.Any]) -> typing.Any:
+    """Expand a template string."""
+    if isinstance(value, str) and value.find("template:") != -1:
+        return evaluate_f_string(value.replace("template:", "", 1), env)
+    else:
+        return value
 
 
 def ensure_folder(path: str | pathlib.Path) -> pathlib.Path:
@@ -208,6 +230,49 @@ def load_toolchains(paths: list[pathlib.Path]) -> dict[pathlib.Path, str]:
     return toolchains
 
 
+def zap_select_endpoint_type(endpoint_type_name: int | str) -> str:
+    return (
+        ".endpointTypes[]"
+        if endpoint_type_name == "all"
+        else f'.endpointTypes[] | select(.name == "{endpoint_type_name}")'
+    )
+
+
+def zap_select_cluster(cluster_name: int | str) -> str:
+    return (
+        ".clusters[]"
+        if cluster_name == "all"
+        else f'.clusters[] | select(.name == "{cluster_name}")'
+    )
+
+
+def zap_delete_cluster(
+    cluster_name: str, endpoint_type_name: int | str = "all"
+) -> list[dict[str, typing.Any]]:
+    return [
+        {
+            "file": "config/zcl/zcl_config.zap",
+            "jq": f'del({zap_select_endpoint_type(endpoint_type_name)}.clusters[] | select(.name == "{cluster_name}"))',
+            "skip_if_missing": False,
+        }
+    ]
+
+
+def zap_set_cluster_attribute(
+    attribute_name: str,
+    default_value: typing.Any,
+    endpoint_type_name: int | str = "all",
+    cluster_name: int | str = "all",
+) -> list[dict[str, typing.Any]]:
+    return [
+        {
+            "file": "config/zcl/zcl_config.zap",
+            "jq": f'({zap_select_endpoint_type(endpoint_type_name)}{zap_select_cluster(cluster_name)}.attributes[] | select(.name == "{attribute_name}")).defaultValue = "{default_value}"',
+            "skip_if_missing": False,
+        }
+    ]
+
+
 def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
@@ -313,10 +378,10 @@ def main():
 
     # Ensure we can load the correct SDK and toolchain
     sdks = load_sdks(args.sdks)
-    sdk, sdk_version = next(
+    sdk, sdk_name_version = next(
         (path, version) for path, version in sdks.items() if version == manifest["sdk"]
     )
-    sdk_name = sdk_version.split(":", 1)[0]
+    sdk_name, _, sdk_version = sdk_name_version.partition(":")
 
     toolchains = load_toolchains(args.toolchains)
     toolchain = next(
@@ -411,55 +476,56 @@ def main():
     with (args.build_dir / "gbl_metadata.yaml").open("w") as f:
         yaml.dump(manifest["gbl"], f)
 
-    zcl_config_zap = build_template_path / "config/zcl/zcl_config.zap"
+    # Template variables
+    value_template_env = {
+        "git_repo_hash": get_git_commit_id(repo=pathlib.Path(__file__).parent.parent),
+        "manifest_name": args.manifest.stem,
+        "now": datetime.now(timezone.utc),
+        "sdk": sdk,
+        "sdk_version": sdk_version,
+    }
 
-    if zcl_config_zap.exists():
-        date_code = datetime.today().strftime("%Y-%m-%d")
-        default_zap_changes = [
-            # Set software date code to day of build
-            f'(.endpointTypes[].clusters[].attributes[] | select(.name == "date code")).defaultValue = "{date_code}"',
-            # Set software build ID to SDK version
-            f'(.endpointTypes[].clusters[].attributes[] | select(.name == "sw build id")).defaultValue = "{sdk_version.split(":", 1)[1]}"',
-            # Set path
-            f'(.package[] | select(.type == "zcl-properties")).path = "{sdk}/app/zcl/zcl-zap.json"',
-            # Set path
-            f'(.package[] | select(.type == "gen-templates-json")).path = "{sdk}/protocol/zigbee/app/framework/gen-template/gen-templates.json"',
-        ]
+    LOGGER.info("Using templating env:")
+    LOGGER.info(str(value_template_env))
 
-        for zap_change in default_zap_changes:
-            LOGGER.info("Default ZAP change: %s", zap_change)
+    zap_config = manifest.get("zap_config", None)
+    zap_json_config: list[dict[str, typing.Any]] = []
 
-            result = subprocess.run(
-                [
-                    "jq",
-                    zap_change,
-                    zcl_config_zap,
-                ],
-                capture_output=True,
-            )
+    if zap_config:
+        for endpoint_type in zap_config.get("endpoint_types", []):
+            for cluster in endpoint_type.get("clusters", []):
+                for to_remove in cluster.get("remove", []):
+                    zap_json_config += zap_delete_cluster(
+                        to_remove, endpoint_type["name"]
+                    )
 
-            if result.returncode != 0:
-                LOGGER.error("jq stderr: %s\n%s", result.returncode, result.stderr)
-                sys.exit(1)
-
-            with open(zcl_config_zap, "wb") as f:
-                f.write(result.stdout)
+                for attribute_name, default_value in cluster.get(
+                    "attribute_defaults", {}
+                ).items():
+                    zap_json_config += zap_set_cluster_attribute(
+                        attribute_name,
+                        expand_template(default_value, value_template_env),
+                        endpoint_type["name"],
+                        cluster["name"],
+                    )
 
     # JSON config
-    for json_config in manifest.get("json_config", []):
+    for json_config in (
+        DEFAULT_JSON_CONFIG + manifest.get("json_config", []) + zap_json_config
+    ):
         json_path = build_template_path / json_config["file"]
 
-        if not json_path.exists():
-            raise ValueError(f"[{json_path}] does not exist")
+        if json_config.get("skip_if_missing", False) and not json_path.exists():
+            continue
 
-        device_spe_change = json_config["jq"]
+        jq_arg = expand_template(json_config["jq"], value_template_env)
 
-        LOGGER.info("Device-specific change in %s: %s", json_path, device_spe_change)
+        LOGGER.info(f"Patching {json_path} with {jq_arg}")
 
         result = subprocess.run(
             [
                 "jq",
-                device_spe_change,
+                jq_arg,
                 json_path,
             ],
             capture_output=True,
@@ -505,7 +571,7 @@ def main():
         LOGGER.error("[SLC generate] Error: %s", slc_result_returncode)
         sys.exit(1)
 
-    log_tree(build_template_path)
+    log_tree(args.build_dir)
 
     # Make sure all extensions are valid
     for sdk_extension in base_project.get("sdk_extension", []):
@@ -515,14 +581,10 @@ def main():
             LOGGER.error("Referenced extension not present in SDK: %s", expected_dir)
             sys.exit(1)
 
-    # Template variables for C defines
-    value_template_env = {
-        "git_repo_hash": get_git_commit_id(repo=pathlib.Path(__file__).parent.parent),
-        "manifest_name": args.manifest.stem,
-    }
-
     # Actually search for C defines within config
     unused_defines = set(manifest.get("c_defines", {}).keys())
+
+    LOGGER.info(manifest.get("c_defines", {}))
 
     for config_root in [args.build_dir / "autogen", args.build_dir / "config"]:
         for config_f in config_root.glob("*.h"):
@@ -531,7 +593,7 @@ def main():
             new_config_h_lines = []
 
             for index, line in enumerate(config_h_lines):
-                for define, value_template in manifest.get("c_defines", {}).items():
+                for define, value in manifest.get("c_defines", {}).items():
                     if f"#define {define} " not in line:
                         continue
 
@@ -556,15 +618,7 @@ def main():
                         assert re.match(r'#warning ".*? not configured"', prev_line)
                         new_config_h_lines.pop(index - 1)
 
-                    value_template = str(value_template)
-
-                    if value_template.startswith("template:"):
-                        value = value_template.replace("template:", "", 1).format(
-                            **value_template_env
-                        )
-                    else:
-                        value = value_template
-
+                    value = expand_template(value, value_template_env)
                     new_config_h_lines.append(f"#define {define}{alignment}{value}")
                     written_config[define] = value
 
@@ -661,7 +715,7 @@ def main():
     extracted_gbl_metadata = json.loads(
         (output_artifact.parent / "gbl_metadata.json").read_text()
     )
-    base_filename = evaulate_f_string(
+    base_filename = evaluate_f_string(
         manifest.get("filename", "{manifest_name}"),
         {**value_template_env, **extracted_gbl_metadata},
     )
