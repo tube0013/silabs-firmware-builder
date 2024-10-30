@@ -1,0 +1,6 @@
+name: TubesZB MGM24 Firmware Eraser
+device: MGM240PA32VNN
+base_project: misc/firmware-eraser
+filename: "{manifest_name}_gsdk_{sdk_version}"
+
+gbl: {}
