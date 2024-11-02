@@ -1,7 +1,8 @@
 name: TubesZB MGM24 HW Zigbee
 device: MGM240PA32VNN
-base_project: src/ncp-uart-hw_MGM240PA32VNN
-filename: "{manifest_name}_{ezsp_version}"
+base_project: src/zigbee_ncp
+sdk: "gecko_sdk:4.4.4"
+toolchain: "12.2.1.20221205"
 
 gbl:
   fw_type: ncp-uart-hw

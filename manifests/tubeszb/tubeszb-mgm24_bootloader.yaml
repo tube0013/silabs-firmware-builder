@@ -1,5 +1,5 @@
 name: Yellow Bootloader
-device: MGM240PB32VNN
+device: MGM240PA32VNN
 base_project: src/bootloader
 filename: "{manifest_name}_{gecko_bootloader_version}"
 sdk: "gecko_sdk:4.4.4"
