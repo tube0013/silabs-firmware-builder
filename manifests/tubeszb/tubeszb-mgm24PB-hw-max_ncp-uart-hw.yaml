@@ -14,7 +14,6 @@ add_components:
 - id: zigbee_token_interface
 
 slcp_defines:
-  EMBER_ROUTE_TABLE_SIZE: 254 
   EMBER_APS_DUPLICATE_REJECTION_MAX_ENTRIES: 255
 
 configuration:
