@@ -1,7 +1,7 @@
-name: MGM240P Zigbee Router
-device: MGM240PB32VNA
+name: TubesZB MGM24PB Zigbee Router
+device: MGM240PB32VNN
 base_project: src/zigbee_router
-filename: "{manifest_name}_{ezsp_version}_{baudrate}_{fw_variant}"
+filename: "{manifest_name}_{ezsp_version}_{baudrate}"
 sdk: "simplicity_sdk:2024.6.2"
 toolchain: "12.2.1.20221205"
 
@@ -9,45 +9,45 @@ gbl:
   fw_type: zigbee_router
   ezsp_version: dynamic
   baudrate: 115200
-  fw_variant: sw_flow
 
 slcp_defines:
-  SL_ZIGBEE_ADDRESS_TABLE_SIZE: 32
+  SL_ZIGBEE_ADDRESS_TABLE_SIZE: 64
   SL_ZIGBEE_MULTICAST_TABLE_SIZE: 26
   SL_ZIGBEE_ROUTE_TABLE_SIZE: 16
   SL_ZIGBEE_DISCOVERY_TABLE_SIZE: 16
 
 c_defines:
   SL_IOSTREAM_USART_VCOM_BAUDRATE: 115200
-  SL_IOSTREAM_USART_VCOM_FLOW_CONTROL_TYPE: uartFlowControlSoftware
+  SL_IOSTREAM_USART_VCOM_FLOW_CONTROL_TYPE: usartHwFlowControlCtsAndRts
 
   SL_IOSTREAM_USART_VCOM_PERIPHERAL: USART0
   SL_IOSTREAM_USART_VCOM_PERIPHERAL_NO: 0
 
   SL_IOSTREAM_USART_VCOM_TX_PORT: gpioPortA
-  SL_IOSTREAM_USART_VCOM_TX_PIN:  5
+  SL_IOSTREAM_USART_VCOM_TX_PIN:  6
 
   SL_IOSTREAM_USART_VCOM_RX_PORT: gpioPortA
-  SL_IOSTREAM_USART_VCOM_RX_PIN:  6
+  SL_IOSTREAM_USART_VCOM_RX_PIN:  5
 
-  SL_IOSTREAM_USART_VCOM_CTS_PORT: 0
-  SL_IOSTREAM_USART_VCOM_CTS_PIN:  0
+  SL_IOSTREAM_USART_VCOM_CTS_PORT: gpioPortA
+  SL_IOSTREAM_USART_VCOM_CTS_PIN:  7
 
-  SL_IOSTREAM_USART_VCOM_RTS_PORT: 0
-  SL_IOSTREAM_USART_VCOM_RTS_PIN:  0
+  SL_IOSTREAM_USART_VCOM_RTS_PORT: gpioPortA
+  SL_IOSTREAM_USART_VCOM_RTS_PIN:  8
 
-  SL_IOSTREAM_USART_VCOM_RX_BUFFER_SIZE: 64
+  SL_IOSTREAM_USART_VCOM_RX_BUFFER_SIZE: 128
 
   SL_CLOCK_MANAGER_HFXO_EN: 1
   SL_CLOCK_MANAGER_HFXO_CTUNE: 140
   SL_CLOCK_MANAGER_DEFAULT_HF_CLOCK_SOURCE: SL_CLOCK_MANAGER_DEFAULT_HF_CLOCK_SOURCE_HFXO
 
-  SL_ZIGBEE_APS_UNICAST_MESSAGE_COUNT: 64
+  SL_ZIGBEE_APS_UNICAST_MESSAGE_COUNT: 128
   SL_ZIGBEE_BROADCAST_TABLE_SIZE: 30
   SL_ZIGBEE_NEIGHBOR_TABLE_SIZE: 26
   SL_ZIGBEE_SOURCE_ROUTE_TABLE_SIZE: 254
-  SL_ZIGBEE_MAX_END_DEVICE_CHILDREN: 32
+  SL_ZIGBEE_MAX_END_DEVICE_CHILDREN: 64
   SL_ZIGBEE_BINDING_TABLE_SIZE: 64
+  SL_ZIGBEE_APS_DUPLICATE_REJECTION_MAX_ENTRIES: 64
 
   SL_RAIL_UTIL_RSSI_OFFSET: 0
 
@@ -61,8 +61,8 @@ zap_config:
       clusters:
         - name: "Basic"
           attribute_defaults:
-              "model identifier": MGM240P
-              "manufacturer name": SparkFun
+              "model identifier": MGM24PB
+              "manufacturer name": TubesZB
               "date code": template:{now:%Y%m%d%H%M%S}
               "sw build id": template:{sdk_version}
           remove:
