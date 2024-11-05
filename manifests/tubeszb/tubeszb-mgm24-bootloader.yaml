@@ -1,4 +1,4 @@
-name: TubesZB MGM24PB Bootloader
+name: TubesZB MGM24PA Bootloader
 device: MGM240PA32VNN
 base_project: src/bootloader
 filename: "{manifest_name}_{gecko_bootloader_version}"
