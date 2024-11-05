@@ -1,5 +1,5 @@
 name: TubesZB MGM24PB Bootloader
-device: MGM240PB32VNN
+device: MGM240PA32VNN
 base_project: src/bootloader
 filename: "{manifest_name}_{gecko_bootloader_version}"
 sdk: "simplicity_sdk:2024.6.2"
