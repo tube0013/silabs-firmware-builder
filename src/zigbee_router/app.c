@@ -27,6 +27,7 @@
 #if (LARGE_NETWORK_TESTING == 0)
 
 #include "network-steering.h"
+#include "stack/include/zigbee-device-stack.h"
 
 #if defined(SL_CATALOG_LED0_PRESENT)
 #include "sl_led.h"
@@ -70,11 +71,12 @@ static void commissioning_led_event_handler(sl_zigbee_af_event_t *event)
  */
 void sl_zigbee_af_stack_status_cb(sl_status_t status)
 {
-  // Note, the ZLL state is automatically updated by the stack and the plugin.
   if (status == SL_STATUS_NETWORK_DOWN) {
     led_turn_off(COMMISSIONING_STATUS_LED);
     sl_zigbee_af_event_set_delay_ms(&commissioning_led_event, NWK_STEERING_COOLDOWN_MS);
   } else if (status == SL_STATUS_NETWORK_UP) {
+    // make some noise on start for reconnect (otherwise perceived as offline until pinged)
+    sl_zigbee_send_device_announcement();
     led_turn_on(COMMISSIONING_STATUS_LED);
   }
 }
