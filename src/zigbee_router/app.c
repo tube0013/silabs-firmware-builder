@@ -133,35 +133,4 @@ void sl_zigbee_af_radio_needs_calibrating_cb(void)
   #endif
 }
 
-#if defined(SL_CATALOG_SIMPLE_BUTTON_PRESENT) && (SL_ZIGBEE_APP_FRAMEWORK_USE_BUTTON_TO_STAY_AWAKE == 0)
-#include "sl_simple_button.h"
-#include "sl_simple_button_instances.h"
-/***************************************************************************//**
- * A callback called in interrupt context whenever a button changes its state.
- *
- * @remark Can be implemented by the application if required. This function
- * can contain the functionality to be executed in response to changes of state
- * in each of the buttons, or callbacks to appropriate functionality.
- *
- * @note The button state should not be updated in this function, it is updated
- * by specific button driver prior to arriving here
- *
-   @param[out] handle             Pointer to button instance
- ******************************************************************************/
-void sl_button_on_change(const sl_button_t *handle)
-{
-  if (sl_button_get_state(handle) == SL_SIMPLE_BUTTON_RELEASED) {
-  }
-}
-#endif // SL_CATALOG_SIMPLE_BUTTON_PRESENT && SL_ZIGBEE_APP_FRAMEWORK_USE_BUTTON_TO_STAY_AWAKE == 0
-
-//Internal testing stuff
-#if defined(SL_ZIGBEE_TEST)
-void sl_zigbee_af_hal_button_isr_cb(uint8_t button, uint8_t state)
-{
-  if (state == BUTTON_RELEASED) {
-  }
-}
-#endif // SL_ZIGBEE_TEST
-
 #endif //#if (LARGE_NETWORK_TESTING == 0)
