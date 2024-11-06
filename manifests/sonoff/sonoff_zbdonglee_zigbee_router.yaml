@@ -86,7 +86,7 @@ zap_config:
       clusters:
         - name: "Basic"
           attribute_defaults:
-              "model identifier": DONGLE-E_R
+              "model identifier": DONGLE-E
               "manufacturer name": SONOFF
               "date code": template:{now:%Y%m%d%H%M%S}
               "sw build id": template:{sdk_version}
