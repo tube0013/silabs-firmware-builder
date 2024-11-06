@@ -7,9 +7,6 @@ description: Zigbee Router firmware. Derived from the `Z3Light` example Simplici
 author: Nerivec
 
 component:
-  - id: cli
-    instance:
-      - example
   - id: iostream_recommended_stream
   - id: iostream_usart
     instance:
@@ -20,13 +17,10 @@ component:
   - id: zigbee_stack_diagnostics
   - id: zigbee_gp
   - id: zigbee_zcl_framework_core
-  - id: zigbee_zcl_cli
-  - id: zigbee_core_cli
   - id: zigbee_identify
   - id: zigbee_counters
   - id: zigbee_green_power_common
   - id: zigbee_green_power_client
-  - id: zigbee_green_power_client_cli
   - id: zigbee_interpan
   - id: zigbee_network_steering
   - id: zigbee_reporting
