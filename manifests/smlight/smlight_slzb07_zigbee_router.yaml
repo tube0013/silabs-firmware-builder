@@ -9,6 +9,7 @@ gbl:
   fw_type: zigbee_router
   ezsp_version: dynamic
   baudrate: 115200
+  fw_variant: sw_flow
 
 slcp_defines:
   SL_ZIGBEE_ADDRESS_TABLE_SIZE: 32
