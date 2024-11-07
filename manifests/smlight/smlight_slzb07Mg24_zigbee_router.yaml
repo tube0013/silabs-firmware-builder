@@ -1,7 +1,7 @@
 name: SLZB-07Mg24 Zigbee Router
 device: EFR32MG24A020F1024IM40
 base_project: src/zigbee_router
-filename: "{manifest_name}_{ezsp_version}_{baudrate}"
+filename: "{manifest_name}_{ezsp_version}_{baudrate}_{fw_variant}"
 sdk: "simplicity_sdk:2024.6.2"
 toolchain: "12.2.1.20221205"
 
