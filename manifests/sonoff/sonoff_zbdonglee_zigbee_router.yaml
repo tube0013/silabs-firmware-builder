@@ -1,4 +1,4 @@
-name: ZBDongle-E Zigbee Router
+name: SONOFF DONGLE-E Zigbee Router
 device: EFR32MG21A020F768IM32
 base_project: src/zigbee_router
 filename: "{manifest_name}_{ezsp_version}_{baudrate}_{fw_variant}"
@@ -80,15 +80,20 @@ c_defines:
   #   a >5sec press will factory reset the adapter
   SL_ZIGBEE_AF_PLUGIN_BUTTON_JOINING_PERMIT_JOIN_TIMEOUT: 60
 
+  SL_ZIGBEE_AF_PLUGIN_CONCENTRATOR_CONCENTRATOR_TYPE: HIGH_RAM_CONCENTRATOR
+  # <1-60>
+  SL_ZIGBEE_AF_PLUGIN_CONCENTRATOR_MIN_TIME_BETWEEN_BROADCASTS_SECONDS: 10
+  # <30-300>
+  SL_ZIGBEE_AF_PLUGIN_CONCENTRATOR_MAX_TIME_BETWEEN_BROADCASTS_SECONDS: 60
+  # <1-100>
+  SL_ZIGBEE_AF_PLUGIN_CONCENTRATOR_ROUTE_ERROR_THRESHOLD: 3
+  # <1-100>
+  SL_ZIGBEE_AF_PLUGIN_CONCENTRATOR_DELIVERY_FAILURE_THRESHOLD: 1
+
 zap_config:
   endpoint_types:
-    - name: "Centralized"
+    - name: Centralized
       clusters:
-        - name: "Basic"
-          attribute_defaults:
-              "model identifier": DONGLE-E
-              "manufacturer name": SONOFF
-              "date code": template:{now:%Y%m%d%H%M%S}
-              "sw build id": template:{sdk_version}
+        - name: Basic
           remove:
             - "Over the Air Bootloading"

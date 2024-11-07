@@ -1,4 +1,4 @@
-name: MGM240P Zigbee Router
+name: SparkFun MGM240P Zigbee Router
 device: MGM240PB32VNA
 base_project: src/zigbee_router
 filename: "{manifest_name}_{ezsp_version}_{baudrate}_{fw_variant}"
@@ -55,15 +55,20 @@ c_defines:
   SL_ZIGBEE_AF_PLUGIN_NETWORK_STEERING_CHANNEL_MASK: 0x07fff800
   SL_ZIGBEE_AF_PLUGIN_NETWORK_STEERING_RADIO_TX_POWER: 19
 
+  SL_ZIGBEE_AF_PLUGIN_CONCENTRATOR_CONCENTRATOR_TYPE: HIGH_RAM_CONCENTRATOR
+  # <1-60>
+  SL_ZIGBEE_AF_PLUGIN_CONCENTRATOR_MIN_TIME_BETWEEN_BROADCASTS_SECONDS: 10
+  # <30-300>
+  SL_ZIGBEE_AF_PLUGIN_CONCENTRATOR_MAX_TIME_BETWEEN_BROADCASTS_SECONDS: 60
+  # <1-100>
+  SL_ZIGBEE_AF_PLUGIN_CONCENTRATOR_ROUTE_ERROR_THRESHOLD: 3
+  # <1-100>
+  SL_ZIGBEE_AF_PLUGIN_CONCENTRATOR_DELIVERY_FAILURE_THRESHOLD: 1
+
 zap_config:
   endpoint_types:
-    - name: "Centralized"
+    - name: Centralized
       clusters:
-        - name: "Basic"
-          attribute_defaults:
-              "model identifier": MGM240P
-              "manufacturer name": SparkFun
-              "date code": template:{now:%Y%m%d%H%M%S}
-              "sw build id": template:{sdk_version}
+        - name: Basic
           remove:
             - "Over the Air Bootloading"
