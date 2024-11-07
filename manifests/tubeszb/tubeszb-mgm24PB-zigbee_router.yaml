@@ -1,7 +1,7 @@
 name: TubesZB MGM24PB Zigbee Router
 device: MGM240PB32VNN
 base_project: src/zigbee_router
-filename: "{manifest_name}_{ezsp_version}_{baudrate}"
+filename: "{manifest_name}_{ezsp_version}_{baudrate}_{fw_variant}"
 sdk: "simplicity_sdk:2024.6.2"
 toolchain: "12.2.1.20221205"
 
@@ -9,6 +9,7 @@ gbl:
   fw_type: zigbee_router
   ezsp_version: dynamic
   baudrate: 115200
+  fw_variant: hw_flow
 
 slcp_defines:
   SL_ZIGBEE_ADDRESS_TABLE_SIZE: 64
