@@ -67,9 +67,3 @@ c_defines:
   SL_ZIGBEE_AF_PLUGIN_CONCENTRATOR_DELIVERY_FAILURE_THRESHOLD: 1
 
 zap_config:
-  endpoint_types:
-    - name: Centralized
-      clusters:
-        - name: Basic
-          remove:
-            - "Over the Air Bootloading"
