@@ -520,10 +520,10 @@ def main():
     LOGGER.info("Using templating env:")
     LOGGER.info(str(value_template_env))
 
-    zap_config = manifest.get("zap_config", None)
     zap_json_config: list[dict[str, typing.Any]] = []
 
-    if zap_config:
+    if pathlib.Path(build_template_path / "config/zcl/zcl_config.zap").exists():
+        zap_config = manifest.get("zap_config", {})
         sw_build_id_suffix = zap_config.get(
             "sw_build_id_suffix", value_template_env["git_repo_owner"]
         )
