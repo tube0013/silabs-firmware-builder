@@ -222,14 +222,10 @@ void sl_button_on_change(const sl_button_t *handle)
   sl_button_state_t button_state = sl_button_get_state(handle);
 
   if (button_state == SL_SIMPLE_BUTTON_PRESSED) {
-    button_long_press = false;
     button_press_time = halCommonGetInt16uMillisecondTick();
   } else if (button_state == SL_SIMPLE_BUTTON_RELEASED) {
     current_time = halCommonGetInt16uMillisecondTick();
-
-    if ((current_time - button_press_time) > BUTTON_LONG_PRESS_TIME_MS) {
-      button_long_press = true;
-    }
+    button_long_press = (current_time - button_press_time) > BUTTON_LONG_PRESS_TIME_MS;
 
     sl_zigbee_af_event_set_active(&button_event);
   }
