@@ -97,9 +97,13 @@ static void button_event_handler(sl_zigbee_af_event_t *event)
     }
   } else if (state == SL_ZIGBEE_NO_NETWORK) {
     if (button_long_press) {
+      sl_zigbee_app_debug_println("Btn long press: nwk down: reboot btl");
       bootloader_rebootAndInstall();
     } else {
-      if (!sl_zigbee_af_event_is_scheduled(&commissioning_event)) {
+      if (sl_zigbee_af_event_is_scheduled(&commissioning_event)) {
+        sl_zigbee_app_debug_println("Btn press: nwk down: stop nwk steering");
+        sl_zigbee_af_event_set_inactive(&commissioning_event);
+      } else {
         sl_zigbee_app_debug_println("Btn press: nwk down: start nwk steering");
         sl_zigbee_af_event_set_active(&commissioning_event);
       }
