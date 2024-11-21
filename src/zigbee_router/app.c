@@ -29,11 +29,13 @@
 #include "btl_interface.h"
 #include "network-steering.h"
 #include "stack/include/zigbee-device-stack.h"
+#include "stack/include/source-route.h"
 #include "app/framework/plugin/basic/basic.h"
 
 #if defined(SL_CATALOG_LED0_PRESENT)
 #include "sl_led.h"
 #include "sl_simple_led_instances.h"
+
 #define led_turn_on(led) sl_led_turn_on(led)
 #define led_turn_off(led) sl_led_turn_off(led)
 #define led_toggle(led) sl_led_toggle(led)
@@ -44,9 +46,22 @@
 #define led_toggle(led)
 #endif // SL_CATALOG_LED0_PRESENT
 
+#if defined(SL_CATALOG_SIMPLE_BUTTON_PRESENT)
+#include "sl_simple_button.h"
+#include "sl_simple_button_instances.h"
+
+#define BUTTON_LONG_PRESS_TIME_MS 5000
+#define PERMIT_JOIN_TIMEOUT_SEC 180
+
+static bool button_long_press = false;
+static sl_zigbee_af_event_t button_event;
+#endif // SL_CATALOG_SIMPLE_BUTTON_PRESENT
+
 #define NWK_STEERING_COOLDOWN_MS 10000
 
 static sl_zigbee_af_event_t commissioning_event;
+
+static bool source_route_discovery_off = false;
 
 //---------------
 // Event handlers
@@ -60,6 +75,39 @@ static void commissioning_event_handler(sl_zigbee_af_event_t *event)
     sl_zigbee_app_debug_println("%s network %s: 0x%X", "Join", "start", status);
   }
 }
+
+#if defined(SL_CATALOG_SIMPLE_BUTTON_PRESENT)
+static void button_event_handler(sl_zigbee_af_event_t *event)
+{
+  sl_zigbee_network_status_t state = sl_zigbee_af_network_state();
+
+  if (state == SL_ZIGBEE_JOINED_NETWORK) {
+    if (button_long_press) {
+      sl_zigbee_af_core_println("btn long press: nwk up: leave network");
+      sl_zigbee_leave_network(SL_ZIGBEE_LEAVE_NWK_WITH_NO_OPTION);
+    } else {
+      if (source_route_discovery_off) {
+        source_route_discovery_off = false;
+        sl_zigbee_af_core_println("btn press: nwk up: enable src route disc");
+        sl_zigbee_set_source_route_discovery_mode(SL_ZIGBEE_SOURCE_ROUTE_DISCOVERY_RESCHEDULE);
+      } else {
+        source_route_discovery_off = true;
+        sl_zigbee_af_core_println("btn press: nwk up: disable src route disc");
+        sl_zigbee_set_source_route_discovery_mode(SL_ZIGBEE_SOURCE_ROUTE_DISCOVERY_OFF);
+      }
+    }
+  } else if (state == SL_ZIGBEE_NO_NETWORK) {
+    if (button_long_press) {
+      bootloader_rebootAndInstall();
+    } else {
+      if (!sl_zigbee_af_event_is_scheduled(&commissioning_event)) {
+        sl_zigbee_af_core_println("btn press: nwk down: start nwk steering");
+        sl_zigbee_af_event_set_active(&commissioning_event);
+      }
+    }
+  }
+}
+#endif // SL_CATALOG_SIMPLE_BUTTON_PRESENT
 
 //----------------------
 // Implemented Callbacks
@@ -90,6 +138,10 @@ void sl_zigbee_af_stack_status_cb(sl_status_t status)
 void sl_zigbee_af_main_init_cb(void)
 {
   sl_zigbee_af_event_init(&commissioning_event, commissioning_event_handler);
+
+  #if defined(SL_CATALOG_SIMPLE_BUTTON_PRESENT)
+  sl_zigbee_af_isr_event_init(&button_event, button_event_handler);
+  #endif // SL_CATALOG_SIMPLE_BUTTON_PRESENT
 
   sl_zigbee_af_event_set_active(&commissioning_event);
 }
@@ -150,5 +202,39 @@ void sl_zigbee_af_radio_needs_calibrating_cb(void)
   sl_mac_calibrate_current_channel();
   #endif
 }
+
+#if defined(SL_CATALOG_SIMPLE_BUTTON_PRESENT)
+/***************************************************************************//**
+ * A callback called in interrupt context whenever a button changes its state.
+ *
+ * @remark Can be implemented by the application if required. This function
+ * can contain the functionality to be executed in response to changes of state
+ * in each of the buttons, or callbacks to appropriate functionality.
+ *
+ * @note The button state should not be updated in this function, it is updated
+ * by specific button driver prior to arriving here
+ *
+   @param[out] handle             Pointer to button instance
+ ******************************************************************************/
+void sl_button_on_change(const sl_button_t *handle)
+{
+  static uint16_t button_press_time;
+  uint16_t current_time = 0;
+  sl_button_state_t button_state = sl_button_get_state(handle);
+
+  if (button_state == SL_SIMPLE_BUTTON_PRESSED) {
+    button_long_press = false;
+    button_press_time = halCommonGetInt16uMillisecondTick();
+  } else if (button_state == SL_SIMPLE_BUTTON_RELEASED) {
+    current_time = halCommonGetInt16uMillisecondTick();
+
+    if ((current_time - button_press_time) > BUTTON_LONG_PRESS_TIME_MS) {
+      button_long_press = true;
+    }
+
+    sl_zigbee_af_event_set_active(&button_event);
+  }
+}
+#endif // SL_CATALOG_SIMPLE_BUTTON_PRESENT
 
 #endif //#if (LARGE_NETWORK_TESTING == 0)

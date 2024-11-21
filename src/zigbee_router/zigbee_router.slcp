@@ -29,7 +29,6 @@ component:
   - id: zigbee_update_tc_link_key
   - id: clock_manager
   - id: zigbee_application_bootloader
-  - id: zigbee_button_joining
   - id: rail_util_rssi
   - id: zigbee_concentrator
 
