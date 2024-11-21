@@ -29,7 +29,6 @@
 #include "btl_interface.h"
 #include "network-steering.h"
 #include "stack/include/zigbee-device-stack.h"
-#include "stack/include/source-route.h"
 #include "app/framework/plugin/basic/basic.h"
 
 #if defined(SL_CATALOG_LED0_PRESENT)
@@ -49,19 +48,19 @@
 #if defined(SL_CATALOG_SIMPLE_BUTTON_PRESENT)
 #include "sl_simple_button.h"
 #include "sl_simple_button_instances.h"
+#include "stack/include/source-route.h"
 
 #define BUTTON_LONG_PRESS_TIME_MS 5000
 #define PERMIT_JOIN_TIMEOUT_SEC 180
 
 static bool button_long_press = false;
 static sl_zigbee_af_event_t button_event;
+static bool source_route_discovery_off = false;
 #endif // SL_CATALOG_SIMPLE_BUTTON_PRESENT
 
 #define NWK_STEERING_COOLDOWN_MS 10000
 
 static sl_zigbee_af_event_t commissioning_event;
-
-static bool source_route_discovery_off = false;
 
 //---------------
 // Event handlers
