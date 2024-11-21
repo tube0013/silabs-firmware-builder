@@ -88,7 +88,7 @@ static void button_event_handler(sl_zigbee_af_event_t *event)
       if (source_route_discovery_off) {
         source_route_discovery_off = false;
         sl_zigbee_app_debug_println("Btn press: nwk up: enable src route disc");
-        sl_zigbee_set_source_route_discovery_mode(SL_ZIGBEE_SOURCE_ROUTE_DISCOVERY_RESCHEDULE);
+        sl_zigbee_set_source_route_discovery_mode(SL_ZIGBEE_SOURCE_ROUTE_DISCOVERY_ON);
       } else {
         source_route_discovery_off = true;
         sl_zigbee_app_debug_println("Btn press: nwk up: disable src route disc");
