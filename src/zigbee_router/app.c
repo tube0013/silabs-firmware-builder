@@ -71,7 +71,7 @@ static void commissioning_event_handler(sl_zigbee_af_event_t *event)
 
   if (sl_zigbee_af_network_state() != SL_ZIGBEE_JOINED_NETWORK) {
     sl_status_t status = sl_zigbee_af_network_steering_start();
-    sl_zigbee_app_debug_println("%s network %s: 0x%X", "Join", "start", status);
+    sl_zigbee_app_debug_println("Join network start: 0x%X", status);
   }
 }
 
@@ -82,16 +82,16 @@ static void button_event_handler(sl_zigbee_af_event_t *event)
 
   if (state == SL_ZIGBEE_JOINED_NETWORK) {
     if (button_long_press) {
-      sl_zigbee_af_core_println("btn long press: nwk up: leave network");
+      sl_zigbee_app_debug_println("Btn long press: nwk up: leave network");
       sl_zigbee_leave_network(SL_ZIGBEE_LEAVE_NWK_WITH_NO_OPTION);
     } else {
       if (source_route_discovery_off) {
         source_route_discovery_off = false;
-        sl_zigbee_af_core_println("btn press: nwk up: enable src route disc");
+        sl_zigbee_app_debug_println("Btn press: nwk up: enable src route disc");
         sl_zigbee_set_source_route_discovery_mode(SL_ZIGBEE_SOURCE_ROUTE_DISCOVERY_RESCHEDULE);
       } else {
         source_route_discovery_off = true;
-        sl_zigbee_af_core_println("btn press: nwk up: disable src route disc");
+        sl_zigbee_app_debug_println("Btn press: nwk up: disable src route disc");
         sl_zigbee_set_source_route_discovery_mode(SL_ZIGBEE_SOURCE_ROUTE_DISCOVERY_OFF);
       }
     }
@@ -100,7 +100,7 @@ static void button_event_handler(sl_zigbee_af_event_t *event)
       bootloader_rebootAndInstall();
     } else {
       if (!sl_zigbee_af_event_is_scheduled(&commissioning_event)) {
-        sl_zigbee_af_core_println("btn press: nwk down: start nwk steering");
+        sl_zigbee_app_debug_println("Btn press: nwk down: start nwk steering");
         sl_zigbee_af_event_set_active(&commissioning_event);
       }
     }
