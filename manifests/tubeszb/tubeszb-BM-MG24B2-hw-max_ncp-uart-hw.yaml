@@ -12,6 +12,8 @@ gbl:
 add_components:
 - id: zigbee_mfglib
 - id: zigbee_token_interface
+- id: simple_led
+  instance: [board_activity]
 
 slcp_defines:
   EMBER_ADDRESS_TABLE_SIZE: 200
@@ -54,5 +56,7 @@ c_defines:
   SL_SIMPLE_LED_BOARD_ACTIVITY_POLARITY: SL_SIMPLE_LED_POLARITY_ACTIVE_LOW
   SL_SIMPLE_LED_BOARD_ACTIVITY_PORT:     gpioPortD
   SL_SIMPLE_LED_BOARD_ACTIVITY_PIN:      2
+
+  SL_DEVICE_INIT_HFXO_CTUNE:  92
 
   SL_ZIGBEE_APS_DUPLICATE_REJECTION_MAX_ENTRIES: 255
