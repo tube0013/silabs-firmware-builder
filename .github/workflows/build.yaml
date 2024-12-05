@@ -6,6 +6,11 @@ on:
       manifest_glob:
         description: 'Manifest glob'
         required: false
+  push:
+    paths-ignore:
+      - '.gitignore'
+      - 'README.md'
+
   release:
     types:
       - published
