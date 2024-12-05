@@ -1,9 +1,9 @@
 /***************************************************************************//**
- * @file app.c
- * @brief Callbacks implementation and application specific code.
+ * @file main.c
+ * @brief main() function.
  *******************************************************************************
  * # License
- * <b>Copyright 2021 Silicon Laboratories Inc. www.silabs.com</b>
+ * <b>Copyright 2022 Silicon Laboratories Inc. www.silabs.com</b>
  *******************************************************************************
  *
  * The licensor of this software is Silicon Laboratories Inc. Your use of this
@@ -14,25 +14,15 @@
  * sections of the MSLA applicable to Source Code.
  *
  ******************************************************************************/
+#include "sl_system_init.h"
+#include "sl_system_kernel.h"
 
-#include PLATFORM_HEADER
-#include "sl_zigbee.h"
-
-//----------------------
-// Implemented Callbacks
-
-/** @brief
- *
- * Application framework equivalent of ::sl_zigbee_radio_needs_calibrating_handler
- */
-void sl_zigbee_af_radio_needs_calibrating_cb(void)
+int main(void)
 {
-  sl_mac_calibrate_current_channel();
-}
+  // Initialize Silicon Labs device, system, service(s) and protocol stack(s).
+  // Note that processing task(s) will be created by this call.
+  sl_system_init();
 
-/** @brief Init
- * Application init function
- */
-void sl_zigbee_af_main_init_cb(void)
-{
+  // Start the kernel. Task(s) created in app_init() will start running.
+  sl_system_kernel_start();
 }

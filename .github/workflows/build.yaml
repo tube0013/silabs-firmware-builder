@@ -1,14 +1,11 @@
 name: Build firmwares
 
 on:
-  pull_request:
-    paths-ignore:
-      - '.gitignore'
-      - 'README.md'
-  push:
-    paths-ignore:
-      - '.gitignore'
-      - 'README.md'
+  workflow_dispatch:
+    inputs:
+      manifest_glob:
+        description: 'Manifest glob'
+        required: false
   release:
     types:
       - published
@@ -112,7 +109,7 @@ jobs:
       - uses: actions/checkout@v4
       - id: set-matrix
         run: |
-          echo "matrix=$(find manifests -type f \( -name "*.yaml" -o -name "*.yml" \) -print | sort | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+          echo "matrix=$(find manifests -type f \( -name "${{ inputs.manifest_glob || '*' }}.yaml" -o -name "${{ inputs.manifest_glob || '*' }}.yml" \) -print | sort | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
   build-firmwares:
     name: Firmware builder
@@ -168,7 +165,9 @@ jobs:
             --output-dir outputs \
             --output gbl \
             --output hex \
-            --output out
+            --output out \
+            --repo-owner "$GITHUB_REPOSITORY_OWNER" \
+            --repo-hash $(git rev-parse --short=8 "$GITHUB_SHA")
 
           # Get the basename of the GBL in `outputs`
           output_basename=$(basename -- $(basename -- $(ls -1 outputs/*.gbl | head -n 1)) .gbl)

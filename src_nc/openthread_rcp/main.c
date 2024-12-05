@@ -1,9 +1,9 @@
 /***************************************************************************//**
- * @file main.c
+ * @file
  * @brief main() function.
  *******************************************************************************
  * # License
- * <b>Copyright 2021 Silicon Laboratories Inc. www.silabs.com</b>
+ * <b>Copyright 2020 Silicon Laboratories Inc. www.silabs.com</b>
  *******************************************************************************
  *
  * The licensor of this software is Silicon Laboratories Inc. Your use of this
@@ -14,31 +14,17 @@
  * sections of the MSLA applicable to Source Code.
  *
  ******************************************************************************/
-
-#ifdef SL_COMPONENT_CATALOG_PRESENT
 #include "sl_component_catalog.h"
-#endif
 #include "sl_system_init.h"
+#include "app.h"
 #if defined(SL_CATALOG_POWER_MANAGER_PRESENT)
 #include "sl_power_manager.h"
-#endif
+#endif // SL_CATALOG_POWER_MANAGER_PRESENT
 #if defined(SL_CATALOG_KERNEL_PRESENT)
 #include "sl_system_kernel.h"
-#else
+#else // !SL_CATALOG_KERNEL_PRESENT
 #include "sl_system_process_action.h"
-#endif  // SL_CATALOG_KERNEL_PRESENT
-
-#ifdef SL_ZIGBEE_TEST
-#define main nodeMain
-#endif
-
-void app_init(void)
-{
-}
-
-void app_process_action(void)
-{
-}
+#endif // SL_CATALOG_KERNEL_PRESENT
 
 int main(void)
 {
@@ -63,12 +49,12 @@ int main(void)
     // Application process.
     app_process_action();
 
-    // Let the CPU go to sleep if the system allow it.
 #if defined(SL_CATALOG_POWER_MANAGER_PRESENT)
+    // Let the CPU go to sleep if the system allows it.
     sl_power_manager_sleep();
-#endif // SL_CATALOG_POWER_MANAGER_PRESENT
+#endif
   }
+  // Clean-up when exiting the application.
+  app_exit();
 #endif // SL_CATALOG_KERNEL_PRESENT
-
-  return 0;
 }
