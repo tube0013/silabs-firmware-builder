@@ -1,4 +1,8 @@
 # Silicon Labs firmware builder repository
+
+> [!IMPORTANT]
+> Builds here are updated fairly fast after new changes/releases, hence, you can consider them somewhat similar to the difference between Zigbee2MQTT "normal" branch, and dev/edge branch.
+
 This repository contains tools for building firmwares for the Home Assistant Connect
 ZBT-1/SkyConnect and the Home Assistant Yellow's IEEE 802.15.4 radio. The firmware
 manifests are entirely generic, however, and are intended to be written easily for any
