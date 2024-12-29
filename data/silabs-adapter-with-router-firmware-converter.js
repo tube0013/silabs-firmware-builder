@@ -1,3 +1,4 @@
+/** Required for Zigbee2MQTT 1.x.x and firmware releases up to v2024.6.2-update3 */
 const {linkQuality} = require('zigbee-herdsman-converters/lib/modernExtend');
 const {factory_reset} = require('zigbee-herdsman-converters/converters/toZigbee');
 const {presets, access} = require('zigbee-herdsman-converters/lib/exposes');
