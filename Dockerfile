@@ -16,9 +16,17 @@ RUN \
        default-jre-headless \
        patch \
        python3 \
-       python3-ruamel.yaml \
+       python3-pip \
+       python3-virtualenv \
        unzip \
        xz-utils
+
+COPY requirements.txt /tmp/
+
+RUN \
+    virtualenv /opt/venv \
+    && /opt/venv/bin/pip install -r /tmp/requirements.txt \
+    && rm /tmp/requirements.txt
 
 # Install Simplicity Commander (unfortunately no stable URL available, this
 # is known to be working with Commander_linux_x86_64_1v15p0b1306.tar.bz).
@@ -51,11 +59,11 @@ RUN \
     && unzip -q -d simplicity_sdk_2024.6.2 simplicity_sdk_2024.6.2.zip \
     && rm simplicity_sdk_2024.6.2.zip
 
-# Gecko SDK 4.4.4
+# Gecko SDK 4.4.6
 RUN \
-    curl -o gecko_sdk_4.4.4.zip -L https://github.com/SiliconLabs/gecko_sdk/releases/download/v4.4.4/gecko-sdk.zip \
-    && unzip -q -d gecko_sdk_4.4.4 gecko_sdk_4.4.4.zip \
-    && rm gecko_sdk_4.4.4.zip
+    curl -o gecko_sdk_4.4.6.zip -L https://github.com/SiliconLabs/gecko_sdk/releases/download/v4.4.6/gecko-sdk.zip \
+    && unzip -q -d gecko_sdk_4.4.6 gecko_sdk_4.4.6.zip \
+    && rm gecko_sdk_4.4.6.zip
 
 # ZCL Advanced Platform (ZAP) v2024.09.27
 RUN \

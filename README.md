@@ -9,7 +9,7 @@ Silicon Labs Configurator (slc) and the Simplicity Commander standalone utility.
 
 ## Background
 The project templates in this repository are configured and built for specific boards
-using manifest files. For example, the [`skyconnect_zigbee_ncp.yaml`](https://github.com/NabuCasa/silabs-firmware-builder/blob/main/manifests/skyconnect_zigbee_ncp.yaml)
+using manifest files. For example, the [`skyconnect_zigbee_ncp.yaml`](https://github.com/NabuCasa/silabs-firmware-builder/blob/main/manifests/nabucasa/skyconnect_zigbee_ncp.yaml)
 manifest file configures the Zigbee firmware for the SkyConnect/Connect ZBT-1.
 
 ## Setting up Simplicity Studio (for development)
@@ -70,7 +70,7 @@ tool will automatically determine which SDK and toolchain to use.
 > automatically found so these flags can be omitted.
 
 ```bash
-pip install ruamel.yaml  # Only dependency
+pip install -r requirements.txt
 
 python tools/build_project.py \
     # The following SDK and toolchain flags can be omitted on macOS
