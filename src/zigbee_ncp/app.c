@@ -160,60 +160,10 @@ void emberAfMainInitCallback(void)
   }
 }
 
-/** @brief Incoming packet filter callback
- *
- * Filters and/or mutates incoming packets. Currently used only for wildcard multicast
- * group membership.
- */
-EmberPacketAction sli_zigbee_af_packet_handoff_incoming_callback(EmberZigbeePacketType packetType,
-                                                                 EmberMessageBuffer packetBuffer,
-                                                                 uint8_t index,
-                                                                 void *data)
+bool __wrap_sli_zigbee_am_multicast_member(EmberMulticastId multicastId)
 {
-  if (packetType != EMBER_ZIGBEE_PACKET_TYPE_APS_DATA) {
-    return EMBER_ACCEPT_PACKET;
-  }
-
-  uint8_t* packetData = emberMessageBufferContents(packetBuffer);
-  uint16_t packetSize = emberMessageBufferLength(packetBuffer);
-
-  // Skip over the 802.15.4 header to the payload
-  uint8_t payload_offset = sl_mac_flat_field_offset(packetData, true, EMBER_PH_FIELD_MAC_PAYLOAD);
-  packetData += payload_offset;
-  packetSize -= payload_offset;
-
-  if (packetSize < 3) {
-    return EMBER_ACCEPT_PACKET;
-  }
-
-  uint8_t deliveryMode = (packetData[0] & 0b00001100) >> 2;
-
-  // Only look at multicast packets
-  if (deliveryMode != 0x03) {
-    return EMBER_ACCEPT_PACKET;
-  }
-
-  // Take ownership over the first entry and continuously rewrite it
-  EmberMulticastTableEntry *tableEntry = &(sl_zigbee_get_multicast_table()[0]);
-
-  tableEntry->endpoint = 1;
-  tableEntry->multicastId = BUILD_UINT16(packetData[1], packetData[2]);
-  tableEntry->networkIndex = 0;
-
-  return EMBER_ACCEPT_PACKET;
-}
-
-
-/** @brief Outgoing packet filter callback
- *
- * Filters and/or mutates outgoing packets.
- */
-EmberPacketAction sli_zigbee_af_packet_handoff_outgoing_callback(EmberZigbeePacketType packetType,
-                                                                 EmberMessageBuffer packetBuffer,
-                                                                 uint8_t index,
-                                                                 void *data)
-{
-  return EMBER_ACCEPT_PACKET;
+  // Ignore all binding and multicast table logic, we want all group packets
+  return true;
 }
 
 
