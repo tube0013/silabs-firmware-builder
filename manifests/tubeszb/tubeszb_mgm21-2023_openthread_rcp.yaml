@@ -1,0 +1,28 @@
+name: TubesZB MGM21 2023 OpenThread RCP
+device: MGM240PA32VNN
+base_project: src/openthread_rcp
+filename: "{manifest_name}_{ot_rcp_version.split('/')[-1]}_gsdk_{sdk_version}"
+sdk: "gecko_sdk:4.4.6"
+toolchain: "12.2.1.20221205"
+
+gbl:
+  fw_type: openthread_rcp
+  ot_rcp_version: dynamic
+  baudrate: 460800
+
+c_defines:
+  SL_UARTDRV_USART_VCOM_PERIPHERAL: USART0
+  SL_UARTDRV_USART_VCOM_PERIPHERAL_NO: 0
+  SL_UARTDRV_USART_VCOM_BAUDRATE: 460800
+
+  SL_UARTDRV_USART_VCOM_TX_PORT: gpioPortA
+  SL_UARTDRV_USART_VCOM_TX_PIN:  6
+
+  SL_UARTDRV_USART_VCOM_RX_PORT: gpioPortA
+  SL_UARTDRV_USART_VCOM_RX_PIN:  5
+
+  SL_UARTDRV_USART_VCOM_CTS_PORT: gpioPortC
+  SL_UARTDRV_USART_VCOM_CTS_PIN:  1
+
+  SL_UARTDRV_USART_VCOM_RTS_PORT: gpioPortD
+  SL_UARTDRV_USART_VCOM_RTS_PIN:  2
