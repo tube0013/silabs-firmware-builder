@@ -1,5 +1,5 @@
 name: TubesZB MGM21 2023 Zigbee
-device: MGM240PA32VNN
+device: MGM210PA32JIA
 base_project: src/zigbee_ncp
 sdk: "gecko_sdk:4.4.6"
 toolchain: "12.2.1.20221205"
@@ -28,7 +28,7 @@ c_defines:
   SL_IOSTREAM_USART_VCOM_CTS_PORT: gpioPortC
   SL_IOSTREAM_USART_VCOM_CTS_PIN:  1
 
-  SL_IOSTREAM_USART_VCOM_RTS_PORT: gpioPortC
+  SL_IOSTREAM_USART_VCOM_RTS_PORT: gpioPortD
   SL_IOSTREAM_USART_VCOM_RTS_PIN:  2
 
   SL_IOSTREAM_USART_VCOM_RX_BUFFER_SIZE: 64
