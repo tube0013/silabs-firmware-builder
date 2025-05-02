@@ -10,6 +10,9 @@ gbl:
   gecko_bootloader_version: dynamic
   baudrate: 115200
 
+remove_components:
+  - id: bootloader_gpio_activation
+
 c_defines:
   SL_SERIAL_UART_FLOW_CONTROL: 1
 
