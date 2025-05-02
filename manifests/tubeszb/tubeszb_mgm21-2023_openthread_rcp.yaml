@@ -1,5 +1,5 @@
 name: TubesZB MGM21 2023 OpenThread RCP
-device: MGM240PA32VNN
+device: MGM210PA32JIA
 base_project: src/openthread_rcp
 filename: "{manifest_name}_{ot_rcp_version.split('/')[-1]}_gsdk_{sdk_version}"
 sdk: "gecko_sdk:4.4.6"

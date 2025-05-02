@@ -1,5 +1,5 @@
 name: TubesZB MGM21 2023 Zigbee
-device: MGM240PA32VNN
+device: MGM210PA32JIA
 base_project: src/zigbee_ncp
 sdk: "gecko_sdk:4.4.6"
 toolchain: "12.2.1.20221205"
