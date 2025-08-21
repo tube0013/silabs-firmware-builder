@@ -159,7 +159,7 @@ jobs:
           done
 
           # Build it
-          /opt/venv/bin/python3 tools/build_project.py \
+          python3 tools/build_project.py \
             $sdk_args \
             $toolchain_args \
             --manifest "${{ matrix.manifest }}" \
@@ -207,7 +207,7 @@ jobs:
 
       - name: Generate manifest
         run: |
-          /opt/venv/bin/python3 tools/create_manifest.py artifacts src > artifacts/manifest.json
+          python3 tools/create_manifest.py artifacts src > artifacts/manifest.json
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
