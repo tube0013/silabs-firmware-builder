@@ -13,7 +13,7 @@ RUN \
        yq \
        libgl1 \
        make \
-       default-jre-headless \
+       openjdk-21-jre-headless \
        patch \
        python3 \
        python3-ruamel.yaml \
