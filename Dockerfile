@@ -7,6 +7,7 @@ RUN \
     && apt-get install -y --no-install-recommends \
        bzip2 \
        curl \
+       ca-certificates \
        git \
        git-lfs \
        gnupg \
@@ -23,14 +24,14 @@ RUN \
 
 # Install Temurin JRE 21 for slc-cli (requires class file version 65)
 RUN \
-    install -d /usr/share/keyrings \
+    apt-get update \
+    && install -d /usr/share/keyrings \
     && curl -fsSL https://packages.adoptium.net/artifactory/api/gpg/key/public \
         | gpg --batch --yes --dearmor > /usr/share/keyrings/adoptium-archive-keyring.gpg \
     && echo "deb [signed-by=/usr/share/keyrings/adoptium-archive-keyring.gpg] https://packages.adoptium.net/artifactory/deb stable main" \
         > /etc/apt/sources.list.d/adoptium.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends temurin-21-jre \
-    && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME="/usr/lib/jvm/temurin-21-jre-amd64"
