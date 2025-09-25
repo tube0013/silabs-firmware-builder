@@ -97,6 +97,8 @@ jobs:
           cache-from: ${{ env.REGISTRY }}/${{ steps.read-repo-info.outputs.image_name }}:cache-${{ steps.read-repo-info.outputs.tag_name }}
           cache-to: ${{ env.REGISTRY }}/${{ steps.read-repo-info.outputs.image_name }}:cache-${{ steps.read-repo-info.outputs.tag_name }}
           push: true
+          secrets: |
+            github_token=${{ secrets.GITHUB_TOKEN }}
     outputs:
       tag_name: ${{ steps.read-repo-info.outputs.tag_name }}
       image_name: ${{ steps.read-repo-info.outputs.image_name }}

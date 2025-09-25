@@ -46,8 +46,20 @@ RUN \
     && rm arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi.tar.xz
 
 # Simplicity SDK 2025.6.2
-RUN \
-    curl -o simplicity_sdk_2025.6.2.zip -L https://github.com/SiliconLabs/simplicity_sdk/releases/download/v2025.6.2/gecko-sdk.zip \
+RUN --mount=type=secret,id=github_token,required=false \
+    set -euo pipefail \
+    && if [ -s /run/secrets/github_token ]; then \
+        curl --fail --location --show-error \
+            --retry 5 --retry-delay 5 --retry-connrefused \
+            -H "Authorization: Bearer $(cat /run/secrets/github_token)" \
+            -o simplicity_sdk_2025.6.2.zip \
+            https://github.com/SiliconLabs/simplicity_sdk/releases/download/v2025.6.2/gecko-sdk.zip; \
+    else \
+        curl --fail --location --show-error \
+            --retry 5 --retry-delay 5 --retry-connrefused \
+            -o simplicity_sdk_2025.6.2.zip \
+            https://github.com/SiliconLabs/simplicity_sdk/releases/download/v2025.6.2/gecko-sdk.zip; \
+    fi \
     && unzip -q -d simplicity_sdk_2025.6.2 simplicity_sdk_2025.6.2.zip \
     && rm simplicity_sdk_2025.6.2.zip
 
