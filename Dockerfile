@@ -34,7 +34,7 @@ ENV PATH="$PATH:/opt/commander"
 # Install Silicon Labs Configurator (slc)
 RUN \
     curl -O https://www.silabs.com/documents/login/software/slc_cli_linux.zip \
-    && unzip -q -d /opt slc_cli_linux.zip \
+    && unzip -q -O UTF-8 -d /opt slc_cli_linux.zip \
     && rm slc_cli_linux.zip
 
 ENV PATH="$PATH:/opt/slc_cli"
