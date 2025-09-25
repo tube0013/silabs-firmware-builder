@@ -51,6 +51,14 @@ DEFAULT_JSON_CONFIG = [
 ]
 
 
+IGNORED_UNUSED_DEFINES = {
+    # Some SDK headers (e.g., UARTDRV configs) derive certain values implicitly and
+    # omit the corresponding pin tool placeholder. Still allow manifests to pass a
+    # value for consistency without failing the build.
+    "SL_UARTDRV_USART_VCOM_PERIPHERAL_NO",
+}
+
+
 def tree(dir_path: pathlib.Path, prefix: str = ""):
     """A recursive generator, given a directory Path object
     will yield a visual tree structure line by line
@@ -717,6 +725,8 @@ def main():
             if written_config:
                 LOGGER.info("Patching %s with %s", config_f, written_config)
                 config_f.write_text("\n".join(new_config_h_lines))
+
+    unused_defines -= IGNORED_UNUSED_DEFINES
 
     if unused_defines:
         LOGGER.error("Defines were unused, aborting: %s", unused_defines)
