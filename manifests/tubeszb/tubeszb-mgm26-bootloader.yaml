@@ -1,5 +1,5 @@
 name: TubesZB MGM26PA Bootloader
-device: MGM260PB32VNN5
+device: MGM260PB32VNN
 base_project: src/bootloader
 filename: "{manifest_name}_{gecko_bootloader_version}"
 sdk: "simplicity_sdk:2025.6.2"

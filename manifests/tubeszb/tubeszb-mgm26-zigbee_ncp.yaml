@@ -1,5 +1,5 @@
 name: TubesZB MGM26 Zigbee NCP
-device: MGM260PB32VNN5
+device: MGM260PB32VNN
 base_project: src/zigbee_ncp
 filename: "{manifest_name}_{ezsp_version}_{baudrate}_{fw_variant}"
 sdk: "simplicity_sdk:2025.6.2"
