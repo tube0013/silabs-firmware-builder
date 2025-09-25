@@ -18,6 +18,7 @@ RUN \
        python3 \
        python3-ruamel.yaml \
        unzip \
+       p7zip-full \
        xz-utils
 
 # Install Simplicity Commander (unfortunately no stable URL available, this
@@ -48,7 +49,7 @@ RUN \
 # Simplicity SDK 2025.6.2
 RUN \
     curl -o simplicity_sdk_2025.6.2.zip -L https://github.com/SiliconLabs/simplicity_sdk/releases/download/v2025.6.2/gecko-sdk.zip \
-    && unzip -q -d simplicity_sdk_2025.6.2 simplicity_sdk_2025.6.2.zip \
+    && 7z x -o"simplicity_sdk_2025.6.2" simplicity_sdk_2025.6.2.zip \
     && rm simplicity_sdk_2025.6.2.zip
 
 # ZCL Advanced Platform (ZAP) v2024.10.24
