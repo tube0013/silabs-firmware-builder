@@ -34,7 +34,7 @@ ENV PATH="$PATH:/opt/commander"
 # Install Silicon Labs Configurator (slc)
 RUN \
     curl -O https://www.silabs.com/documents/login/software/slc_cli_linux.zip \
-    && unzip -q -O UTF-8 -d /opt slc_cli_linux.zip \
+    && unzip -q -d /opt slc_cli_linux.zip \
     && rm slc_cli_linux.zip
 
 ENV PATH="$PATH:/opt/slc_cli"
@@ -48,7 +48,7 @@ RUN \
 # Simplicity SDK 2025.6.2
 RUN \
     curl -o simplicity_sdk_2025.6.2.zip -L https://github.com/SiliconLabs/simplicity_sdk/releases/download/v2025.6.2/gecko-sdk.zip \
-    && unzip -q -d simplicity_sdk_2025.6.2 simplicity_sdk_2025.6.2.zip \
+    && unzip -q -I UTF-8 -d simplicity_sdk_2025.6.2 simplicity_sdk_2025.6.2.zip \
     && rm simplicity_sdk_2025.6.2.zip
 
 # ZCL Advanced Platform (ZAP) v2024.10.24
