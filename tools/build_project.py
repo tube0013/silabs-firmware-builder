@@ -691,7 +691,7 @@ def main():
                     if not alignment:
                         alignment = " "
 
-                    prev_line = config_h_lines[index - 1]
+                    prev_line = new_config_h_lines[-1] if new_config_h_lines else ""
                     if "#ifndef" in prev_line:
                         assert (
                             re.match(r"#ifndef\s+([A-Z0-9_]+)", prev_line).group(1)
@@ -702,10 +702,11 @@ def main():
                         assert not any(
                             c["name"] == define for c in base_project.get("define", [])
                         )
-                        new_config_h_lines[index - 1] = "#if 1"
+
+                        new_config_h_lines.append(f"#undef {define}")
                     elif "#warning" in prev_line:
                         assert re.match(r'#warning ".*? not configured"', prev_line)
-                        new_config_h_lines.pop(index - 1)
+                        new_config_h_lines.pop()
                         new_config_h_lines.append(f"#undef {define}")
                     else:
                         new_config_h_lines.append(f"#undef {define}")
