@@ -128,12 +128,16 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install SDK extensions
+        shell: bash
         run: |
+          set -euo pipefail
+          trap 'status=$?; shopt -s nullglob; for log in /opt/slc_cli/bin/slc-cli/configuration/*.log; do echo "::group::${log}"; cat "$log"; echo "::endgroup::"; done; exit $status' ERR
+
           # XXX: slc-cli does not actually work when the extensions aren't in the SDK!
           for sdk in /*_sdk_*; do
             slc signature trust --sdk "$sdk"
 
-            ln -s $PWD/gecko_sdk_extensions "$sdk"/extension
+            ln -s "$PWD/gecko_sdk_extensions" "$sdk"/extension
 
             for ext in "$sdk"/extension/*/; do
               slc signature trust --sdk "$sdk" --extension-path "$ext"
