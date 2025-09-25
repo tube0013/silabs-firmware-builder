@@ -28,7 +28,8 @@ RUN \
     && install -d /usr/share/keyrings \
     && curl -fsSL https://packages.adoptium.net/artifactory/api/gpg/key/public \
         | gpg --batch --yes --dearmor > /usr/share/keyrings/adoptium-archive-keyring.gpg \
-    && echo "deb [signed-by=/usr/share/keyrings/adoptium-archive-keyring.gpg] https://packages.adoptium.net/artifactory/deb stable main" \
+    && . /etc/os-release \
+    && echo "deb [signed-by=/usr/share/keyrings/adoptium-archive-keyring.gpg] https://packages.adoptium.net/artifactory/deb ${VERSION_CODENAME} main" \
         > /etc/apt/sources.list.d/adoptium.list \
     && apt-get update \
     && apt-get install -y --no-install-recommends temurin-21-jre \
