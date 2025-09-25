@@ -638,7 +638,7 @@ def main():
     LOGGER.info(manifest.get("c_defines", {}))
 
     for config_root in [args.build_dir / "autogen", args.build_dir / "config"]:
-        for config_f in config_root.glob("*.h"):
+        for config_f in config_root.rglob("*.h"):
             config_h_lines = config_f.read_text().split("\n")
             written_config = {}
             new_config_h_lines = []
@@ -668,6 +668,8 @@ def main():
                     elif "#warning" in prev_line:
                         assert re.match(r'#warning ".*? not configured"', prev_line)
                         new_config_h_lines.pop(index - 1)
+                    else:
+                        new_config_h_lines.append(f"#undef {define}")
 
                     value = expand_template(value, value_template_env)
                     new_config_h_lines.append(f"#define {define}{alignment}{value}")
