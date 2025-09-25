@@ -56,6 +56,7 @@ IGNORED_UNUSED_DEFINES = {
     # omit the corresponding pin tool placeholder. Still allow manifests to pass a
     # value for consistency without failing the build.
     "SL_UARTDRV_USART_VCOM_PERIPHERAL_NO",
+    "SL_SERIAL_UART_PERIPHERAL_NO",
 }
 
 
