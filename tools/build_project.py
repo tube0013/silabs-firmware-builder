@@ -706,11 +706,8 @@ def main():
                     new_config_h_lines.append(f"#define {define}{alignment}{value}")
                     written_config[define] = value
 
-                    if define not in unused_defines:
-                        LOGGER.error("Define %r used twice!", define)
-                        sys.exit(1)
-
-                    unused_defines.remove(define)
+                    if define in unused_defines:
+                        unused_defines.remove(define)
                     matched_define = True
                     break
 
