@@ -637,7 +637,12 @@ def main():
 
     LOGGER.info(manifest.get("c_defines", {}))
 
-    for config_root in [args.build_dir / "autogen", args.build_dir / "config"]:
+    config_roots = [args.build_dir / "autogen", args.build_dir / "config", args.build_dir / "hardware"]
+
+    for config_root in config_roots:
+        if not config_root.exists():
+            continue
+
         for config_f in config_root.rglob("*.h"):
             config_h_lines = config_f.read_text().split("\n")
             written_config = {}
