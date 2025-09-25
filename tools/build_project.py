@@ -704,6 +704,7 @@ def main():
                             c["name"] == define for c in base_project.get("define", [])
                         )
 
+                        new_config_h_lines[-1] = "#if 1"
                         new_config_h_lines.append(f"#undef {define}")
                     elif "#warning" in prev_line:
                         assert re.match(r'#warning ".*? not configured"', prev_line)
