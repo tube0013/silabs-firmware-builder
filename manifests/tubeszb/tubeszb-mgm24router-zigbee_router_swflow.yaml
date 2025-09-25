@@ -16,6 +16,7 @@ add_components:
   - id: simple_button
     instance:
       - btn1
+  - id: sl_system_init
 
 slcp_defines:
   SL_ZIGBEE_ADDRESS_TABLE_SIZE: 64

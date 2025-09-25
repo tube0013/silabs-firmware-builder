@@ -16,6 +16,7 @@ add_components:
 - id: zigbee_token_interface
 - id: simple_led
   instance: [board_activity]
+- id: sl_system_init
 
 slcp_defines:
   SL_ZIGBEE_MULTICAST_TABLE_SIZE: 26
