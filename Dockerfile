@@ -9,17 +9,31 @@ RUN \
        curl \
        git \
        git-lfs \
+       gnupg \
        jq \
        yq \
        libgl1 \
        make \
-       openjdk-21-jre-headless \
        patch \
        python3 \
        python3-ruamel.yaml \
        unzip \
        p7zip-full \
        xz-utils
+
+# Install Temurin JRE 21 for slc-cli (requires class file version 65)
+RUN \
+    curl -fsSL https://packages.adoptium.net/artifactory/api/gpg/key/public \
+        | gpg --dearmor -o /usr/share/keyrings/adoptium-archive-keyring.gpg \
+    && echo "deb [signed-by=/usr/share/keyrings/adoptium-archive-keyring.gpg] https://packages.adoptium.net/artifactory/deb stable main" \
+        > /etc/apt/sources.list.d/adoptium.list \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends temurin-21-jre \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_HOME="/usr/lib/jvm/temurin-21-jre-amd64"
+ENV PATH="$JAVA_HOME/bin:$PATH"
 
 # Install Simplicity Commander (unfortunately no stable URL available, this
 # is known to be working with Commander_linux_x86_64_1v15p0b1306.tar.bz).
