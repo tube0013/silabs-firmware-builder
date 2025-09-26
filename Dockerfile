@@ -58,9 +58,9 @@ RUN \
 
 # Simplicity SDK 2025.6.1
 RUN \
-    curl -o simplicity_sdk_2025.6.1.zip -L https://github.com/SiliconLabs/simplicity_sdk/releases/download/v2025.6.1/simplicity-sdk.zip \
-    && unzip -UU -q -d simplicity_sdk_2025.6.1 simplicity_sdk_2025.6.1.zip \
-    && rm simplicity_sdk_2025.6.1.zip
+    curl -o simplicity_sdk_2025.6.1.zip -L https://github.com/SiliconLabs/simplicity_sdk/releases/download/v2025.6.2/simplicity-sdk.zip \
+    && unzip -UU -q -d simplicity_sdk_2025.6.1 simplicity_sdk_2025.6.2.zip \
+    && rm simplicity_sdk_2025.6.2.zip
 
 # ZCL Advanced Platform (ZAP) v2025.07.24
 RUN \
