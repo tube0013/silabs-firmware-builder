@@ -38,7 +38,7 @@ RUN \
     && unzip -q SC-Linux.zip \
     && tar -C /opt -xjf SimplicityCommander-Linux/Commander_linux_x86_64_*.tar.bz \
     && rm -r SimplicityCommander-Linux \
-    && rm SimplicityCommander-Linux.zip
+    && rm SC-Linux.zip
 
 ENV PATH="$PATH:/opt/commander"
 
