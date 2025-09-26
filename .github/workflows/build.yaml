@@ -1,11 +1,14 @@
 name: Build firmwares
 
 on:
-  workflow_dispatch:
-    inputs:
-      manifest_glob:
-        description: 'Manifest glob'
-        required: false
+  pull_request:
+    paths-ignore:
+      - '.gitignore'
+      - 'README.md'
+  push:
+    paths-ignore:
+      - '.gitignore'
+      - 'README.md'
   release:
     types:
       - published
