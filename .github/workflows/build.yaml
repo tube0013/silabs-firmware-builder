@@ -1,14 +1,11 @@
 name: Build firmwares
 
 on:
-  pull_request:
-    paths-ignore:
-      - '.gitignore'
-      - 'README.md'
-  push:
-    paths-ignore:
-      - '.gitignore'
-      - 'README.md'
+  workflow_dispatch:
+    inputs:
+      manifest_glob:
+        description: 'Manifest glob'
+        required: false
   release:
     types:
       - published
@@ -55,7 +52,7 @@ jobs:
             head_image=$(echo ${{ github.repository }} | awk '{print tolower($0)}')
           fi
 
-          tag_name=$(echo "${{ hashFiles('Dockerfile', 'requirements.txt') }}" | cut -c-16)
+          tag_name=$(echo "${{ hashFiles('Dockerfile') }}" | cut -c-16)
 
           # Default to building a new container under the original repo
           image_name=$head_image
@@ -112,10 +109,10 @@ jobs:
       - uses: actions/checkout@v4
       - id: set-matrix
         run: |
-          echo "matrix=$(find manifests -type f \( -name "*.yaml" -o -name "*.yml" \) -print | sort | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+          echo "matrix=$(find manifests -type f \( -name "${{ inputs.manifest_glob || '*' }}.yaml" -o -name "${{ inputs.manifest_glob || '*' }}.yml" \) -print | sort | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
 
   build-firmwares:
-    name: Firmware builder
+    name: Build
     needs: [list-manifests, build-container]
     runs-on: ubuntu-latest
     container:
@@ -128,20 +125,16 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install SDK extensions
-        shell: bash
         run: |
-          set -euo pipefail
-          trap 'status=$?; shopt -s nullglob; for log in /opt/slc_cli/bin/slc-cli/configuration/*.log; do echo "::group::${log}"; cat "$log"; echo "::endgroup::"; done; exit $status' ERR
-
           # XXX: slc-cli does not actually work when the extensions aren't in the SDK!
           for sdk in /*_sdk_*; do
             slc signature trust --sdk "$sdk"
 
-            ln -s "$PWD/gecko_sdk_extensions" "$sdk"/extension
+            # ln -s $PWD/gecko_sdk_extensions "$sdk"/extension
 
-            for ext in "$sdk"/extension/*/; do
-              slc signature trust --sdk "$sdk" --extension-path "$ext"
-            done
+            # for ext in "$sdk"/extension/*/; do
+            #   slc signature trust --sdk "$sdk" --extension-path "$ext"
+            # done
           done
 
       - name: Build firmware
@@ -154,6 +147,12 @@ jobs:
           sdk_args=""
           for sdk_dir in /*_sdk*; do
             sdk_args="$sdk_args --sdk $sdk_dir"
+
+            for patch in "$PWD/sdk_patches"/*.patch
+            do
+                echo "Patching ${patch}"
+                patch -p1 -d "$sdk_dir" < $patch
+            done
           done
 
           # Pass all toolchains as consecutive `--toolchain ...` arguments
@@ -172,7 +171,9 @@ jobs:
             --output-dir outputs \
             --output gbl \
             --output hex \
-            --output out
+            --output out \
+            --repo-owner "$GITHUB_REPOSITORY_OWNER" \
+            --repo-hash $(git rev-parse --short=8 "$GITHUB_SHA")
 
           # Get the basename of the GBL in `outputs`
           output_basename=$(basename -- $(basename -- $(ls -1 outputs/*.gbl | head -n 1)) .gbl)
@@ -192,50 +193,14 @@ jobs:
           compression-level: 9
           if-no-files-found: error
 
-  generate-manifest:
-    name: Generate manifest
-    needs: [build-container, build-firmwares]
-    runs-on: ubuntu-latest
-    container:
-      image: ${{ needs.build-container.outputs.container_name }}
-      options: --user root
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Download all workflow artifacts
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-          merge-multiple: true
-          pattern: firmware-build-*
-
-      - name: Generate manifest
-        run: |
-          python3 tools/create_manifest.py artifacts src > artifacts/manifest.json
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: manifest
-          path: artifacts/manifest.json
-          compression-level: 9
-          if-no-files-found: error
-
   release-assets:
     name: Upload release assets
-    needs: [generate-manifest]
+    needs: [build-firmwares]
     if: github.event_name == 'release'
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Download manifest
-        uses: actions/download-artifact@v4
-        with:
-          path: artifacts
-          merge-multiple: true
-          pattern: manifest
-
       - name: Download all workflow artifacts
         uses: actions/download-artifact@v4
         with:
@@ -246,6 +211,4 @@ jobs:
       - name: Upload artifacts
         uses: softprops/action-gh-release@v2
         with:
-          files: |
-            artifacts/*.gbl
-            artifacts/manifest.json
+          files: artifacts/*.gbl

@@ -1,5 +1,5 @@
 diff --git a/protocol/openthread/platform-abstraction/efr32/radio.c b/protocol/openthread/platform-abstraction/efr32/radio.c
-index 1a375ffe..20c1e376 100644
+index 1a375ffe8..752e55ea8 100644
 --- a/protocol/openthread/platform-abstraction/efr32/radio.c
 +++ b/protocol/openthread/platform-abstraction/efr32/radio.c
 @@ -3453,14 +3453,14 @@ static void processNextRxPacket(otInstance *aInstance)
@@ -8,17 +8,19 @@ index 1a375ffe..20c1e376 100644
          {
 -            bool isGpPacket = sl_gp_intf_is_gp_pkt(&sReceive.frame);
 -#if OPENTHREAD_CONFIG_MULTIPAN_RCP_ENABLE
-+            // bool isGpPacket = sl_gp_intf_is_gp_pkt(&sReceive.frame);
-+// #if OPENTHREAD_CONFIG_MULTIPAN_RCP_ENABLE
-             // For multipan RCP, continue normal processing.
+-            // For multipan RCP, continue normal processing.
 -            OT_UNUSED_VARIABLE(isGpPacket);
 -#else
-+            // OT_UNUSED_VARIABLE(isGpPacket);
-+// #else
-             // Else, we should not receive GP packets.
+-            // Else, we should not receive GP packets.
 -            otEXPECT(!isGpPacket);
 -#endif
-+            // otEXPECT(!isGpPacket);
++//             bool isGpPacket = sl_gp_intf_is_gp_pkt(&sReceive.frame);
++// #if OPENTHREAD_CONFIG_MULTIPAN_RCP_ENABLE
++//             // For multipan RCP, continue normal processing.
++//             OT_UNUSED_VARIABLE(isGpPacket);
++// #else
++//             // Else, we should not receive GP packets.
++//             otEXPECT(!isGpPacket);
 +// #endif
  
  #if OPENTHREAD_CONFIG_MULTIPAN_RCP_ENABLE

@@ -2,7 +2,7 @@ name: TubesZB MGM26PA Bootloader
 device: MGM260PB32VNN
 base_project: src/bootloader
 filename: "{manifest_name}_{gecko_bootloader_version}"
-sdk: "simplicity_sdk:2025.6.2"
+sdk: "simplicity_sdk:2025.6.1"
 toolchain: "12.2.1.20221205"
 
 gbl:
@@ -10,13 +10,11 @@ gbl:
   gecko_bootloader_version: dynamic
   baudrate: 115200
 
-slcp_defines:
-  SL_SERIAL_UART_PERIPHERAL_NO: 0
-
 c_defines:
   SL_SERIAL_UART_FLOW_CONTROL: 1
 
   SL_SERIAL_UART_PERIPHERAL: USART0
+  SL_SERIAL_UART_PERIPHERAL_NO: 0
 
   SL_SERIAL_UART_TX_PORT: gpioPortA
   SL_SERIAL_UART_TX_PIN:  6

@@ -7,37 +7,29 @@ RUN \
     && apt-get install -y --no-install-recommends \
        bzip2 \
        curl \
-       ca-certificates \
        git \
        git-lfs \
-       gnupg \
        jq \
        yq \
        libgl1 \
-       libglib2.0-0 \
        make \
+       lsb-release \
        patch \
        python3 \
        python3-ruamel.yaml \
        unzip \
-       p7zip-full \
-       xz-utils
+       xz-utils \
+       ca-certificates \
+       libglib2.0-0
 
-# Install Temurin JRE 21 for slc-cli (requires class file version 65)
+# https://jdk.java.net/archive/
 RUN \
-    apt-get update \
-    && install -d /usr/share/keyrings \
-    && curl -fsSL https://packages.adoptium.net/artifactory/api/gpg/key/public \
-        | gpg --batch --yes --dearmor > /usr/share/keyrings/adoptium-archive-keyring.gpg \
-    && . /etc/os-release \
-    && echo "deb [signed-by=/usr/share/keyrings/adoptium-archive-keyring.gpg] https://packages.adoptium.net/artifactory/deb ${VERSION_CODENAME} main" \
-        > /etc/apt/sources.list.d/adoptium.list \
-    && apt-get update \
-    && apt-get install -y --no-install-recommends temurin-21-jre \
-    && rm -rf /var/lib/apt/lists/*
+    curl -O https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz \
+    && tar -C /opt -xf openjdk-21.0.2_linux-x64_bin.tar.gz \
+    && rm openjdk-21.0.2_linux-x64_bin.tar.gz
 
-ENV JAVA_HOME="/usr/lib/jvm/temurin-21-jre-amd64"
-ENV PATH="$JAVA_HOME/bin:$PATH"
+ENV JAVA_HOME="/opt/jdk-21.0.2"
+ENV PATH="$PATH:$JAVA_HOME/bin"
 
 # Install Simplicity Commander (unfortunately no stable URL available, this
 # is known to be working with Commander_linux_x86_64_1v15p0b1306.tar.bz).
@@ -64,13 +56,13 @@ RUN \
     && tar -C /opt -xf arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi.tar.xz \
     && rm arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi.tar.xz
 
-# Simplicity SDK 2025.6.2
+# Simplicity SDK 2025.6.1
 RUN \
-    curl -o simplicity_sdk_2025.6.2.zip -L https://github.com/SiliconLabs/simplicity_sdk/releases/download/v2025.6.2/gecko-sdk.zip \
-    && 7z x -o"simplicity_sdk_2025.6.2" simplicity_sdk_2025.6.2.zip \
-    && rm simplicity_sdk_2025.6.2.zip
+    curl -o simplicity_sdk_2025.6.1.zip -L https://github.com/SiliconLabs/simplicity_sdk/releases/download/v2025.6.1/simplicity-sdk.zip \
+    && unzip -UU -q -d simplicity_sdk_2025.6.1 simplicity_sdk_2025.6.1.zip \
+    && rm simplicity_sdk_2025.6.1.zip
 
-# ZCL Advanced Platform (ZAP) v2024.10.24
+# ZCL Advanced Platform (ZAP) v2025.07.24
 RUN \
     curl -o zap_2025.07.24.zip -L https://github.com/project-chip/zap/releases/download/v2025.07.24/zap-linux-x64.zip \
     && unzip -q -d /opt/zap zap_2025.07.24.zip \

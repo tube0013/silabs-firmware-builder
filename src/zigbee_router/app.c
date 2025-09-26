@@ -67,6 +67,8 @@ static sl_zigbee_af_event_t commissioning_event;
 
 static void commissioning_event_handler(sl_zigbee_af_event_t *event)
 {
+  (void)event;
+
   led_turn_on(COMMISSIONING_STATUS_LED);
 
   if (sl_zigbee_af_network_state() != SL_ZIGBEE_JOINED_NETWORK) {
@@ -78,6 +80,8 @@ static void commissioning_event_handler(sl_zigbee_af_event_t *event)
 #if defined(SL_CATALOG_SIMPLE_BUTTON_PRESENT)
 static void button_event_handler(sl_zigbee_af_event_t *event)
 {
+  (void)event;
+
   sl_zigbee_network_status_t state = sl_zigbee_af_network_state();
 
   if (state == SL_ZIGBEE_JOINED_NETWORK) {
@@ -172,6 +176,10 @@ void sl_zigbee_af_network_steering_complete_cb(sl_status_t status,
                                                uint8_t joinAttempts,
                                                uint8_t finalState)
 {
+  (void)totalBeacons;
+  (void)joinAttempts;
+  (void)finalState;
+
   sl_zigbee_app_debug_println("Join network complete: 0x%X", status);
 
   if (status != SL_STATUS_OK) {
@@ -192,6 +200,8 @@ void sl_zigbee_af_network_steering_complete_cb(sl_status_t status,
  */
 void sl_zigbee_af_basic_reset_to_factory_defaults_cb(uint8_t endpoint)
 {
+  (void)endpoint;
+
   bootloader_rebootAndInstall();
 }
 

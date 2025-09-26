@@ -51,15 +51,6 @@ DEFAULT_JSON_CONFIG = [
 ]
 
 
-IGNORED_UNUSED_DEFINES = {
-    # Some SDK headers (e.g., UARTDRV configs) derive certain values implicitly and
-    # omit the corresponding pin tool placeholder. Still allow manifests to pass a
-    # value for consistency without failing the build.
-    "SL_UARTDRV_USART_VCOM_PERIPHERAL_NO",
-    "SL_SERIAL_UART_PERIPHERAL_NO",
-}
-
-
 def tree(dir_path: pathlib.Path, prefix: str = ""):
     """A recursive generator, given a directory Path object
     will yield a visual tree structure line by line
@@ -646,53 +637,23 @@ def main():
 
     LOGGER.info(manifest.get("c_defines", {}))
 
-    config_roots = [
-        args.build_dir / "autogen",
-        args.build_dir / "config",
-        args.build_dir / "hardware",
-    ]
-
-    for config_root in config_roots:
-        if not config_root.exists():
-            continue
-
-        for config_f in config_root.rglob("*.h"):
+    for config_root in [args.build_dir / "autogen", args.build_dir / "config"]:
+        for config_f in config_root.glob("*.h"):
             config_h_lines = config_f.read_text().split("\n")
             written_config = {}
             new_config_h_lines = []
 
             for index, line in enumerate(config_h_lines):
-                matched_define = False
-
                 for define, value in manifest.get("c_defines", {}).items():
-                    raw_define = f"#define {define}"
-                    commented_variants = (f"//{raw_define}", f"// {raw_define}")
-
-                    if raw_define not in line and not any(
-                        marker in line for marker in commented_variants
-                    ):
+                    if f"#define {define} " not in line:
                         continue
 
-                    comment_marker = next(
-                        (marker for marker in commented_variants if marker in line),
-                        None,
-                    )
-
-                    if comment_marker is not None:
-                        define_with_whitespace = line.split(comment_marker, 1)[1]
-                    else:
-                        define_with_whitespace = line.split(raw_define, 1)[1]
-
-                    trimmed_value = define_with_whitespace.strip()
+                    define_with_whitespace = line.split(f"#define {define}", 1)[1]
                     alignment = define_with_whitespace[
-                        : define_with_whitespace.index(trimmed_value)
-                        if trimmed_value
-                        else 0
+                        : define_with_whitespace.index(define_with_whitespace.strip())
                     ]
-                    if not alignment:
-                        alignment = " "
 
-                    prev_line = new_config_h_lines[-1] if new_config_h_lines else ""
+                    prev_line = config_h_lines[index - 1]
                     if "#ifndef" in prev_line:
                         assert (
                             re.match(r"#ifndef\s+([A-Z0-9_]+)", prev_line).group(1)
@@ -703,33 +664,27 @@ def main():
                         assert not any(
                             c["name"] == define for c in base_project.get("define", [])
                         )
-
-                        new_config_h_lines[-1] = "#if 1"
-                        new_config_h_lines.append(f"#undef {define}")
+                        new_config_h_lines[index - 1] = "#if 1"
                     elif "#warning" in prev_line:
                         assert re.match(r'#warning ".*? not configured"', prev_line)
-                        new_config_h_lines.pop()
-                        new_config_h_lines.append(f"#undef {define}")
-                    else:
-                        new_config_h_lines.append(f"#undef {define}")
+                        new_config_h_lines.pop(index - 1)
 
                     value = expand_template(value, value_template_env)
                     new_config_h_lines.append(f"#define {define}{alignment}{value}")
                     written_config[define] = value
 
-                    if define in unused_defines:
-                        unused_defines.remove(define)
-                    matched_define = True
-                    break
+                    if define not in unused_defines:
+                        LOGGER.error("Define %r used twice!", define)
+                        sys.exit(1)
 
-                if not matched_define:
+                    unused_defines.remove(define)
+                    break
+                else:
                     new_config_h_lines.append(line)
 
             if written_config:
                 LOGGER.info("Patching %s with %s", config_f, written_config)
                 config_f.write_text("\n".join(new_config_h_lines))
-
-    unused_defines -= IGNORED_UNUSED_DEFINES
 
     if unused_defines:
         LOGGER.error("Defines were unused, aborting: %s", unused_defines)

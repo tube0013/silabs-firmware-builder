@@ -1,23 +1,38 @@
 project_name: openthread_rcp
 label: OpenThread - RCP
-package: OpenThread
+package: openthread
 category: OpenThread Examples
 quality: production
 description: This is a simple OpenThread RCP application. This is equivalent to the ot-rcp application in the OpenThread GitHub repo.
 
 component:
-  - id: uartdrv_usart
+  - id: iostream_usart
     instance: 
       - vcom
   - id: bootloader_interface
   - id: clock_manager
   - id: ot_crash_handler
+  - id: ot_reset_utils
   - id: ot_stack_rcp
   - id: rail_util_pti
+  - id: sl_main
+  - id: toolchain_gcc_lto
 
 configuration:
+  - name: SL_MAIN_START_TASK_STACK_SIZE_BYTES
+    value: 2752
+    condition:
+      - sl_main
   - name: SL_BOARD_ENABLE_VCOM
     value: 1
+  - name: SL_IOSTREAM_USART_VCOM_BAUDRATE
+    value: 460800
+    condition:
+      - iostream_usart
+  - name: SL_IOSTREAM_EUSART_VCOM_BAUDRATE
+    value: 460800
+    condition:
+      - iostream_eusart
   - name: OPENTHREAD_CONFIG_HEAP_EXTERNAL_ENABLE
     value: 0
   - name: OPENTHREAD_CONFIG_LOG_OUTPUT
@@ -34,17 +49,27 @@ configuration:
       - ot_rtt_log
   - name: CIRCULAR_QUEUE_LEN_MAX
     value: 16
-  - name: EMDRV_UARTDRV_MAX_DRIVER_INSTANCES
-    value: 1
+  - name: SL_IOSTREAM_USART_VCOM_FLOW_CONTROL_TYPE
+    value: usartHwFlowControlCtsAndRts
+    condition:
+      - iostream_usart
+  - name: SL_IOSTREAM_EUSART_VCOM_FLOW_CONTROL_TYPE
+    value: SL_IOSTREAM_EUSART_UART_FLOW_CTRL_CTS_RTS
+    condition:
+      - iostream_eusart
+  - name: SL_OPENTHREAD_STACK_TASK_MEM_SIZE
+    value: 4608
+  - name: SL_STACK_SIZE
+    value: 2048
+    condition: 
+      - kernel
 
 include:
 - path: .
   file_list:
     - path: app.h
-    - path: reset_util.h
 
 source:
-  - path: main.c
   - path: app.c
 
 filter:

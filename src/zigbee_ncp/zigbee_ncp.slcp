@@ -1,6 +1,6 @@
 project_name: zigbee_ncp
 label: Zigbee - NCP
-package: Zigbee
+package: zigbee
 category: Zigbee Application
 quality: production
 description: Zigbee NCP firmware. Derived from the `ncp-uart-hw` example Gecko SDK project.
@@ -12,7 +12,9 @@ component:
       - vcom
   - id: zigbee_debug_print
   - id: iostream_vuart
+  - id: sl_main
   - id: token_manager
+  - id: toolchain_gcc_lto
   - id: zigbee_token_interface
   - id: zigbee_mfglib
   - id: zigbee_pro_stack

@@ -1,5 +1,5 @@
-name: TubesZB BM24 OpenThread RCP
-device: device: EFR32MG24A420F1536IM48
+name: TubesZB MGM26 OpenThread RCP
+device: MGM260PB32VNN
 base_project: src/openthread_rcp
 filename: "{manifest_name}_{ot_rcp_version}_{baudrate}_{fw_variant}"
 sdk: "simplicity_sdk:2025.6.1"
@@ -29,9 +29,5 @@ c_defines:
 
   SL_IOSTREAM_USART_VCOM_RTS_PORT: gpioPortA
   SL_IOSTREAM_USART_VCOM_RTS_PIN:  8
-
-  SL_CLOCK_MANAGER_HFXO_EN: 1
-  SL_CLOCK_MANAGER_HFXO_CTUNE: 92
-  SL_CLOCK_MANAGER_DEFAULT_HF_CLOCK_SOURCE: SL_CLOCK_MANAGER_DEFAULT_HF_CLOCK_SOURCE_HFXO
 
   SL_RAIL_UTIL_RSSI_OFFSET: 0

@@ -218,10 +218,12 @@ def main():
 
     if "ot_rcp_version" in gbl_dynamic:
         gbl_dynamic.remove("ot_rcp_version")
-        openthread_config_h = parse_c_header_defines(
-            (project_root / "config/sl_openthread_generic_config.h").read_text()
+        openthread_package_info_h = parse_c_header_defines(
+            (
+                gsdk_path / "protocol/openthread/include/sl_openthread_package_info.h"
+            ).read_text()
         )
-        metadata["ot_rcp_version"] = openthread_config_h["PACKAGE_VERSION"]
+        metadata["ot_rcp_version"] = openthread_package_info_h["PACKAGE_VERSION"]
 
     if "gecko_bootloader_version" in gbl_dynamic:
         gbl_dynamic.remove("gecko_bootloader_version")
