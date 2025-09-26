@@ -34,17 +34,17 @@ ENV PATH="$PATH:$JAVA_HOME/bin"
 # Install Simplicity Commander (unfortunately no stable URL available, this
 # is known to be working with Commander_linux_x86_64_1v15p0b1306.tar.bz).
 RUN \
-    curl -O https://tubeszb.com/wp-content/uploads/2025/09/SC-Linux.zip \
-    && unzip -q SC-Linux.zip \
+    curl -O https://www.silabs.com/documents/public/software/SimplicityCommander-Linux.zip \
+    && unzip -q SimplicityCommander-Linux.zip \
     && tar -C /opt -xjf SimplicityCommander-Linux/Commander_linux_x86_64_*.tar.bz \
     && rm -r SimplicityCommander-Linux \
-    && rm SC-Linux.zip
+    && rm SimplicityCommander-Linux.zip
 
 ENV PATH="$PATH:/opt/commander"
 
 # Install Silicon Labs Configurator (slc)
 RUN \
-    curl -O https://www.silabs.com/documents/login/software/slc_cli_linux.zip \
+    curl -O https://www.silabs.com/documents/public/software/slc_cli_linux.zip \
     && unzip -q -d /opt slc_cli_linux.zip \
     && rm slc_cli_linux.zip
 
