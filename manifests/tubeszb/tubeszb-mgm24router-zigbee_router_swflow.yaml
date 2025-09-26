@@ -17,6 +17,7 @@ add_components:
     instance:
       - btn1
   - id: sl_system_init
+  - id: sl_system_core
 
 configuration:
   SL_ZIGBEE_APS_UNICAST_MESSAGE_COUNT: 128
