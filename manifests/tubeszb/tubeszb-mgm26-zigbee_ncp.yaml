@@ -12,7 +12,7 @@ gbl:
   fw_variant: hw_flow
 
 add_components:
-  - id: sl_system_init
+  - id: sl_main
 
 configuration:
   SL_ZIGBEE_APS_UNICAST_MESSAGE_COUNT: 128

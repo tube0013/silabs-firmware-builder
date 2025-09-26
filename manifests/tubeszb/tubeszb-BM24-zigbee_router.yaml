@@ -20,7 +20,7 @@ add_components:
   - id: simple_led
     instance:
       - led0
-  - id: sl_system_init
+  - id: sl_main
 
 configuration:
   SL_ZIGBEE_APS_UNICAST_MESSAGE_COUNT: 128
