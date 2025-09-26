@@ -34,8 +34,8 @@ ENV PATH="$PATH:$JAVA_HOME/bin"
 # Install Simplicity Commander (unfortunately no stable URL available, this
 # is known to be working with Commander_linux_x86_64_1v15p0b1306.tar.bz).
 RUN \
-    curl -O https://www.silabs.com/documents/login/software/SimplicityCommander-Linux.zip \
-    && unzip -q SimplicityCommander-Linux.zip \
+    curl -O https://tubeszb.com/wp-content/uploads/2025/09/SC-Linux.zip \
+    && unzip -q SC-Linux.zip \
     && tar -C /opt -xjf SimplicityCommander-Linux/Commander_linux_x86_64_*.tar.bz \
     && rm -r SimplicityCommander-Linux \
     && rm SimplicityCommander-Linux.zip
