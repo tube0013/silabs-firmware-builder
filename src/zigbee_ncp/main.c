@@ -15,6 +15,10 @@
  *
  ******************************************************************************/
 
+#ifndef __has_include
+#define __has_include(x) 0
+#endif
+
 #ifdef SL_COMPONENT_CATALOG_PRESENT
 #include "sl_component_catalog.h"
 #endif
@@ -25,7 +29,11 @@
 #if defined(SL_CATALOG_KERNEL_PRESENT)
 #include "sl_system_kernel.h"
 #else
+#if __has_include("sl_system_process_action.h")
 #include "sl_system_process_action.h"
+#else
+void sl_system_process_action(void);
+#endif
 #endif  // SL_CATALOG_KERNEL_PRESENT
 
 #ifdef SL_ZIGBEE_TEST
