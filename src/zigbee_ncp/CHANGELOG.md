@@ -1,8 +1,11 @@
+# 7.5.1.0
+Beta release built with Gecko SDK 4.5.0. This includes a new feature to restore routes on adapter startup, speeding up network responsiveness after a reset.
+
 # 7.5.0.0
 Beta release built with Gecko SDK 4.4.6.
 
 # 7.4.4.2
-Fix remaining issues related to group addressing, affecting a small subset of users. This removes an outstanding limitation that prevented events from being received from devices that use group addressing with arbitrary group IDs.
+Allow receiving events from devices using unregistered group IDs and increase routing and child table sizes.
 
 # 7.4.4.1
 Re-release of 7.4.4.0 that fixes a regression with group addressing present in the previous release, affecting some devices like IKEA remotes.

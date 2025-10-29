@@ -1,4 +1,4 @@
-FROM debian:bookworm
+FROM debian:trixie
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -12,6 +12,7 @@ RUN \
        jq \
        yq \
        libgl1 \
+       libglib2.0-0 \
        make \
        default-jre-headless \
        patch \
@@ -31,7 +32,7 @@ RUN \
 # Install Simplicity Commander (unfortunately no stable URL available, this
 # is known to be working with Commander_linux_x86_64_1v15p0b1306.tar.bz).
 RUN \
-    curl -O https://www.silabs.com/documents/login/software/SimplicityCommander-Linux.zip \
+    curl -L -O --compressed -H 'User-Agent: Firefox/143' -H 'Accept-Language: *' https://www.silabs.com/documents/public/software/SimplicityCommander-Linux.zip \
     && unzip -q SimplicityCommander-Linux.zip \
     && tar -C /opt -xjf SimplicityCommander-Linux/Commander_linux_x86_64_*.tar.bz \
     && rm -r SimplicityCommander-Linux \
@@ -41,7 +42,7 @@ ENV PATH="$PATH:/opt/commander"
 
 # Install Silicon Labs Configurator (slc)
 RUN \
-    curl -O https://www.silabs.com/documents/login/software/slc_cli_linux.zip \
+    curl -L -O --compressed -H 'User-Agent: Firefox/143' -H 'Accept-Language: *' https://www.silabs.com/documents/public/software/slc_cli_linux.zip \
     && unzip -q -d /opt slc_cli_linux.zip \
     && rm slc_cli_linux.zip
 
@@ -59,11 +60,11 @@ RUN \
     && unzip -q -d simplicity_sdk_2024.6.2 simplicity_sdk_2024.6.2.zip \
     && rm simplicity_sdk_2024.6.2.zip
 
-# Gecko SDK 4.4.6
+# Gecko SDK 4.5.0
 RUN \
-    curl -o gecko_sdk_4.4.6.zip -L https://github.com/SiliconLabs/gecko_sdk/releases/download/v4.4.6/gecko-sdk.zip \
-    && unzip -q -d gecko_sdk_4.4.6 gecko_sdk_4.4.6.zip \
-    && rm gecko_sdk_4.4.6.zip
+    curl -o gecko_sdk_4.5.0.zip -L https://github.com/SiliconLabs/gecko_sdk/releases/download/v4.5.0/gecko-sdk.zip \
+    && unzip -q -d gecko_sdk_4.5.0 gecko_sdk_4.5.0.zip \
+    && rm gecko_sdk_4.5.0.zip
 
 # ZCL Advanced Platform (ZAP) v2024.09.27
 RUN \

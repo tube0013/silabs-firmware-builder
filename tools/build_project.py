@@ -351,6 +351,10 @@ def main():
             )
             sys.exit(1)
 
+    # Add new sources
+    base_project.setdefault("source", []).extend(manifest.get("add_sources", []))
+    base_project.setdefault("include", []).extend(manifest.get("add_includes", []))
+
     # Extend configuration and C defines
     for input_config, output_config in [
         (
@@ -419,7 +423,12 @@ def main():
             "--sdk", sdk,
             "--output-type", args.build_system,
         ],
-        "slc generate"
+        "slc generate",
+        env={
+            **os.environ,
+            # XXX: this is a fun hack to disable `slc trust`
+            "JAVA_TOOL_OPTIONS": "-Dstudio.unittest=true",
+        }
     )
     # fmt: on
 
@@ -441,6 +450,32 @@ def main():
     # Actually search for C defines within config
     unused_defines = set(manifest.get("c_defines", {}).keys())
 
+    # First, populate build flags
+    build_flags = {
+        "C_FLAGS": [],
+        "CXX_FLAGS": [],
+        "LD_FLAGS": [],
+    }
+
+    for define, config in manifest.get("c_defines", {}).items():
+        if not isinstance(config, dict):
+            config = manifest["c_defines"][define] = {
+                "type": "config",
+                "value": config,
+                "error_on_duplicate": True,
+            }
+        elif isinstance(config, dict) and "error_on_duplicate" not in config:
+            config["error_on_duplicate"] = True
+
+        if config["type"] == "config":
+            continue
+        elif config["type"] != "c_flag":
+            raise ValueError(f"Invalid config type: {config['type']}")
+
+        build_flags["C_FLAGS"].append(f"-D{define}={config['value']}")
+        build_flags["CXX_FLAGS"].append(f"-D{define}={config['value']}")
+        unused_defines.remove(define)
+
     for config_root in [args.build_dir / "autogen", args.build_dir / "config"]:
         for config_f in config_root.glob("*.h"):
             config_h_lines = config_f.read_text().split("\n")
@@ -448,9 +483,24 @@ def main():
             new_config_h_lines = []
 
             for index, line in enumerate(config_h_lines):
-                for define, value_template in manifest.get("c_defines", {}).items():
+                for define, config in manifest.get("c_defines", {}).items():
+                    if config["type"] == "c_flag":
+                        continue
+
+                    value_template = config["value"]
+
                     if f"#define {define} " not in line:
                         continue
+
+                    if define not in unused_defines:
+                        if manifest["c_defines"][define]["error_on_duplicate"]:
+                            LOGGER.error("Define %r used twice!", define)
+                            sys.exit(1)
+                        else:
+                            LOGGER.warning(
+                                "Define %r used twice but this is allowed", define
+                            )
+                            continue
 
                     define_with_whitespace = line.split(f"#define {define}", 1)[1]
                     alignment = define_with_whitespace[
@@ -485,10 +535,6 @@ def main():
                     new_config_h_lines.append(f"#define {define}{alignment}{value}")
                     written_config[define] = value
 
-                    if define not in unused_defines:
-                        LOGGER.error("Define %r used twice!", define)
-                        sys.exit(1)
-
                     unused_defines.remove(define)
                     break
                 else:
@@ -514,11 +560,18 @@ def main():
             )
         )
 
-    build_flags = {
-        "C_FLAGS": [],
-        "CXX_FLAGS": [],
-        "LD_FLAGS": [],
-    }
+    # Same with EUSART config
+    sl_uartdrv_eusart_ws2812_uart_config = (
+        args.build_dir / "config/sl_uartdrv_eusart_ws2812_uart_config.h"
+    )
+
+    if sl_uartdrv_eusart_ws2812_uart_config.exists():
+        sl_uartdrv_eusart_ws2812_uart_config.write_text(
+            sl_uartdrv_eusart_ws2812_uart_config.read_text().replace(
+                '#warning "UARTDRV EUSART peripheral not configured"\n',
+                '// #warning "UARTDRV EUSART peripheral not configured"\n',
+            )
+        )
 
     # Remove absolute paths from the build for reproducibility
     build_flags["C_FLAGS"] += [
