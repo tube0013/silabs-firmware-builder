@@ -1,62 +1,119 @@
 project_name: openthread_rcp
 label: OpenThread - RCP
-package: OpenThread
-description:   >
-  This is a simple OpenThread RCP application. This is equivalent to the ot-rcp application in the OpenThread GitHub repo.
+package: openthread
 category: OpenThread Examples
 quality: production
+description: OpenThread RCP firmware. Derived from the `ot-rcp` example Simplicity SDK project.
+author: Nerivec
 
 component:
+  - id: sl_main
   - id: ot_stack_rcp
   - id: ot_crash_handler
-  - id: uartdrv_usart
+  - id: iostream_usart
     instance:
       - vcom
+    condition:
+      - device_generic_family_efr32xg21
+  - id: iostream_eusart
+    instance:
+      - vcom
+    condition:
+      - device_has_eusart
   - id: rail_util_pti
   - id: bootloader_interface
-
-include:
-  - path: .
-    file_list:
-    - path: app.h
-    - path: reset_util.h  # Originally included from `util/third_party/openthread/src/lib/platform`
-
-source:
-  - path: main.c
-  - path: app.c
+  - id: clock_manager
+  - id: ot_reset_utils
+  # Platform - Enable LTO for gcc by installing the following component
+  - id: toolchain_gcc_lto
 
 define:
-  - name: OPENTHREAD_CONFIG_DEFAULT_TRANSMIT_POWER
-    value: 6
+  - name: OPENTHREAD_CONFIG_MAC_SOFTWARE_CSMA_BACKOFF_ENABLE
+    value: 1
+  - name: OPENTHREAD_CONFIG_MAC_SOFTWARE_RETRANSMIT_ENABLE
+    value: 1
+  - name: OPENTHREAD_CONFIG_MAC_SOFTWARE_TX_TIMING_ENABLE
+    value: 1
+  ## make OT more reliable in less than ideal RF environment
+  - name: OPENTHREAD_CONFIG_TMF_ADDRESS_QUERY_MAX_RETRY_DELAY
+    value: 120
+  - name: OPENTHREAD_CONFIG_MAC_DEFAULT_MAX_FRAME_RETRIES_DIRECT
+    value: 15
+  - name: OPENTHREAD_CONFIG_MAC_DEFAULT_MAX_FRAME_RETRIES_INDIRECT
+    value: 1
+  - name: OPENTHREAD_CONFIG_MAC_MAX_TX_ATTEMPTS_INDIRECT_POLLS
+    value: 16
 
 configuration:
+  - name: SL_MAIN_START_TASK_STACK_SIZE_BYTES
+    value: 2752
+    condition:
+      - sl_main
   - name: SL_BOARD_ENABLE_VCOM
     value: 1
+  # By default, OTBR is configured to work with 460800 baud rate on UART
+  - name: SL_IOSTREAM_USART_VCOM_BAUDRATE
+    value: 460800
+    condition:
+      - iostream_usart
+  - name: SL_IOSTREAM_EUSART_VCOM_BAUDRATE
+    value: 460800
+    condition:
+      - iostream_eusart
   - name: OPENTHREAD_CONFIG_HEAP_EXTERNAL_ENABLE
     value: 0
   - name: OPENTHREAD_CONFIG_LOG_OUTPUT
     value: OPENTHREAD_CONFIG_LOG_OUTPUT_PLATFORM_DEFINED
-    condition: [ot_rtt_log]
+    condition:
+      - ot_rtt_log
   - name: BUFFER_SIZE_UP
     value: 768
-    condition: [ot_rtt_log]
-  - name: BUFFER_SIZE_UP
-    value: 128
-    condition: [ot_rtt_log, device_family_efr32mg1]
+    condition:
+      - ot_rtt_log
   - name: BUFFER_SIZE_DOWN
     value: 0
-    condition: [ot_rtt_log]
-  - name: SL_UARTDRV_USART_VCOM_FLOW_CONTROL_TYPE
-    value: uartdrvFlowControlHwUart
-    condition: [uartdrv_usart]
-  - name: SL_UARTDRV_EUSART_VCOM_FLOW_CONTROL_TYPE
-    value: uartdrvFlowControlHwUart
-    condition: [uartdrv_eusart]
+    condition:
+      - ot_rtt_log
+  - name: CIRCULAR_QUEUE_LEN_MAX
+    value: 16
+  - name: SL_IOSTREAM_USART_VCOM_FLOW_CONTROL_TYPE
+    value: usartHwFlowControlCtsAndRts
+    condition:
+      - iostream_usart
+  - name: SL_IOSTREAM_EUSART_VCOM_FLOW_CONTROL_TYPE
+    value: SL_IOSTREAM_EUSART_UART_FLOW_CTRL_CTS_RTS
+    condition:
+      - iostream_eusart
+  - name: SL_OPENTHREAD_STACK_TASK_MEM_SIZE
+    value: 4608
+  - name: SL_STACK_SIZE
+    value: 0x800
+    condition:
+      - kernel
+  # custom from ot-rcp
+  - name: SL_IOSTREAM_USART_VCOM_RX_BUFFER_SIZE
+    value: 256
+    condition:
+      - iostream_usart
+  - name: SL_IOSTREAM_EUSART_VCOM_RX_BUFFER_SIZE
+    value: 512
+    condition:
+      - iostream_eusart
+  - name: OPENTHREAD_CONFIG_LINK_RAW_ENABLE
+    value: 1
+
+include:
+  - path: .
+    file_list:
+      - path: app.h
+
+source:
+  - path: app.c
 
 filter:
-  - name: "Wireless Technology"
-    value: ["Thread"]
-  - name: "Device Type"
-    value: ["RCP"]
-  - name: "Project Difficulty"
-    value: ["Advanced"]
+  - name: Wireless Technology
+    value: [Thread]
+  - name: Device Type
+    value: [RCP]
+  - name: Project Difficulty
+    value: [Advanced]

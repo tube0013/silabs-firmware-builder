@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import os
 import re
 import ast
 import sys
@@ -30,13 +29,69 @@ LOGGER = logging.getLogger(__name__)
 
 yaml = YAML(typ="safe")
 
+# prefix components:
+TREE_SPACE = "    "
+TREE_BRANCH = "│   "
+# pointers:
+TREE_TEE = "├── "
+TREE_LAST = "└── "
 
-def evaulate_f_string(f_string: str, variables: dict[str, typing.Any]) -> str:
+DEFAULT_JSON_CONFIG = [
+    # Fix a few paths by default
+    {
+        "file": "config/zcl/zcl_config.zap",
+        "jq": '(.package[] | select(.type == "zcl-properties")).path = "template:{sdk}/app/zcl/zcl-zap.json"',
+        "skip_if_missing": True,
+    },
+    {
+        "file": "config/zcl/zcl_config.zap",
+        "jq": '(.package[] | select(.type == "gen-templates-json")).path = "template:{sdk}/protocol/zigbee/app/framework/gen-template/gen-templates.json"',
+        "skip_if_missing": True,
+    },
+]
+
+
+def tree(dir_path: pathlib.Path, prefix: str = ""):
+    """A recursive generator, given a directory Path object
+    will yield a visual tree structure line by line
+    with each line prefixed by the same characters
+    Source: https://stackoverflow.com/a/59109706
+    """
+    contents = list(dir_path.iterdir())
+    # contents each get pointers that are ├── with a final └── :
+    pointers = [TREE_TEE] * (len(contents) - 1) + [TREE_LAST]
+
+    for pointer, path in zip(pointers, contents):
+        yield prefix + pointer + path.name
+
+        if path.is_dir():  # extend the prefix and recurse:
+            extension = TREE_BRANCH if pointer == TREE_TEE else TREE_SPACE
+
+            # i.e. space because last, └── , above so no more |
+            yield from tree(path, prefix=prefix + extension)
+
+
+def log_tree(dir_path: pathlib.Path, prefix: str = ""):
+    LOGGER.info(f"Tree for {dir_path}:")
+
+    for line in tree(dir_path, prefix):
+        LOGGER.info(line)
+
+
+def evaluate_f_string(f_string: str, variables: dict[str, typing.Any]) -> str:
     """
     Evaluates an `f`-string with the given locals.
     """
 
     return eval("f" + repr(f_string), variables)
+
+
+def expand_template(value: typing.Any, env: dict[str, typing.Any]) -> typing.Any:
+    """Expand a template string."""
+    if isinstance(value, str) and value.find("template:") != -1:
+        return evaluate_f_string(value.replace("template:", "", 1), env)
+    else:
+        return value
 
 
 def ensure_folder(path: str | pathlib.Path) -> pathlib.Path:
@@ -170,9 +225,58 @@ def load_toolchains(paths: list[pathlib.Path]) -> dict[pathlib.Path, str]:
     return toolchains
 
 
-def subprocess_run_verbose(command: list[str], prefix: str, **kwargs) -> None:
+def zap_select_endpoint_type(endpoint_type_name: int | str) -> str:
+    return (
+        ".endpointTypes[]"
+        if endpoint_type_name == "all"
+        else f'.endpointTypes[] | select(.name == "{endpoint_type_name}")'
+    )
+
+
+def zap_select_cluster(cluster_name: int | str) -> str:
+    return (
+        ".clusters[]"
+        if cluster_name == "all"
+        else f'.clusters[] | select(.name == "{cluster_name}")'
+    )
+
+
+def zap_delete_cluster(
+    cluster_name: str, endpoint_type_name: int | str = "all"
+) -> list[dict[str, typing.Any]]:
+    return [
+        {
+            "file": "config/zcl/zcl_config.zap",
+            "jq": f'del({zap_select_endpoint_type(endpoint_type_name)}.clusters[] | select(.name == "{cluster_name}"))',
+            "skip_if_missing": False,
+        }
+    ]
+
+
+def zap_set_cluster_attribute(
+    attribute_name: str,
+    attribute_key: str,
+    attribute_value: typing.Any,
+    endpoint_type_name: int | str = "all",
+    cluster_name: int | str = "all",
+) -> list[dict[str, typing.Any]]:
+    # quote str if needed
+    attribute_value = (
+        f'"{attribute_value}"' if isinstance(attribute_value, str) else attribute_value
+    )
+
+    return [
+        {
+            "file": "config/zcl/zcl_config.zap",
+            "jq": f'({zap_select_endpoint_type(endpoint_type_name)}{zap_select_cluster(cluster_name)}.attributes[] | select(.name == "{attribute_name}")).{attribute_key} = {attribute_value}',
+            "skip_if_missing": False,
+        }
+    ]
+
+
+def subprocess_run_verbose(command: list[str], prefix: str) -> None:
     with subprocess.Popen(
-        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, **kwargs
+        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
     ) as proc:
         for line in proc.stdout:
             LOGGER.info("[%s] %r", prefix, line.decode("utf-8").strip())
@@ -266,6 +370,18 @@ def main():
         default=False,
         help="Do not shut down the SLC daemon after the build",
     )
+    parser.add_argument(
+        "--repo-owner",
+        type=str,
+        default="github-actions[bot]",
+        help="Owner of the repository that triggered this build",
+    )
+    parser.add_argument(
+        "--repo-hash",
+        type=str,
+        default=get_git_commit_id(pathlib.Path(__file__).parent.parent),
+        help="8-length SHA that triggered this build",
+    )
 
     args = parser.parse_args()
 
@@ -287,10 +403,10 @@ def main():
 
     # Ensure we can load the correct SDK and toolchain
     sdks = load_sdks(args.sdks)
-    sdk, sdk_version = next(
+    sdk, sdk_name_version = next(
         (path, version) for path, version in sdks.items() if version == manifest["sdk"]
     )
-    sdk_name = sdk_version.split(":", 1)[0]
+    sdk_name, _, sdk_version = sdk_name_version.partition(":")
 
     toolchains = load_toolchains(args.toolchains)
     toolchain = next(
@@ -328,6 +444,8 @@ def main():
             ".uceditor",
         ],
     )
+
+    log_tree(build_template_path)
 
     # We extend the base project with the manifest, since added components could have
     # extra dependencies
@@ -375,25 +493,6 @@ def main():
                 # Otherwise, append it
                 output_config.append({"name": name, "value": value})
 
-    # Builder config: GCC linker `wrap`ed functions
-    try:
-        wrapped_stack_functions = next(
-            c
-            for c in base_project["configuration"]
-            if c["name"] == "BUILDER_WRAPPED_STACK_FUNCTIONS"
-        )
-    except StopIteration:
-        wrapped_stack_functions = {
-            "name": "BUILDER_WRAPPED_STACK_FUNCTIONS",
-            "value": "",
-        }
-        base_project["configuration"].append(wrapped_stack_functions)
-
-    if "wrapped_stack_functions" in manifest:
-        wrapped_stack_functions["value"] = ",".join(
-            manifest.get("wrapped_stack_functions", [])
-        )
-
     # Finally, write out the modified base project
     with base_project_slcp.open("w") as f:
         yaml.dump(base_project, f)
@@ -401,6 +500,104 @@ def main():
     # Create a GBL metadata file
     with (args.build_dir / "gbl_metadata.yaml").open("w") as f:
         yaml.dump(manifest["gbl"], f)
+
+    # manufacturer name, model id, "Zigbee" or "OpenThread" or "Booloader", "NCP" or "RCP" or "Router" or "none"
+    manifest_meta = manifest["name"].split(" ")
+    # Template variables
+    value_template_env = {
+        "git_repo_owner": args.repo_owner,
+        "git_repo_hash": args.repo_hash,
+        "manifest_name": args.manifest.stem,
+        "now": datetime.now(timezone.utc),
+        "sdk": sdk,
+        "sdk_version": sdk_version,
+        "manufacturer_name": manifest_meta[0],
+        "model_id": manifest_meta[1],
+        "fw_type": manifest_meta[2],
+        "fw_subtype": manifest_meta[3] if len(manifest_meta) > 3 else "none",
+    }
+
+    LOGGER.info("Using templating env:")
+    LOGGER.info(str(value_template_env))
+
+    zap_json_config: list[dict[str, typing.Any]] = []
+
+    if pathlib.Path(build_template_path / "config/zcl/zcl_config.zap").exists():
+        zap_config = manifest.get("zap_config", {})
+        sw_build_id_suffix = zap_config.get(
+            "sw_build_id_suffix", value_template_env["git_repo_owner"]
+        )
+
+        # set some defaults (first, so manifest can override if needed)
+        zap_json_config += zap_set_cluster_attribute(
+            "manufacturer name",
+            "defaultValue",
+            value_template_env["manufacturer_name"][0:32],
+        )
+        zap_json_config += zap_set_cluster_attribute(
+            "model identifier",
+            "defaultValue",
+            value_template_env["model_id"][0:32],
+        )
+        # YYYYMMDD first, per spec
+        zap_json_config += zap_set_cluster_attribute(
+            "date code",
+            "defaultValue",
+            f"{value_template_env['now']:%Y%m%d}{value_template_env['git_repo_hash']}"[
+                0:16
+            ],
+        )
+        # sw build id max 16 bytes, cut off suffix if necessary (expected sdk_version to be max "YYYY.MM.DD")
+        zap_json_config += zap_set_cluster_attribute(
+            "sw build id",
+            "defaultValue",
+            f"{value_template_env['sdk_version']}_{sw_build_id_suffix}"[0:16],
+        )
+
+        for endpoint_type in zap_config.get("endpoint_types", []):
+            for cluster in endpoint_type.get("clusters", []):
+                for to_remove in cluster.get("remove", []):
+                    zap_json_config += zap_delete_cluster(
+                        to_remove, endpoint_type["name"]
+                    )
+
+                for attribute in cluster.get("set_attribute", []):
+                    zap_json_config += zap_set_cluster_attribute(
+                        attribute["name"],
+                        attribute["key"],
+                        expand_template(attribute["value"], value_template_env),
+                        endpoint_type["name"],
+                        cluster["name"],
+                    )
+
+    # JSON config
+    for json_config in (
+        DEFAULT_JSON_CONFIG + manifest.get("json_config", []) + zap_json_config
+    ):
+        json_path = build_template_path / json_config["file"]
+
+        if json_config.get("skip_if_missing", False) and not json_path.exists():
+            continue
+
+        jq_arg = expand_template(json_config["jq"], value_template_env)
+
+        LOGGER.info(f"Patching {json_path} with {jq_arg}")
+
+        result = subprocess.run(
+            [
+                "jq",
+                jq_arg,
+                json_path,
+            ],
+            capture_output=True,
+        )
+
+        if result.returncode != 0:
+            LOGGER.error("jq stderr: %s\n%s", result.returncode, result.stderr)
+            sys.exit(1)
+
+        with open(json_path, "wb") as f:
+            f.write(result.stdout)
 
     # Next, generate a chip-specific project from the modified base project
     LOGGER.info(f"Generating project for {manifest['device']}")
@@ -423,6 +620,8 @@ def main():
     )
     # fmt: on
 
+    log_tree(args.build_dir)
+
     # Make sure all extensions are valid
     for sdk_extension in base_project.get("sdk_extension", []):
         expected_dir = sdk / f"extension/{sdk_extension['id']}_extension"
@@ -431,35 +630,10 @@ def main():
             LOGGER.error("Referenced extension not present in SDK: %s", expected_dir)
             sys.exit(1)
 
-    # Template variables for C defines
-    value_template_env = {
-        "git_repo_hash": get_git_commit_id(repo=pathlib.Path(__file__).parent.parent),
-        "manifest_name": args.manifest.stem,
-        "now": datetime.now(timezone.utc),
-    }
-
     # Actually search for C defines within config
     unused_defines = set(manifest.get("c_defines", {}).keys())
 
-    # First, populate build flags
-    build_flags = {
-        "C_FLAGS": [],
-        "CXX_FLAGS": [],
-        "LD_FLAGS": [],
-    }
-
-    for define, config in manifest.get("c_defines", {}).items():
-        if not isinstance(config, dict):
-            config = manifest["c_defines"][define] = {"type": "config", "value": config}
-
-        if config["type"] == "config":
-            continue
-        elif config["type"] != "c_flag":
-            raise ValueError(f"Invalid config type: {config['type']}")
-
-        build_flags["C_FLAGS"].append(f"-D{define}={config['value']}")
-        build_flags["CXX_FLAGS"].append(f"-D{define}={config['value']}")
-        unused_defines.remove(define)
+    LOGGER.info(manifest.get("c_defines", {}))
 
     for config_root in [args.build_dir / "autogen", args.build_dir / "config"]:
         for config_f in config_root.glob("*.h"):
@@ -468,12 +642,7 @@ def main():
             new_config_h_lines = []
 
             for index, line in enumerate(config_h_lines):
-                for define, config in manifest.get("c_defines", {}).items():
-                    if config["type"] == "c_flag":
-                        continue
-
-                    value_template = config["value"]
-
+                for define, value in manifest.get("c_defines", {}).items():
                     if f"#define {define} " not in line:
                         continue
 
@@ -498,15 +667,7 @@ def main():
                         assert re.match(r'#warning ".*? not configured"', prev_line)
                         new_config_h_lines.pop(index - 1)
 
-                    value_template = str(value_template)
-
-                    if value_template.startswith("template:"):
-                        value = value_template.replace("template:", "", 1).format(
-                            **value_template_env
-                        )
-                    else:
-                        value = value_template
-
+                    value = expand_template(value, value_template_env)
                     new_config_h_lines.append(f"#define {define}{alignment}{value}")
                     written_config[define] = value
 
@@ -540,22 +701,21 @@ def main():
         )
 
     # Remove absolute paths from the build for reproducibility
-    build_flags["C_FLAGS"] += [
+    extra_compiler_flags = [
         f"-ffile-prefix-map={str(src.absolute())}={dst}"
         for src, dst in {
             sdk: f"/{sdk_name}",
             args.build_dir: "/src",
             toolchain: "/toolchain",
         }.items()
+    ] + [
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        # XXX: Fails due to protocol/openthread/platform-abstraction/efr32/radio.c@RAILCb_Generic
+        # Remove once this is fixed in the SDK!
+        "-Wno-error=unused-but-set-variable",
     ]
-
-    # Enable errors
-    build_flags["C_FLAGS"] += ["-Wall", "-Wextra", "-Werror"]
-    build_flags["CXX_FLAGS"] = build_flags["C_FLAGS"]
-
-    # Link-time stack function replacement
-    if wrapped_stack_functions["value"]:
-        build_flags["LD_FLAGS"] += [f"-Wl,--wrap={wrapped_stack_functions['value']}"]
 
     output_artifact = (args.build_dir / "build/debug" / base_project_name).with_suffix(
         ".gbl"
@@ -576,11 +736,9 @@ def main():
     )
     makefile_contents += "\t-@echo ' '"
 
-    for flag, flag_values in build_flags.items():
+    for flag in ("C_FLAGS", "CXX_FLAGS"):
         line = f"{flag:<17} = \n"
-        suffix = " ".join([f'"{m}"' for m in flag_values]) + "\n"
-        assert line in makefile_contents
-
+        suffix = " ".join([f'"{m}"' for m in extra_compiler_flags]) + "\n"
         makefile_contents = makefile_contents.replace(
             line, f"{line.rstrip()} {suffix}\n"
         )
@@ -598,10 +756,7 @@ def main():
             f"POST_BUILD_EXE={args.postbuild}",
             "VERBOSE=1",
         ],
-        "make",
-        env={
-            "PATH": f"{pathlib.Path(sys.executable).parent}:{os.environ['PATH']}"
-        }
+        "make"
     )
     # fmt: on
 
@@ -609,7 +764,7 @@ def main():
     extracted_gbl_metadata = json.loads(
         (output_artifact.parent / "gbl_metadata.json").read_text()
     )
-    base_filename = evaulate_f_string(
+    base_filename = evaluate_f_string(
         manifest.get("filename", "{manifest_name}"),
         {**value_template_env, **extracted_gbl_metadata},
     )
