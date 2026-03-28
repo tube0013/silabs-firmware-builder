@@ -12,6 +12,10 @@ gbl:
   fw_variant: sw_flow
 
 add_components:
+  # Status
+  - id: simple_led
+    instance:
+      - led0
   # BOOT
   - id: simple_button
     instance:
@@ -35,6 +39,10 @@ c_defines:
 
   SL_IOSTREAM_EUSART_VCOM_RTS_PORT: 0
   SL_IOSTREAM_EUSART_VCOM_RTS_PIN: 0
+
+  SL_SIMPLE_LED_LED0_POLARITY: SL_SIMPLE_LED_POLARITY_ACTIVE_LOW
+  SL_SIMPLE_LED_LED0_PORT: SL_GPIO_PORT_D
+  SL_SIMPLE_LED_LED0_PIN: 2
 
   SL_SIMPLE_BUTTON_BTN1_MODE: SL_SIMPLE_BUTTON_MODE_INTERRUPT
   SL_SIMPLE_BUTTON_BTN1_PORT: SL_GPIO_PORT_A
