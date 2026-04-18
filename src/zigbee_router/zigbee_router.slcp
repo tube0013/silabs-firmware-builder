@@ -50,9 +50,9 @@ define:
   - name: SL_ZIGBEE_MULTICAST_TABLE_SIZE
     value: 26
   - name: SL_ZIGBEE_ROUTE_TABLE_SIZE
-    value: 16
+    value: 200
   - name: SL_ZIGBEE_DISCOVERY_TABLE_SIZE
-    value: 16
+    value: 32
 
 configuration:
   - name: SL_BOARD_ENABLE_VCOM
@@ -158,7 +158,7 @@ configuration:
     condition:
       - iostream_eusart
   - name: SL_ZIGBEE_BROADCAST_TABLE_SIZE
-    value: 30
+    value: 100
   - name: SL_ZIGBEE_NEIGHBOR_TABLE_SIZE
     value: 26
   - name: SL_ZIGBEE_BINDING_TABLE_SIZE
@@ -195,7 +195,7 @@ configuration:
     condition: ["device_generic_family_efr32xg21"]
   ## xg24
   - name: SL_ZIGBEE_ADDRESS_TABLE_SIZE
-    value: 64
+    value: 250
     condition: ["device_generic_family_efr32xg24"]
   - name: SL_ZIGBEE_APS_UNICAST_MESSAGE_COUNT
     value: 128
@@ -204,7 +204,7 @@ configuration:
     value: 64
     condition: ["device_generic_family_efr32xg24"]
   - name: SL_ZIGBEE_APS_DUPLICATE_REJECTION_MAX_ENTRIES
-    value: 64
+    value: 96
     condition: ["device_generic_family_efr32xg24"]
   ## xg26
   - name: SL_ZIGBEE_ADDRESS_TABLE_SIZE
