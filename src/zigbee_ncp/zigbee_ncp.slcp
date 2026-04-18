@@ -148,7 +148,7 @@ configuration:
     value: 26
     condition: ["device_generic_family_efr32xg24"] 
   - name: SL_ZIGBEE_ADDRESS_TABLE_SIZE
-    value: 250
+    value: 200
     condition: ["device_generic_family_efr32xg24"]
   - name: SL_ZIGBEE_APS_UNICAST_MESSAGE_COUNT
     value: 128
