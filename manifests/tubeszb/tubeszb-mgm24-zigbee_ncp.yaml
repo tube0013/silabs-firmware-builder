@@ -16,7 +16,7 @@ add_components:
   - id: zigbee_mfglib
   - id: zigbee_token_interface
   - id: simple_led
-  - id: sl_rail_util_pti
+  - id: rail_util_pti
     instance:
       - board_activity
 
