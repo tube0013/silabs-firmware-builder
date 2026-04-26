@@ -16,21 +16,17 @@ add_components:
   - id: zigbee_mfglib
   - id: zigbee_token_interface
   - id: simple_led
-  - id: rail_util_pti
     instance:
       - board_activity
+  - id: rail_util_pti
 
 configuration:
-  - name: SL_RAIL_UTIL_PTI_MODE
-    value: "RAIL_PTI_MODE_UART"
-  - name: SL_RAIL_UTIL_PTI_BAUD_RATE_HZ
-    value: "1600000"
-  - name: SL_RAIL_UTIL_PTI_DOUT_PORT
-    value: "gpioPortC"
-  - name: SL_RAIL_UTIL_PTI_DOUT_PIN: "4"
-  - name: SL_RAIL_UTIL_PTI_DFRAME_PORT
-    value: "gpioPortC"
-  - name: SL_RAIL_UTIL_PTI_DFRAME_PIN: "5"
+  SL_RAIL_UTIL_PTI_MODE: RAIL_PTI_MODE_UART
+  SL_RAIL_UTIL_PTI_BAUD_RATE_HZ: 1600000
+  SL_RAIL_UTIL_PTI_DOUT_PORT: gpioPortC
+  SL_RAIL_UTIL_PTI_DOUT_PIN: 4
+  SL_RAIL_UTIL_PTI_DFRAME_PORT: gpioPortC
+  SL_RAIL_UTIL_PTI_DFRAME_PIN: 5
   
 c_defines:
   SL_IOSTREAM_EUSART_VCOM_BAUDRATE: 460800
