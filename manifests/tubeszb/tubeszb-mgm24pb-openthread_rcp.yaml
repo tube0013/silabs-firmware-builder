@@ -1,5 +1,5 @@
 name: TubesZB MGM24PB OpenThread RCP
-device: MGM240PB32VNN3
+device: MGM240PB32VNN
 base_project: src/openthread_rcp
 filename: "{manifest_name}_{ot_rcp_version}_{baudrate}_{fw_variant}"
 sdk: "simplicity_sdk:2025.6.2"
