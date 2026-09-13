@@ -1,0 +1,24 @@
+id: tubeszb_router_callbacks
+label: TubeZB Router Callbacks
+package: custom
+description: TubeZB PD02 status LED, network joining, and PA0 button handling.
+category: Zigbee|Router
+quality: experimental
+source:
+  - path: src/tubeszb_router_callbacks.c
+provides:
+  - name: tubeszb_router_callbacks
+requires:
+  - name: simple_led
+  - name: simple_button
+  - name: zigbee_network_steering
+  - name: bootloader_interface
+template_contribution:
+  - name: zigbee_af_callback
+    value:
+      callback_type: event_init
+      function_name: tubeszb_router_init
+  - name: zigbee_stack_callback
+    value:
+      callback_type: stack_status
+      function_name: tubeszb_router_stack_status_cb

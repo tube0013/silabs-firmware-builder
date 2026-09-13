@@ -1,0 +1,5 @@
+id: tubeszb_router
+vendor: tubeszb
+version: "1.0.0"
+component_path:
+  - path: "./"
