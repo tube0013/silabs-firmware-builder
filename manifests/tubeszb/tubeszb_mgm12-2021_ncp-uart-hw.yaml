@@ -1,46 +1,55 @@
+# Stack defaults follow Nabu Casa; UART routing and baud rate are TubeZB-specific.
 name: TubesZB MGM12 2021 Zigbee
 device: MGM12P32F1024GE
 base_project: src/zigbee_ncp
-sdk: "gecko_sdk:4.4.6"
-toolchain: "12.2.1.20221205"
-
+sdk: gecko_sdk:4.5.0
+toolchain: 12.2.1.20221205
+filename: '{manifest_name}_{ezsp_version}_{baudrate}'
 gbl:
-  fw_type: ncp-uart-hw
-  dynamic: ["ezsp_version"]
+  fw_type: zigbee_ncp
+  ezsp_version: dynamic
   baudrate: 115200
-
+sdk_extension:
+- id: xncp
+  vendor: nabucasa
+  version: 1.0.0
+- id: xncp_common
+  vendor: nabucasa
+  version: 1.0.0
+add_components:
+- id: xncp_core
+  vendor: nabucasa
+  package: xncp
+- id: xncp_common_commands
+  vendor: nabucasa
+  package: xncp_common
 c_defines:
-  EMBER_PACKET_BUFFER_COUNT: 255
+  XNCP_MFG_MANUF_NAME: '"TubesZB"'
+  XNCP_MFG_BOARD_NAME: '"TubesZB MGM12 2021 Zigbee"'
+  XNCP_BUILD_STRING: template:"{now:%Y%m%d%H%M%S}"
+  XNCP_MANUAL_SOURCE_ROUTE_TABLE_SIZE: 200
   EMBER_APS_UNICAST_MESSAGE_COUNT: 32
+  EMBER_BINDING_TABLE_SIZE: 32
   EMBER_BROADCAST_TABLE_SIZE: 64
-  EMBER_NEIGHBOR_TABLE_SIZE: 26
-  EMBER_SOURCE_ROUTE_TABLE_SIZE: 254
+  EMBER_KEY_TABLE_SIZE: 12
   EMBER_MAX_END_DEVICE_CHILDREN: 32
-
+  EMBER_PACKET_BUFFER_COUNT: 255
+  EMBER_SOURCE_ROUTE_TABLE_SIZE: 200
   EMBER_CHILD_TABLE_SIZE:
     type: c_flag
-    value: 64
-
+    value: 32
   EMBER_ROUTE_TABLE_SIZE:
     type: c_flag
     value: 250
-
   SL_RAIL_UTIL_PTI_MODE: RAIL_PTI_MODE_DISABLED
-
   SL_IOSTREAM_USART_VCOM_BAUDRATE: 115200
   SL_IOSTREAM_USART_VCOM_FLOW_CONTROL_TYPE: usartHwFlowControlNone
-
   SL_IOSTREAM_USART_VCOM_PERIPHERAL: USART0
   SL_IOSTREAM_USART_VCOM_PERIPHERAL_NO: 0
-
   SL_IOSTREAM_USART_VCOM_TX_PORT: gpioPortA
-  SL_IOSTREAM_USART_VCOM_TX_PIN:  0
-  SL_IOSTREAM_USART_VCOM_TX_LOC:  0
-
+  SL_IOSTREAM_USART_VCOM_TX_PIN: 0
+  SL_IOSTREAM_USART_VCOM_TX_LOC: 0
   SL_IOSTREAM_USART_VCOM_RX_PORT: gpioPortA
-  SL_IOSTREAM_USART_VCOM_RX_PIN:  1
-  SL_IOSTREAM_USART_VCOM_RX_LOC:  0
-
-  SL_IOSTREAM_USART_VCOM_RX_BUFFER_SIZE: 64
-  
-
+  SL_IOSTREAM_USART_VCOM_RX_PIN: 1
+  SL_IOSTREAM_USART_VCOM_RX_LOC: 0
+  SL_IOSTREAM_USART_VCOM_RX_BUFFER_SIZE: 128
