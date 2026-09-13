@@ -1,5 +1,5 @@
 id: tubeszb_router
-vendor: tubeszb
+vendor: TubesZB
 version: "1.0.0"
 component_path:
   - path: "./"

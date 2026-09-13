@@ -10,7 +10,7 @@ gbl:
   fw_variant: sw_flow
 sdk_extension:
 - id: tubeszb_router
-  vendor: tubeszb
+  vendor: TubesZB
   version: 1.0.0
 remove_components:
 - id: iostream_usart
@@ -27,7 +27,7 @@ add_components:
   instance:
   - btn1
 - id: tubeszb_router_callbacks
-  vendor: tubeszb
+  vendor: TubesZB
   package: tubeszb_router
 - id: rail_util_rssi
 - id: zigbee_concentrator
