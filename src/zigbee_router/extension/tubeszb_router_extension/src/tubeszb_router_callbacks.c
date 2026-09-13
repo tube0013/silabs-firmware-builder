@@ -15,6 +15,15 @@
  *
  ******************************************************************************/
 
+/*
+ * Adapted from the shipped nerivec-based router application:
+ * https://github.com/tube0013/silabs-firmware-builder/blob/f6a890966f8835694550a1f2c771a5984bedae97/src/zigbee_router/app.c
+ *
+ * The original Silicon Labs copyright and license above are retained.
+ * Local changes package the callbacks as an optional extension and adjust
+ * event scheduling and button timer wrap handling for upstream integration.
+ */
+
 #include "app/framework/include/af.h"
 #ifdef SL_COMPONENT_CATALOG_PRESENT
 #include "sl_component_catalog.h"
