@@ -1,5 +1,8 @@
 # TubeZB PD02 LED investigation
 
+Historical findings before migration. See [SYNC-NOTES.md](SYNC-NOTES.md) for
+the current integration draft and user-confirmed shipped router baseline.
+
 Investigated on 2026-09-13. No firmware was built or flashed in this investigation.
 
 ## Repository sync
