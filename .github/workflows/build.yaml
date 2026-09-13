@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       manifest_glob:
-        description: 'Manifest glob for selective builds'
+        description: 'Manifest path glob, e.g. manifests/tubeszb/*zigbee_router.yaml (blank builds all)'
         required: false
   pull_request:
     paths-ignore:
@@ -222,8 +222,15 @@ jobs:
         with:
           persist-credentials: false
       - id: set-matrix
+        env:
+          MANIFEST_GLOB: ${{ inputs.manifest_glob || '*' }}
         run: |
-          echo "matrix=$(find manifests -type f \( -name "*.yaml" -o -name "*.yml" \) -print | sort | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+          matrix=$(find manifests -type f \( -name "*.yaml" -o -name "*.yml" \) -path "$MANIFEST_GLOB" -print | sort | jq -R -s -c 'split("\n")[:-1]')
+          if [ "$matrix" = '[]' ]; then
+            echo "::error::No firmware manifests matched the selected glob."
+            exit 1
+          fi
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
 
   build-firmwares:
     name: Firmware builder
