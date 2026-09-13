@@ -1,3 +1,5 @@
+# Local package namespace, not a claim of original authorship.
+# See src/tubeszb_router_callbacks.c for source provenance and license.
 id: tubeszb_router
 vendor: TubesZB
 version: "1.0.0"
