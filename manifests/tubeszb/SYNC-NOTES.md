@@ -88,3 +88,13 @@ the shipped reference; it has not been redefined as an NVM erase operation.
   and host integration, then test LED/join/button behavior on hardware.
 - Confirm MGM21's exact 2023 part, PD02 availability on all older PA/PB board
   revisions, and BM24 NCP CTUNE. No hardware testing or flashing was performed.
+
+## Manual workflow selection
+
+`build.yaml` follows this branch's upstream workflow, retaining manual dispatch.
+The `manifest_glob` input is now applied to the build matrix. For example,
+`manifests/tubeszb/*zigbee_router.yaml` selects the three router variants.
+A blank input (and automatic push/PR runs) still selects all active YAML manifests;
+`.yaml.disabled` files are excluded. An unmatched glob fails clearly.
+Legacy bootloader/OpenThread manifests remain unvalidated, so use a targeted
+manual run while this integration is a draft. No GitHub Actions run was triggered.
