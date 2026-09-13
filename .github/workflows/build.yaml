@@ -98,6 +98,12 @@ jobs:
             fi
           fi
 
+          # Reuse upstream's public image only when the dependency hash matches.
+          if [[ "$build_image" == "true" ]] && docker manifest inspect ${{ env.REGISTRY }}/nabucasa/silabs-firmware-builder:$tag_name; then
+            image_name=nabucasa/silabs-firmware-builder
+            build_image=false
+          fi
+
           if [[ $build_image == "true" && $GITHUB_EVENT_NAME == "pull_request" ]]; then
             echo "Cannot build a new container within a PR. Please re-run this action after $head_image:$tag_name is built."
             exit 1
@@ -244,6 +250,7 @@ jobs:
       image: ${{ needs.merge-container.outputs.container_name }} # zizmor: ignore[unpinned-images]
       options: --user root
     strategy:
+      fail-fast: false
       matrix:
         manifest: ${{ fromJson(needs.list-manifests.outputs.matrix) }}
     steps:
