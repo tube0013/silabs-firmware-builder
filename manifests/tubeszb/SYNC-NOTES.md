@@ -10,9 +10,9 @@ and GCC 12.2.1.20221205. This includes both MGM12 revisions; they remain on 7.5.
 The router builds match upstream stable's separate Simplicity SDK 2025.6.2
 selection, retaining the SDK used by the shipped nerivec router firmware.
 
-This is Zigbee NCP/router preparation. Existing bootloader and OpenThread
-manifests have not been migrated and still select older SDKs. Do not treat an
-unfiltered build of every TubeZB manifest as validated by this work.
+All existing active TubeZB manifests now use the corresponding upstream channel's
+SDK/toolchain selections. This includes Zigbee, OpenThread, and bootloader builds.
+Full workflow/firmware compilation still requires validation as described below.
 No branches have been pushed and no PRs have been opened.
 
 ## NCP changes
@@ -65,7 +65,11 @@ the shipped reference; it has not been redefined as an NVM erase operation.
 
 ## Validation and remaining work
 
-- Parsed and checked all active Zigbee manifests in both drafts (18 total).
+- Parsed and checked all active TubeZB manifests in both drafts (30 total:
+  16 stable and 14 beta), including OpenThread and bootloaders. All SDK and
+  compiler versions match their corresponding upstream manifests.
+- Checked bootloader pin/activation settings against the original fork and
+  OpenThread routing, patch paths, and watchdog extension selection.
 - Checked inherited component merges/removals, extension locations, metadata
   versus serial baud, original NCP pin routing, absence of obsolete USART
   settings in EUSART manifests, and MGM12 exclusion from beta.
@@ -96,5 +100,31 @@ The `manifest_glob` input is now applied to the build matrix. For example,
 `manifests/tubeszb/*zigbee_router.yaml` selects the three router variants.
 A blank input (and automatic push/PR runs) still selects all active YAML manifests;
 `.yaml.disabled` files are excluded. An unmatched glob fails clearly.
-Legacy bootloader/OpenThread manifests remain unvalidated, so use a targeted
-manual run while this integration is a draft. No GitHub Actions run was triggered.
+All firmware types remain pending full compilation and hardware validation;
+a targeted manual run can isolate failures while this integration is a draft. No GitHub Actions run was triggered.
+
+## OpenThread and bootloader migration
+
+All three existing MG24 PA/PB and BM24 bootloaders now match the upstream
+channel's SDK and toolchain. Preserve USART0, 115200 baud, hardware flow control,
+PA6 TX / PA5 RX / PA7 CTS / PA8 RTS, and active-low PA0 activation. Correct the
+copied Yellow/MGM240PB display names. Do not import ZBT-2's dual GPIO activation
+or its board-specific customer version override into these single-button boards.
+
+MGM24 OpenThread is migrated to EUSART0 using the nerivec PA6/PA5/PA7/PA8 routing;
+the obsolete main manifest incorrectly selected port B for CTS/RTS. Add matching
+BM24 and MGM24PB OpenThread manifests. All use upstream's 460800 baud rate and
+512-byte receive buffer. This preserves main's MGM24 baud rate but differs from
+nerivec's 921600; configure OTBR for 460800 when testing these builds.
+
+Preserve the nerivec OpenThread oscillator configuration (CTUNE 140) and RSSI
+offset. The new PB OpenThread variant uses the same configuration and needs
+board validation. Beta includes upstream's watchdog component, 4096-byte NCP
+TX buffer, GP receive-filter patch, and both EUSART transmit-timeout patches.
+Stable tracks its upstream OpenThread settings without backporting beta-only
+features. ZBT-2 RGB/accelerometer/reset-button drivers and its product identity
+are not applicable to TubeZB and are omitted.
+
+No new MGM12/MGM21 bootloader or OpenThread target has been invented; this update
+covers the existing bootloader targets and MG24/BM24 OpenThread hardware whose
+routing is available. MGM12 remains on stable Zigbee NCP only.
