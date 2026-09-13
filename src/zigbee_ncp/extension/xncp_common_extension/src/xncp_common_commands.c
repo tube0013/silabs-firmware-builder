@@ -9,7 +9,6 @@
 #include "xncp_config.h"
 #include "tx_power.h"
 #include "ezsp-enum.h"
-#include "em_usart.h"
 #include "random.h"
 #include "stack/include/stack-info.h"
 
@@ -17,6 +16,7 @@
 #include "sl_iostream_eusart.h"
 #include "sl_iostream_eusart_vcom_config.h"
 #elif defined(SL_CATALOG_IOSTREAM_USART_PRESENT)
+#include "em_usart.h"
 #include "sl_iostream_usart_vcom_config.h"
 #endif
 
@@ -341,11 +341,19 @@ static bool handle_get_flow_control_type(xncp_context_t *ctx)
     XncpFlowControlType flow_control_type;
 
     switch (XNCP_FLOW_CONTROL_TYPE) {
+#if defined(SL_CATALOG_IOSTREAM_EUSART_PRESENT)
+        case SL_IOSTREAM_EUSART_UART_FLOW_CTRL_CTS_RTS:
+#else
         case usartHwFlowControlCtsAndRts:
+#endif
             flow_control_type = XNCP_FLOW_CONTROL_TYPE_HARDWARE;
             break;
 
+#if defined(SL_CATALOG_IOSTREAM_EUSART_PRESENT)
+        case SL_IOSTREAM_EUSART_UART_FLOW_CTRL_NONE:
+#else
         case usartHwFlowControlNone:
+#endif
         default:
             flow_control_type = XNCP_FLOW_CONTROL_TYPE_SOFTWARE;
             break;
