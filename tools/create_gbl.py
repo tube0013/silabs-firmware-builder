@@ -214,7 +214,7 @@ def main():
     if "ezsp_version" in gbl_dynamic:
         gbl_dynamic.remove("ezsp_version")
 
-        elf = list((project_root / "build/debug/").glob("*.out"))[0]
+        elf = list(build_dir.glob("*.out"))[0]
         with elf.open("rb") as f:
             ember_version = read_elf_symbol(f, "emberVersion")
 
@@ -278,10 +278,17 @@ def main():
 
     if "zwave_version" in gbl_dynamic:
         gbl_dynamic.remove("zwave_version")
-        zwave_props = parse_properties_file(
-            next((gsdk_path / "protocol/z-wave/").glob("*.properties")).read_text()
+        zw_version_config_h = parse_c_header_defines(
+            (project_root / "config/zw_version_config.h").read_text()
         )
-        metadata["zwave_version"] = zwave_props["version"][0]
+
+        metadata["zwave_version"] = ".".join(
+            [
+                str(zw_version_config_h["USER_APP_VERSION"]),
+                str(zw_version_config_h["USER_APP_REVISION"]),
+                str(zw_version_config_h["USER_APP_PATCH"]),
+            ]
+        )
 
     if "ot_rcp_version" in gbl_dynamic:
         gbl_dynamic.remove("ot_rcp_version")
@@ -296,7 +303,11 @@ def main():
             metadata["ot_rcp_version"] = openthread_config_h["PACKAGE_STRING"]
         elif ot_sdk_path.exists():
             openthread_package_info_h = parse_c_header_defines(ot_sdk_path.read_text())
-            metadata["ot_rcp_version"] = openthread_package_info_h["PACKAGE_VERSION"]
+            metadata["ot_rcp_version"] = (
+                openthread_package_info_h["PACKAGE_NAME"]
+                + "/"
+                + openthread_package_info_h["PACKAGE_VERSION"]
+            )
         else:
             raise FileNotFoundError("Could not find OpenThread package info")
 
@@ -306,11 +317,19 @@ def main():
             (gsdk_path / "platform/bootloader/config/btl_config.h").read_text()
         )
 
+        # Look for overrides
+        btl_core_config_h = parse_c_header_defines(
+            (project_root / "config/btl_core_cfg.h").read_text()
+        )
+
+        btl_config = dict(btl_config_h)
+        btl_config.update(btl_core_config_h)
+
         metadata["gecko_bootloader_version"] = ".".join(
             [
-                str(btl_config_h["BOOTLOADER_VERSION_MAIN_MAJOR"]),
-                str(btl_config_h["BOOTLOADER_VERSION_MAIN_MINOR"]),
-                str(btl_config_h["BOOTLOADER_VERSION_MAIN_CUSTOMER"]),
+                str(btl_config["BOOTLOADER_VERSION_MAIN_MAJOR"]),
+                str(btl_config["BOOTLOADER_VERSION_MAIN_MINOR"]),
+                str(btl_config["BOOTLOADER_VERSION_MAIN_CUSTOMER"]),
             ]
         )
 
