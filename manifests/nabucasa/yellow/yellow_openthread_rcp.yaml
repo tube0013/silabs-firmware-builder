@@ -1,0 +1,58 @@
+name: Yellow OpenThread RCP
+device: MGM210PA32JIA
+base_project: src/openthread_rcp
+filename: "{manifest_name}_{ot_rcp_version.split('/')[-1]}_gsdk_{sdk_version}"
+sdk: "simplicity_sdk:2026.6.1"
+toolchain: "14.2.1.20241119"
+
+gbl:
+  fw_type: openthread_rcp
+  ot_rcp_version: dynamic
+  baudrate: 460800
+
+sdk_patches:
+  - disable_gp_rx_filter.patch
+  - uart_tx_drop_on_timeout.patch
+  - uart_tx_bounded_wait_usart.patch
+
+sdk_extension:
+  - id: watchdog
+    version: 1.0.0
+    vendor: nabucasa
+
+add_components:
+- id: iostream_usart
+  instance: [vcom]
+- id: simple_led
+  instance: [board_activity]
+- id: watchdog
+  vendor: nabucasa
+  package: watchdog
+
+# SLC validates clock settings before c_defines are patched, use `configuration`
+configuration:
+  SL_CLOCK_MANAGER_PCLK_DIVIDER: SL_CLOCK_MANAGER_PCLK_DIV_MIN
+
+c_defines:
+  # SDK bug: the PCLK divider is set to 1 for the MGM210, it is set to 2 everywhere else
+  SL_CLOCK_MANAGER_PCLK_DIVIDER: SL_CLOCK_MANAGER_PCLK_DIV_MIN
+
+  OPENTHREAD_CONFIG_NCP_TX_BUFFER_SIZE:
+    type: c_flag
+    value: 4096  # Default is 2048
+
+  SL_IOSTREAM_USART_VCOM_PERIPHERAL: USART0
+  SL_IOSTREAM_USART_VCOM_PERIPHERAL_NO: 0
+  SL_IOSTREAM_USART_VCOM_BAUDRATE: 460800
+  SL_IOSTREAM_USART_VCOM_TX_PORT: SL_GPIO_PORT_A
+  SL_IOSTREAM_USART_VCOM_TX_PIN:  5
+  SL_IOSTREAM_USART_VCOM_RX_PORT: SL_GPIO_PORT_A
+  SL_IOSTREAM_USART_VCOM_RX_PIN:  6
+  SL_IOSTREAM_USART_VCOM_CTS_PORT: SL_GPIO_PORT_D
+  SL_IOSTREAM_USART_VCOM_CTS_PIN:  2
+  SL_IOSTREAM_USART_VCOM_RTS_PORT: SL_GPIO_PORT_C
+  SL_IOSTREAM_USART_VCOM_RTS_PIN:  1
+
+  SL_SIMPLE_LED_BOARD_ACTIVITY_POLARITY: SL_SIMPLE_LED_POLARITY_ACTIVE_LOW
+  SL_SIMPLE_LED_BOARD_ACTIVITY_PORT:     SL_GPIO_PORT_B
+  SL_SIMPLE_LED_BOARD_ACTIVITY_PIN:      1
