@@ -12,8 +12,9 @@ Use the stable branch to produce MGM12 firmware.
 
 All existing active TubeZB manifests now use the corresponding upstream channel's
 SDK/toolchain selections. This includes Zigbee, OpenThread, and bootloader builds.
-Full workflow/firmware compilation still requires validation as described below.
-No branches have been pushed and no PRs have been opened.
+Full workflow and firmware compilation passed. See [BUILD-RESULTS.md](BUILD-RESULTS.md)
+for every device result and the exact tested source commit. Hardware testing remains.
+Both integration branches have been pushed to the fork. No PRs have been opened.
 
 ## NCP changes
 
@@ -80,16 +81,13 @@ the shipped reference; it has not been redefined as an NVM erase operation.
   LED/join/retry, restored-network startup, short/long button presses, and
   timer wrap tests pass. Run `python3 tests/test_tubeszb_router.py` with a host C
   compiler. These mocks do not validate Silicon Labs API or linker compatibility.
-- Firmware generation/build is not yet verified. The local SLC installation
-  was quarantined by macOS; quarantine was removed at the user's suggestion.
-  A temporary Intel Java 17 runtime gets the Intel SLC 5.9.2 launcher running.
-  The stable MGM24 router generation then fails with: `Cannot build an extension
-  framework without a best-fit sdk`. No firmware compilation was reached.
-  Local SDKs do not include the required Gecko 4.5.0 or Simplicity 2026.6.1
-  NCP versions. SLC/SDK compatibility and selection must be resolved next.
-- Before PR/release: build each targeted manifest with its exact SDK/toolchain,
-  inspect generated UART/LED configs and XNCP symbols, verify serial startup
-  and host integration, then test LED/join/button behavior on hardware.
+- GitHub Actions completed successfully for all 14 beta firmware targets,
+  including artifact uploads and aggregate manifest generation. See BUILD-RESULTS.md.
+- Local SLC was unblocked by removing quarantine and using a temporary Intel Java
+  runtime, but local SDK selection remained problematic. CI used the matching
+  upstream container and built successfully.
+- Before release: verify serial startup and host integration, then test
+  LED/join/button behavior on hardware.
 - Confirm MGM21's exact 2023 part, PD02 availability on all older PA/PB board
   revisions, and BM24 NCP CTUNE. No hardware testing or flashing was performed.
 
@@ -100,8 +98,7 @@ The `manifest_glob` input is now applied to the build matrix. For example,
 `manifests/tubeszb/*zigbee_router.yaml` selects the three router variants.
 A blank input (and automatic push/PR runs) still selects all active YAML manifests;
 `.yaml.disabled` files are excluded. An unmatched glob fails clearly.
-All firmware types remain pending full compilation and hardware validation;
-a targeted manual run can isolate failures while this integration is a draft. No GitHub Actions run was triggered.
+All firmware types passed CI compilation. Hardware validation is still pending. Targeted GitHub Actions runs completed successfully; see BUILD-RESULTS.md.
 
 ## OpenThread and bootloader migration
 
