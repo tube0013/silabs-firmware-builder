@@ -1,5 +1,24 @@
 # TubeZB beta build results
 
+## PTI follow-up — 2026-09-17
+
+**4/4 affected coordinator builds succeeded**, along with the full workflow.
+
+- [PTI firmware artifacts and workflow](https://github.com/tube0013/silabs-firmware-builder/actions/runs/35260973250)
+- Tested source commit: `4f4a89ed4a897b41da271809d5ea50bd7540762f`.
+- PTI UART: 1,600,000 baud; PC04 DOUT and PC05 DFRAME, ported from `pti_nonsense`.
+- The user reports the earlier firmware is running well; these PTI-enabled
+  artifacts still require capture verification on hardware.
+
+| Manifest | Result |
+| --- | --- |
+| `tubeszb-BM-MG24B2-hw-max_ncp-uart-hw.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/35260973250/job/105336500089) |
+| `tubeszb-mgm24-hw-ncp-uart-hw.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/35260973250/job/105336500082) |
+| `tubeszb-mgm24-hw-ncp-uart-hw_2025.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/35260973250/job/105336500131) |
+| `tubeszb-mgm24PB-hw-max_ncp-uart-hw.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/35260973250/job/105336500081) |
+
+## Original full beta validation
+
 Verified 2026-09-13. **14/14 firmware builds succeeded**, as did the full workflow.
 
 - [Workflow and downloadable artifacts](https://github.com/tube0013/silabs-firmware-builder/actions/runs/34775291246)
