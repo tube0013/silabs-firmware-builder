@@ -39,6 +39,17 @@ Both integration branches have been pushed to the fork. No PRs have been opened.
 - BM24 NCP retains main's CTUNE 92 pending confirmation; the nerivec NCP
   reference uses 140. Beta MGM24 uses the nerivec clock settings (CTUNE 140).
 
+## PTI coordinator follow-up
+
+Port the final PTI configuration from `pti_nonsense` (`aa5f7fe`) into all four
+MGM24 PA/PB and BM24 NCP manifests. Include `rail_util_pti` and select UART mode
+at 1,600,000 baud, with DOUT on PC04 and DFRAME on PC05. This is the PTI capture
+baud rate; existing host EUSART baud rates remain unchanged. The MGM24PB variant
+uses the same PTI routing and needs capture verification on hardware.
+
+The user reports the previous firmware builds are running well. PTI capture
+with these updated builds still needs hardware verification.
+
 ## Router changes and shipped baseline
 
 The router reference is the user-confirmed shipped
