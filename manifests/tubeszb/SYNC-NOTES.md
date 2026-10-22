@@ -125,3 +125,13 @@ are not applicable to TubeZB and are omitted.
 No new MGM12/MGM21 bootloader or OpenThread target has been invented; this update
 covers the existing bootloader targets and MG24/BM24 OpenThread hardware whose
 routing is available. MGM12 remains on stable Zigbee NCP only.
+
+## Router manufacturer and model attributes
+
+Set the Basic server cluster's ManufacturerName (0x0004) and ModelIdentifier
+(0x0005) defaults in the ZAP configuration, matching Nabu Casa's router approach.
+Manufacturer is `TubesZB`. Both MGM24 UART variants report
+`TubesZB MGM24 Zigbee Router`; BM24 reports `TubesZB BM24 Zigbee Router`.
+The BM24 manifest selects its own ZAP configuration, identical to MGM24 apart
+from the model default. These firmware defaults require no manufacturing-token
+programming. Endpoints and all other cluster settings are preserved.

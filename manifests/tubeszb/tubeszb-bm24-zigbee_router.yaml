@@ -85,6 +85,6 @@ c_defines:
     type: c_flag
     value: 16
 config_file:
-- path: config/zcl/zcl_config.zap
+- path: config/zcl/bm24/zcl_config.zap
   file_id: zap_configuration_file_id
   directory: zcl
