@@ -1,4 +1,42 @@
-# TubeZB beta build results
+# TubeZB SDK build results
+
+## SDK 2026.6.2 migration — 2026-10-22
+
+**14/14 TubeZB firmware builds succeeded**, along with the full workflow.
+
+- [Workflow and downloadable artifacts](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39808283510)
+- Tested source commit: `d3fb4a948e16238590a3946ba6fe1696768d8f60`.
+- Every artifact reports SDK **2026.6.2** in the generated manifest.
+- All five coordinators: **9.1.2.1**, preserving upstream's DLK policy patch suffix.
+- All three OpenThread RCPs: **SL-OPENTHREAD/3.1.2.0_GitHub-fb274efe6**.
+- All three TubeZB bootloaders: **3.2.0**, rebuilt with the new SDK.
+- Both AMD64 and ARM64 SDK containers were built and published successfully
+  in [the initial run](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39803892800).
+- Initial Zigbee jobs compiled but failed the reproducibility check because
+  SDK prebuilt libraries referenced a new `silabs_core` Conan package path.
+  Add that path to the existing remaps; the final run passes with verification enabled.
+- Existing OpenThread SDK patches still apply. TubeZB PTI, LED, UART, clock,
+  and router behavior settings are preserved. Local router callback tests passed.
+- Upstream reference manifests also select the new SDK; this run validates
+  the 14 TubeZB targets. MGM12 stays on the stable branch.
+- Hardware testing of this SDK update remains. No PR has been opened.
+
+| Manifest | Result |
+| --- | --- |
+| `tubeszb-BM-MG24B2-hw-max_ncp-uart-hw.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39808283510/job/119927487693) |
+| `tubeszb-bm24-openthread_rcp.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39808283510/job/119927487229) |
+| `tubeszb-bm24-zigbee_router.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39808283510/job/119927486878) |
+| `tubeszb-mgm21-2023-sw_ncp-uart-hw.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39808283510/job/119927487050) |
+| `tubeszb-mgm24-hw-ncp-uart-hw.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39808283510/job/119927487164) |
+| `tubeszb-mgm24-hw-ncp-uart-hw_2025.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39808283510/job/119927486976) |
+| `tubeszb-mgm24-openthread-rcp.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39808283510/job/119927486985) |
+| `tubeszb-mgm24-zigbee_router.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39808283510/job/119927487132) |
+| `tubeszb-mgm24PB-hw-max_ncp-uart-hw.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39808283510/job/119927487017) |
+| `tubeszb-mgm24PB-openthread_rcp.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39808283510/job/119927487217) |
+| `tubeszb-mgm24_bootloader.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39808283510/job/119927487117) |
+| `tubeszb-mgm24router-zigbee_router.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39808283510/job/119927487434) |
+| `tubeszb_BM24-MG24_bootloader-uart-xmodem.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39808283510/job/119927487043) |
+| `tubeszb_MGM240PB_bootloader-uart-xmodem.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39808283510/job/119927487088) |
 
 ## Upstream resync — 2026-10-22
 

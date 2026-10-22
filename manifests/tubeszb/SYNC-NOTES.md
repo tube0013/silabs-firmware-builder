@@ -12,8 +12,9 @@ and remains available on stable.
 
 Retain upstream Nabu Casa DLK negotiation policy and patch override 1, so
 coordinator firmware reports 9.1.2.1 (SDK stack version 9.1.2). Keep all PTI,
-LED, clock, UART, and router settings from the tested beta branch. Existing
-build results below describe earlier beta sources until this branch is validated.
+LED, clock, UART, and router settings from the tested beta branch. All 14 TubeZB firmware targets and the full workflow pass on the new SDK.
+See BUILD-RESULTS.md for the tested source commit and artifact links. Older
+sections below record the inherited beta baseline.
 
 The first SDK run compiled the Zigbee firmware but its reproducibility check
 found a new `silabs_core` Conan package path in the prebuilt libraries. Add that
@@ -26,7 +27,7 @@ Release references:
 - https://docs.silabs.com/zigbee/9.1.2/sisdk-zigbee-release-notes/
 
 
-## Scope and upstream baseline
+## Inherited beta scope and upstream baseline
 
 Based on the locally synced main, including upstream `adafdc2` and latest
 beta `v2026.09.17-beta2`. The beta baseline used Simplicity SDK 2026.6.1 and
