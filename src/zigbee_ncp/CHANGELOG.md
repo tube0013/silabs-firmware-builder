@@ -1,3 +1,10 @@
+# 9.1.2.1
+Built with EmberZNet 9.1.2 from Simplicity SDK 2026.6.2.
+
+- Rebuilt with Silicon Labs' October 14, 2026 maintenance SDK.
+- Retain Nabu Casa's direct-router-join dynamic link key policy and patch override.
+- Preserve TubeZB PTI, UART routing, and activity LED configuration.
+
 # 9.1.1.1
 Fix Zigbee 4.0 routers failing to join directly through the coordinator.
 

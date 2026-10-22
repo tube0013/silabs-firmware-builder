@@ -1,11 +1,29 @@
-# TubeZB beta integration draft
+# TubeZB SDK 2026.6.2 integration draft
 
-Branch: `codex/tubeszb-beta-sync`.
+Branch: `codex/tubeszb-sdk-2026.6.2`, forked from beta sync `7ab3aa5`.
+
+## SDK 2026.6.2 migration
+
+Move every active Simplicity SDK manifest, including TubeZB NCP, routers,
+OpenThread, bootloaders, and upstream reference devices, from 2026.6.1 to
+2026.6.2. The build container installs the same new SDK. Keep GCC 14.2.rel1,
+which remains supported by Silicon Labs. MGM12 stays disabled on this branch
+and remains available on stable.
+
+Retain upstream Nabu Casa DLK negotiation policy and patch override 1, so
+coordinator firmware reports 9.1.2.1 (SDK stack version 9.1.2). Keep all PTI,
+LED, clock, UART, and router settings from the tested beta branch. Existing
+build results below describe earlier beta sources until this branch is validated.
+
+Release references:
+- https://docs.silabs.com/sisdk-release-notes/2026.6.2/sisdk-release-notes-overview/
+- https://docs.silabs.com/zigbee/9.1.2/sisdk-zigbee-release-notes/
+
 
 ## Scope and upstream baseline
 
 Based on the locally synced main, including upstream `adafdc2` and latest
-beta `v2026.09.17-beta2`. NCP/router builds use Simplicity SDK 2026.6.1 and
+beta `v2026.09.17-beta2`. The beta baseline used Simplicity SDK 2026.6.1 and
 GCC 14.2.1.20241119. MGM12 manifests are renamed `.yaml.disabled` so beta
 manifest discovery cannot attempt to build unsupported Series-1 devices.
 Use the stable branch to produce MGM12 firmware.

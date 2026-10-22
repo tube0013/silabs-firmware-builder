@@ -1,7 +1,7 @@
 name: TubesZB MGM21 2023 Zigbee
 device: MGM210PA32JIA
 base_project: src/zigbee_ncp
-sdk: simplicity_sdk:2026.6.1
+sdk: simplicity_sdk:2026.6.2
 toolchain: 14.2.1.20241119
 filename: '{manifest_name}_{ezsp_version}_{baudrate}'
 gbl:

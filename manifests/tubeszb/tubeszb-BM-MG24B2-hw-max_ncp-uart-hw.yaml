@@ -2,7 +2,7 @@
 name: TubesZB BM MG24B2 HW Max Zigbee
 device: EFR32MG24A420F1536IM48
 base_project: src/zigbee_ncp
-sdk: simplicity_sdk:2026.6.1
+sdk: simplicity_sdk:2026.6.2
 toolchain: gcc:14.2.1.20241119
 filename: '{manifest_name}_{ezsp_version}_{baudrate}'
 gbl:

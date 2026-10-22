@@ -2,7 +2,7 @@
 name: TubesZB MGM24PB HW Max Zigbee
 device: MGM240PB32VNN
 base_project: src/zigbee_ncp
-sdk: simplicity_sdk:2026.6.1
+sdk: simplicity_sdk:2026.6.2
 toolchain: gcc:14.2.1.20241119
 filename: '{manifest_name}_{ezsp_version}_{baudrate}'
 gbl:

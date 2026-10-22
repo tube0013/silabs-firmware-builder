@@ -58,7 +58,7 @@ RUN set -eux \
 # package id and package revision are all discoverable over its REST API. Those revisions
 # are content hashes, so the URL is already pinned to exactly these bytes.
 FROM trixie-stable AS silabs-sdk
-ARG SDK_VERSION=2026.6.1
+ARG SDK_VERSION=2026.6.2
 ENV LANG=C.UTF-8
 ENV LC_ALL=C.UTF-8
 RUN set -eux \
