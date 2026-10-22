@@ -1,5 +1,48 @@
 # TubeZB SDK build results
 
+## Simple identities and experimental PB router — 2026-10-22
+
+**15/15 firmware builds succeeded** across the full target run and the added
+PB router run. Existing-target and PB source commits are recorded separately.
+
+- [Full 14-target build and artifacts](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833461370); source `ef6e5241ff2322567fa65ffb9bffa42ac263cc8a`.
+- [Additional MGM24PB router and artifacts](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833813595); source `97382e007ed416ddb59197f8fca2024adbbc2b83`.
+- Router Basic-cluster ManufacturerName (0x0004) is `TubesZB`.
+- Router ModelIdentifier (0x0005) is `MGM24`, `BM24`, or `MGM24PB`.
+- Coordinator XNCP manufacturer is `TubesZB`, with simple hardware model names:
+  `MGM12`, `MGM21`, `MGM24`, `MGM24PB`, or `BM24`, as applicable to this branch.
+- Checked compiled router ELF files for the length-prefixed ZCL manufacturer/model
+  strings, and every coordinator ELF for its firmware XNCP identity strings.
+- Router LED/join/button host checks pass. Configuration merge checks cover file-ID
+  replacement, preservation of unrelated entries, repeated merges, and path fallback.
+- Fix manifest configuration-file merging to replace the base ZAP by file ID;
+  initially appending the BM24 ZAP caused SLC to reject duplicate definitions.
+- The user-supplied flashing tokens used manufacturer `TubesZB`, with older board
+  names `MG24-2024` / `BM MG24-2024`. Firmware now uses the requested simple names.
+- PB router is an experimental personal target, explicitly built for `MGM240PB32VNN`.
+  Earlier PB operation was reportedly unsuccessful; no hardware test is claimed.
+  Use the PB target and matching PB bootloader when testing. The supplied older
+  MGM24 flash scripts select the PA target. No flashing scripts or tokens were changed.
+- Revision/baud/flow details remain in build labels and filenames. No PR was opened.
+
+| Manifest | Result |
+| --- | --- |
+| `tubeszb-BM-MG24B2-hw-max_ncp-uart-hw.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833461370/job/120016623703) |
+| `tubeszb-bm24-openthread_rcp.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833461370/job/120016623756) |
+| `tubeszb-bm24-zigbee_router.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833461370/job/120016623769) |
+| `tubeszb-mgm21-2023-sw_ncp-uart-hw.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833461370/job/120016624057) |
+| `tubeszb-mgm24-hw-ncp-uart-hw.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833461370/job/120016623956) |
+| `tubeszb-mgm24-hw-ncp-uart-hw_2025.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833461370/job/120016623560) |
+| `tubeszb-mgm24-openthread-rcp.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833461370/job/120016623911) |
+| `tubeszb-mgm24-zigbee_router.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833461370/job/120016623660) |
+| `tubeszb-mgm24PB-hw-max_ncp-uart-hw.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833461370/job/120016623913) |
+| `tubeszb-mgm24PB-openthread_rcp.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833461370/job/120016623622) |
+| `tubeszb-mgm24PB-zigbee_router.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833813595/job/120016929439) |
+| `tubeszb-mgm24_bootloader.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833461370/job/120016623637) |
+| `tubeszb-mgm24router-zigbee_router.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833461370/job/120016624007) |
+| `tubeszb_BM24-MG24_bootloader-uart-xmodem.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833461370/job/120016623746) |
+| `tubeszb_MGM240PB_bootloader-uart-xmodem.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39833461370/job/120016623652) |
+
 ## SDK 2026.6.2 migration — 2026-10-22
 
 **14/14 TubeZB firmware builds succeeded**, along with the full workflow.

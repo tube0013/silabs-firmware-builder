@@ -201,3 +201,8 @@ PA0 button, and CTUNE 140, matching the existing PB manifest hardware routing.
 This is a personal experimental target, not a hardware-tested product.
 Previous PB firmware reportedly did not work; compilation does not resolve
 that history. The PB part and matching PB bootloader must be used when testing.
+
+Identity and experimental PB validation: 15/15 firmware targets passed
+across the full-target and additional PB builds. Compiled router Basic defaults
+and coordinator XNCP identity strings were checked. See BUILD-RESULTS.md for
+source commits and download links. Hardware behavior remains unverified for PB.
