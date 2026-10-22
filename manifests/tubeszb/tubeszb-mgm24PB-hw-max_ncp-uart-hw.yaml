@@ -34,6 +34,7 @@ add_components:
   vendor: nabucasa
   package: board_activity
 c_defines:
+  XNCP_EZSP_VERSION_PATCH_NUM_OVERRIDE: 1
   XNCP_MFG_MANUF_NAME: '"TubesZB"'
   XNCP_MFG_BOARD_NAME: '"TubesZB MGM24PB HW Max Zigbee"'
   XNCP_BUILD_STRING: template:"{now:%Y%m%d%H%M%S}"

@@ -4,8 +4,8 @@ Branch: `codex/tubeszb-beta-sync`.
 
 ## Scope and upstream baseline
 
-Based on the locally synced main, including upstream `c9fa1d6` and latest
-beta `v2026.08.18-beta1`. NCP/router builds use Simplicity SDK 2026.6.1 and
+Based on the locally synced main, including upstream `adafdc2` and latest
+beta `v2026.09.17-beta2`. NCP/router builds use Simplicity SDK 2026.6.1 and
 GCC 14.2.1.20241119. MGM12 manifests are renamed `.yaml.disabled` so beta
 manifest discovery cannot attempt to build unsupported Series-1 devices.
 Use the stable branch to produce MGM12 firmware.
@@ -38,6 +38,17 @@ Both integration branches have been pushed to the fork. No PRs have been opened.
   historical filenames, not a promise to retain the old fork's larger limits.
 - BM24 NCP retains main's CTUNE 92 pending confirmation; the nerivec NCP
   reference uses 140. Beta MGM24 uses the nerivec clock settings (CTUNE 140).
+
+## Upstream resync — 2026-10-22
+
+Merge upstream `adafdc2` (PR #227, release `v2026.09.17-beta2`). The base NCP
+project now includes Nabu Casa's dynamic link key policy to fix direct joins
+by Zigbee 4.0 routers without an install code. All five active TubeZB NCP
+manifests follow upstream's patch override and report firmware 9.1.1.1.
+Firmware version handling now applies the override at compile time and reads
+packaging metadata from SDK headers, as upstream does. SDK/toolchain versions
+remain unchanged. Existing TubeZB PTI and EUSART compatibility changes are retained.
+Upstream stable remains `b45d978`, already present in the stable sync branch.
 
 ## PTI coordinator follow-up
 
