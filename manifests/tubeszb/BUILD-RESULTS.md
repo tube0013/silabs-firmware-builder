@@ -1,5 +1,35 @@
 # TubeZB beta build results
 
+## Upstream resync — 2026-10-22
+
+**14/14 firmware builds succeeded**, along with the full workflow.
+
+- [Workflow and downloadable artifacts](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39788425319)
+- Tested source commit: `d1321dd9d641b9f78b62ea2bef9ca906953c5917`.
+- Upstream: `adafdc2`, release `v2026.09.17-beta2`.
+- All five coordinator artifacts report **9.1.1.1**, verified in the generated manifest.
+- Includes the upstream dynamic link key policy fix for direct Zigbee 4.0 router joins.
+- TubeZB hardware configuration, PTI, and EUSART compatibility changes are preserved.
+- Router callback host tests passed. Hardware testing of this update remains.
+- Upstream stable is unchanged at `b45d978`; the stable integration already includes it.
+
+| Manifest | Result |
+| --- | --- |
+| `tubeszb-BM-MG24B2-hw-max_ncp-uart-hw.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39788425319/job/119857847838) |
+| `tubeszb-bm24-openthread_rcp.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39788425319/job/119857848036) |
+| `tubeszb-bm24-zigbee_router.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39788425319/job/119857847845) |
+| `tubeszb-mgm21-2023-sw_ncp-uart-hw.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39788425319/job/119857847908) |
+| `tubeszb-mgm24-hw-ncp-uart-hw.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39788425319/job/119857847957) |
+| `tubeszb-mgm24-hw-ncp-uart-hw_2025.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39788425319/job/119857847999) |
+| `tubeszb-mgm24-openthread-rcp.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39788425319/job/119857847995) |
+| `tubeszb-mgm24-zigbee_router.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39788425319/job/119857847932) |
+| `tubeszb-mgm24PB-hw-max_ncp-uart-hw.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39788425319/job/119857848073) |
+| `tubeszb-mgm24PB-openthread_rcp.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39788425319/job/119857848107) |
+| `tubeszb-mgm24_bootloader.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39788425319/job/119857848060) |
+| `tubeszb-mgm24router-zigbee_router.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39788425319/job/119857847975) |
+| `tubeszb_BM24-MG24_bootloader-uart-xmodem.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39788425319/job/119857848212) |
+| `tubeszb_MGM240PB_bootloader-uart-xmodem.yaml` | [Passed](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39788425319/job/119857848040) |
+
 ## PTI follow-up — 2026-09-17
 
 **4/4 affected coordinator builds succeeded**, along with the full workflow.
