@@ -186,3 +186,7 @@ programming. Endpoints and all other cluster settings are preserved.
 Coordinator XNCP model strings also use only the hardware model: `MGM12`,
 `MGM21`, `MGM24`, `MGM24PB`, or `BM24`. Manufacturer remains `TubesZB`.
 Manifest labels and output filenames retain revision/baud/flow-control details.
+
+Configuration files supplied by a manifest replace a matching base-project
+`file_id` (or path when no ID is provided). This lets the BM24 ZAP override the
+base ZAP without SLC reporting duplicate `zcl_config.zap` definitions.
