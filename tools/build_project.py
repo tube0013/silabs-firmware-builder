@@ -486,7 +486,15 @@ def main():
         shutil.copy(src_path, dst_path)
         LOGGER.info("Copied config file: %s", config_file["path"])
 
-    base_project.setdefault("config_file", []).extend(manifest.get("config_file", []))
+    # A manifest may replace a base configuration (e.g. a board-specific ZAP).
+    # SLC rejects two different paths with the same configuration file identity.
+    config_files = base_project.setdefault("config_file", [])
+    for config_file in manifest.get("config_file", []):
+        key = "file_id" if config_file.get("file_id") else "path"
+        config_files[:] = [
+            item for item in config_files if item.get(key) != config_file[key]
+        ]
+        config_files.append(config_file)
 
     # Extend configuration and C defines
     for input_config, output_config in [
