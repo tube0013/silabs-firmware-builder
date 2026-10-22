@@ -34,7 +34,7 @@ add_components:
   package: board_activity
 c_defines:
   XNCP_MFG_MANUF_NAME: '"TubesZB"'
-  XNCP_MFG_BOARD_NAME: '"TubesZB MGM24PB HW Max Zigbee"'
+  XNCP_MFG_BOARD_NAME: '"MGM24PB"'
   XNCP_BUILD_STRING: template:"{now:%Y%m%d%H%M%S}"
   XNCP_MANUAL_SOURCE_ROUTE_TABLE_SIZE: 200
   EMBER_APS_UNICAST_MESSAGE_COUNT: 32

@@ -169,7 +169,7 @@
               "storageOption": "RAM",
               "singleton": 1,
               "bounded": null,
-              "defaultValue": "TubesZB MGM24 Zigbee Router",
+              "defaultValue": "MGM24",
               "reportable": 0,
               "minInterval": 1,
               "maxInterval": 65534,

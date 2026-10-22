@@ -25,7 +25,7 @@ add_components:
   package: xncp_common
 c_defines:
   XNCP_MFG_MANUF_NAME: '"TubesZB"'
-  XNCP_MFG_BOARD_NAME: '"TubesZB MGM12 2022 Zigbee"'
+  XNCP_MFG_BOARD_NAME: '"MGM12"'
   XNCP_BUILD_STRING: template:"{now:%Y%m%d%H%M%S}"
   XNCP_MANUAL_SOURCE_ROUTE_TABLE_SIZE: 200
   EMBER_APS_UNICAST_MESSAGE_COUNT: 32
