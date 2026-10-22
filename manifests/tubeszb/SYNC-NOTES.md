@@ -15,6 +15,12 @@ coordinator firmware reports 9.1.2.1 (SDK stack version 9.1.2). Keep all PTI,
 LED, clock, UART, and router settings from the tested beta branch. Existing
 build results below describe earlier beta sources until this branch is validated.
 
+The first SDK run compiled the Zigbee firmware but its reproducibility check
+found a new `silabs_core` Conan package path in the prebuilt libraries. Add that
+SDK 2026.6.2 path to the existing source remaps; keep the verification enabled.
+OpenThread builds report `SL-OPENTHREAD/3.1.2.0_GitHub-fb274efe6`; existing
+SDK patches still apply. TubeZB bootloader metadata remains version 3.2.0.
+
 Release references:
 - https://docs.silabs.com/sisdk-release-notes/2026.6.2/sisdk-release-notes-overview/
 - https://docs.silabs.com/zigbee/9.1.2/sisdk-zigbee-release-notes/

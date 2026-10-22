@@ -1037,6 +1037,8 @@ def sdk_path_remaps(build: ResolvedBuild) -> dict[str, str]:
         "/github/home/.silabs/slt/installs/conan/p/commo8335073ce327e/p": f"{sdk_src}/platform_core",
         # silabs_core was repackaged under a new conan hash in Simplicity SDK 2026.6.1
         "/github/home/.silabs/slt/installs/conan/p/commo6146391826d06/p": f"{sdk_src}/platform_core",
+        # silabs_core package used by the prebuilt Zigbee libraries in SDK 2026.6.2
+        "/github/home/.silabs/slt/installs/conan/p/commo5efcde78445e1/p": f"{sdk_src}/platform_core",
         # The Z-Wave SDK isn't part of the Simplicity SDK but is still referenced. If we
         # ever decide to compile it as part of CI, we can change this remap.
         "/opt/github/runner/_work/z-wave/z-wave": "/src/vendor/zwave",
