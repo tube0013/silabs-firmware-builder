@@ -190,3 +190,14 @@ Manifest labels and output filenames retain revision/baud/flow-control details.
 Configuration files supplied by a manifest replace a matching base-project
 `file_id` (or path when no ID is provided). This lets the BM24 ZAP override the
 base ZAP without SLC reporting duplicate `zcl_config.zap` definitions.
+
+## Experimental personal MGM24PB router
+
+Add `tubeszb-mgm24PB-zigbee_router.yaml` for the user's few MGM240PB32VNN
+boards, with Basic model `MGM24PB` and manufacturer `TubesZB`. Existing PB
+coordinator firmware also reports `MGM24PB`. Use the current MGM24 hardware-flow
+router as the reference: EUSART0, 460800 baud, PA6/PA5/PA7/PA8 UART, PD2 LED,
+PA0 button, and CTUNE 140, matching the existing PB manifest hardware routing.
+This is a personal experimental target, not a hardware-tested product.
+Previous PB firmware reportedly did not work; compilation does not resolve
+that history. The PB part and matching PB bootloader must be used when testing.
