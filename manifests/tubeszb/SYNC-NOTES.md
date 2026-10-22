@@ -153,7 +153,11 @@ routing is available. MGM12 remains on stable Zigbee NCP only.
 Set the Basic server cluster's ManufacturerName (0x0004) and ModelIdentifier
 (0x0005) defaults in the ZAP configuration, matching Nabu Casa's router approach.
 Manufacturer is `TubesZB`. Both MGM24 UART variants report
-`TubesZB MGM24 Zigbee Router`; BM24 reports `TubesZB BM24 Zigbee Router`.
+`MGM24`; BM24 reports `BM24`.
 The BM24 manifest selects its own ZAP configuration, identical to MGM24 apart
 from the model default. These firmware defaults require no manufacturing-token
 programming. Endpoints and all other cluster settings are preserved.
+
+Coordinator XNCP model strings also use only the hardware model: `MGM12`,
+`MGM21`, `MGM24`, `MGM24PB`, or `BM24`. Manufacturer remains `TubesZB`.
+Manifest labels and output filenames retain revision/baud/flow-control details.
