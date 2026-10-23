@@ -1,5 +1,25 @@
 # TubeZB SDK build results
 
+## Experimental PB startup test — 2026-10-23
+
+[Build and artifacts](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39901169755); tested source `d3fa4ac1e44ab768f7efbd271722be0683613040`.
+The PB router build and complete workflow pass. Hardware retest is pending.
+
+- Investigating the user's repeating legacy-token-manager assertion on a PB
+  device after a full erase. The original serial line was truncated before its
+  source line number, so the precise assertion has not been confirmed.
+- The previous compiled router has 195 Zigbee token objects and only 200 NVM3
+  cache entries. Secure Vault/PSA storage also uses the default NVM3 instance.
+- Set `NVM3_DEFAULT_CACHE_SIZE` to 512 only for the experimental PB router.
+  The built ELF confirms `defaultCache` is 4,096 bytes rather than 1,600 bytes.
+  Keep the 32 KiB flash storage region and existing token formats.
+- Apply a PB-only SDK patch that prints the assertion filename basename and
+  line number. Build logs confirm the patch applied; disassembly confirms the
+  path-stripping code and preservation of original crash filename/line values.
+- Host router behavior checks pass. Assertions remain enabled.
+- Cache overflow is a candidate cause pending user hardware testing. Do not
+  describe this as a confirmed runtime fix or propagate it to other builds yet.
+
 ## Simple identities and experimental PB router — 2026-10-22
 
 **15/15 firmware builds succeeded** across the full target run and the added
