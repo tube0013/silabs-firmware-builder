@@ -1,0 +1,19 @@
+--- a/zigbee/platform/service/legacy_hal/src/diagnostic.c
++++ b/zigbee/platform/service/legacy_hal/src/diagnostic.c
+@@ -561,7 +561,15 @@
+ #endif
+ 
+ #if defined(SL_CATALOG_IOSTREAM_UART_COMMON_PRESENT)
+-  sl_iostream_printf(SL_IOSTREAM_STDOUT, "\r\n[ASSERT:%s:%d]\r\n", filename, linenumber);
++  // TubeZB: keep the assertion line short enough to arrive before the reset.
++  // Preserve the original filename for the crash information stored below.
++  const char *short_filename = filename;
++  for (const char *p = filename; *p != '\0'; p++) {
++    if (*p == '/' || *p == '\\') {
++      short_filename = p + 1;
++    }
++  }
++  sl_iostream_printf(SL_IOSTREAM_STDOUT, "\r\n[ASSERT:%s:%d]\r\n", short_filename, linenumber);
+ #endif // SL_CATALOG_IOSTREAM_UART_COMMON_PRESENT
+ 
+   halResetWatchdog();              // In case we're close to running out.

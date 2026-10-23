@@ -34,6 +34,8 @@ add_components:
 - id: zigbee_concentrator
 - id: zigbee_identify
 c_defines:
+  # The large router token tables need headroom for Secure Vault/PSA objects.
+  NVM3_DEFAULT_CACHE_SIZE: 512
   SL_ZIGBEE_BROADCAST_TABLE_SIZE: 30
   SL_ZIGBEE_NEIGHBOR_TABLE_SIZE: 26
   SL_ZIGBEE_BINDING_TABLE_SIZE: 32
@@ -87,3 +89,6 @@ config_file:
 - path: config/zcl/mgm24pb/zcl_config.zap
   file_id: zap_configuration_file_id
   directory: zcl
+
+sdk_patches:
+- short_assert_filename.patch

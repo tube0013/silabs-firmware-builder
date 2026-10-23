@@ -206,3 +206,19 @@ Identity and experimental PB validation: 15/15 firmware targets passed
 across the full-target and additional PB builds. Compiled router Basic defaults
 and coordinator XNCP identity strings were checked. See BUILD-RESULTS.md for
 source commits and download links. Hardware behavior remains unverified for PB.
+
+## PB router startup assertion investigation — 2026-10-23
+
+The user reports a repeating assertion in legacy `sl_token_manager.c` even
+after erasing main flash and user data. Its long path hides the line number
+in the captured serial output. Examination of the actual 2026.6.2 PB router
+ELF found 195 Zigbee token objects and a 200-entry NVM3 cache. PB also selects
+Secure Vault/PSA storage. This leaves only five spare cache entries; cache
+overflow is a candidate cause, not yet a confirmed hardware diagnosis.
+
+Increase only the experimental PB router's NVM3 RAM cache to 512 entries
+(4,096 bytes versus 1,600 bytes). Keep the 32 KiB NVM region and assertions.
+A PB-only SDK patch prints just the basename and line for assertions while
+preserving the original filename in crash information. This produces useful
+output such as `[ASSERT:sl_token_manager.c:219]` if startup still fails.
+This test change is on the SDK 2026.6.2 branch pending a hardware retest.
