@@ -198,3 +198,13 @@ cluster hook is needed now. Joined short presses now do nothing. Preserve
 long presses, joining/retry behavior, LED behavior, Basic-command bootloader
 entry, and serial bootloader commands. See ROUTER-BEHAVIOR.md for the exact
 button and LED behavior, including BM24's working LED and MGM24's missing trace.
+
+
+## Joining LED feedback — 2026-10-23
+
+Blink PD02 at 500 ms on / 500 ms off while a network-steering attempt is active.
+Stop the blink timer and show solid on when joined, or off after a failure or
+NETWORK_DOWN while waiting for the next automatic attempt. Keep button and
+commissioning timing unchanged: an unjoined startup starts joining immediately,
+and a successful leave schedules joining after ten seconds. The host test now
+checks blink cadence, failure cleanup, and the transition to solid on.

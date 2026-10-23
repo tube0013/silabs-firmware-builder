@@ -80,3 +80,19 @@ Stable router key-table size is passed as a compiler define because that SDK
 has no generated header override for it. Beta XNCP selects USART versus EUSART
 headers and flow-control constants to support EUSART-only configurations.
 Upstream extension vendor attribution remains unchanged.
+
+
+## Source-route control removal — 2026-10-23
+
+Source commit: `6b9053d`. All four router build jobs passed: MGM24 HW flow,
+MGM24 SW flow, BM24, and experimental MGM24PB. Pre-commit and the host router
+behavior checks passed. Coordinator/Thread/bootloader builds were not repeated
+for this router-only change.
+
+Run and downloadable artifacts: https://github.com/tube0013/silabs-firmware-builder/actions/runs/39966548530
+
+The newly built BM24 ELF on each branch was checked: both custom source-route
+button messages and the optional concentrator init callback are absent; the
+serial bootloader reboot handler remains. Runtime button and LED verification
+of these new artifacts is still pending hardware testing. See ROUTER-BEHAVIOR.md
+for the resulting behavior.
