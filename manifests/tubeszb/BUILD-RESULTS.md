@@ -3,7 +3,8 @@
 ## Experimental PB startup test — 2026-10-23
 
 [Build and artifacts](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39901169755); tested source `d3fa4ac1e44ab768f7efbd271722be0683613040`.
-The PB router build and complete workflow pass. Hardware retest is pending.
+The PB router build and complete workflow pass. On 2026-10-23 the user confirmed
+that this firmware boots on the PB device and enters joining mode.
 
 - Investigating the user's repeating legacy-token-manager assertion on a PB
   device after a full erase. The original serial line was truncated before its
@@ -17,8 +18,11 @@ The PB router build and complete workflow pass. Hardware retest is pending.
   line number. Build logs confirm the patch applied; disassembly confirms the
   path-stripping code and preservation of original crash filename/line values.
 - Host router behavior checks pass. Assertions remain enabled.
-- Cache overflow is a candidate cause pending user hardware testing. Do not
-  describe this as a confirmed runtime fix or propagate it to other builds yet.
+- User hardware feedback confirms startup and entry into joining mode. This
+  strongly supports cache exhaustion as the cause of the earlier reset loop,
+  although the original assertion line was not captured. Successful network
+  joining and sustained routing have not yet been reported. Other builds are
+  unchanged pending those checks.
 
 ## Simple identities and experimental PB router — 2026-10-22
 

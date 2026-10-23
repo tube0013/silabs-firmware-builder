@@ -221,4 +221,7 @@ Increase only the experimental PB router's NVM3 RAM cache to 512 entries
 A PB-only SDK patch prints just the basename and line for assertions while
 preserving the original filename in crash information. This produces useful
 output such as `[ASSERT:sl_token_manager.c:219]` if startup still fails.
-This test change is on the SDK 2026.6.2 branch pending a hardware retest.
+On 2026-10-23 the user confirmed that this SDK 2026.6.2 PB test firmware
+boots and enters joining mode. This strongly supports the cache-capacity
+diagnosis. Successful network joining and sustained routing remain unverified;
+the change has not been propagated to other branches.
