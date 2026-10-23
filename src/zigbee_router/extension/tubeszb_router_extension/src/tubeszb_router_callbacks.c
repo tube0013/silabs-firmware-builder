@@ -68,6 +68,36 @@ static sl_zigbee_af_event_t button_event;
 
 static sl_zigbee_af_event_t commissioning_event;
 
+#if defined(SL_CATALOG_LED0_PRESENT)
+#define JOINING_LED_INTERVAL_MS 500
+static sl_zigbee_af_event_t joining_led_event;
+
+static void joining_led_event_handler(sl_zigbee_af_event_t *event)
+{
+  led_toggle(COMMISSIONING_STATUS_LED);
+  sl_zigbee_af_event_set_delay_ms(event, JOINING_LED_INTERVAL_MS);
+}
+
+static void joining_led_start(void)
+{
+  led_turn_on(COMMISSIONING_STATUS_LED);
+  sl_zigbee_af_event_set_delay_ms(&joining_led_event, JOINING_LED_INTERVAL_MS);
+}
+
+static void joining_led_stop(bool joined)
+{
+  sl_zigbee_af_event_set_inactive(&joining_led_event);
+  if (joined) {
+    led_turn_on(COMMISSIONING_STATUS_LED);
+  } else {
+    led_turn_off(COMMISSIONING_STATUS_LED);
+  }
+}
+#else
+#define joining_led_start() ((void)0)
+#define joining_led_stop(joined) ((void)0)
+#endif
+
 //---------------
 // Event handlers
 
@@ -76,13 +106,12 @@ static void commissioning_event_handler(sl_zigbee_af_event_t *event)
   (void)event;
 
   sl_zigbee_af_event_set_inactive(event);
-  led_turn_on(COMMISSIONING_STATUS_LED);
-
   if (sl_zigbee_af_network_state() != SL_ZIGBEE_JOINED_NETWORK) {
+    joining_led_start();
     sl_status_t status = sl_zigbee_af_network_steering_start();
     sl_zigbee_app_debug_println("Join network start: 0x%X", status);
     if (status != SL_STATUS_OK) {
-      led_turn_off(COMMISSIONING_STATUS_LED);
+      joining_led_stop(false);
       sl_zigbee_af_event_set_delay_ms(event, NWK_STEERING_COOLDOWN_MS);
     }
   }
@@ -131,14 +160,14 @@ static void button_event_handler(sl_zigbee_af_event_t *event)
 void tubeszb_router_stack_status_cb(sl_status_t status)
 {
   if (status == SL_STATUS_NETWORK_DOWN) {
-    led_turn_off(COMMISSIONING_STATUS_LED);
+    joining_led_stop(false);
     sl_zigbee_af_event_set_delay_ms(&commissioning_event, NWK_STEERING_COOLDOWN_MS);
   } else if (status == SL_STATUS_NETWORK_UP) {
     sl_zigbee_af_event_set_inactive(&commissioning_event);
     // make some noise on start for reconnect
     // (otherwise perceived as offline until pinged)
     sl_zigbee_send_device_announcement();
-    led_turn_on(COMMISSIONING_STATUS_LED);
+    joining_led_stop(true);
   }
 }
 
@@ -150,13 +179,18 @@ void tubeszb_router_init(uint8_t init_level)
   (void)init_level;
   sl_zigbee_af_event_init(&commissioning_event, commissioning_event_handler);
 
+  #if defined(SL_CATALOG_LED0_PRESENT)
+  sl_zigbee_af_event_init(&joining_led_event, joining_led_event_handler);
+  #endif
+
   #if defined(SL_CATALOG_SIMPLE_BUTTON_PRESENT)
   sl_zigbee_af_isr_event_init(&button_event, button_event_handler);
   #endif // SL_CATALOG_SIMPLE_BUTTON_PRESENT
 
   if (sl_zigbee_af_network_state() == SL_ZIGBEE_JOINED_NETWORK) {
-    led_turn_on(COMMISSIONING_STATUS_LED);
+    joining_led_stop(true);
   } else {
+    joining_led_stop(false);
     sl_zigbee_af_event_set_active(&commissioning_event);
   }
 }
@@ -191,7 +225,7 @@ void sl_zigbee_af_network_steering_complete_cb(sl_status_t status,
   sl_zigbee_app_debug_println("Join network complete: 0x%X", status);
 
   if (status != SL_STATUS_OK) {
-    led_turn_off(COMMISSIONING_STATUS_LED);
+    joining_led_stop(false);
     sl_zigbee_af_event_set_delay_ms(&commissioning_event, NWK_STEERING_COOLDOWN_MS);
   }
 }

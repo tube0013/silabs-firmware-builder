@@ -28,16 +28,16 @@ joining immediately. The LED is a single active-low output on PD02:
 | Event/state | LED |
 | --- | --- |
 | Joined at startup, or NETWORK_UP | Steady on |
-| Joining attempt starts | On during the attempt |
+| Joining attempt starts | Immediately on, then toggles every 500 ms (one full blink per second) |
 | Steering start fails or steering completion reports failure | Off; retry scheduled after 10 seconds |
 | NETWORK_DOWN | Off; joining scheduled after 10 seconds |
-| Next retry starts | On again |
+| Next retry starts | Blinking resumes |
 | Joined short press | Unchanged |
 | Unjoined short press | No direct LED change |
 
-There is no intentional blinking, traffic indication, or Identify-command LED
-feedback. Failed joins can produce on/off cycles as attempts and retries run;
-this is not a fixed blink pattern. There is no application-defined bootloader
+Joining blinks at 500 ms on / 500 ms off. Blinking stops on network-up,
+network-down, or a failed joining attempt. There is no traffic indication or
+Identify-command LED feedback. There is no application-defined bootloader
 LED pattern. BM24 LEDs should visibly follow these states. The current MGM24
 PCBs have a confirmed missing LED trace, so their physical LEDs cannot show
 the firmware's PD02 output.

@@ -46,6 +46,7 @@ static uint16_t ticks;
 static int button_state,sl_led_led0,sl_button_btn1;
 static void sl_led_turn_on(int *p){(void)p;led=1;}
 static void sl_led_turn_off(int *p){(void)p;led=0;}
+static void sl_led_toggle(int *p){(void)p;led=!led;}
 static int sl_zigbee_af_network_state(void){return network;}
 static int sl_zigbee_af_network_steering_start(void){starts++;return start_result;}
 static void sl_zigbee_af_event_set_inactive(sl_zigbee_af_event_t *e){e->active=false;e->delay=0;}
@@ -65,16 +66,20 @@ static void press(uint16_t start,uint16_t end){ticks=start;button_state=1;sl_but
 int main(void){
  network=SL_ZIGBEE_NO_NETWORK;tubeszb_router_init(0);assert(commissioning_event.active);
  commissioning_event.handler(&commissioning_event);assert(starts==1 && led==1 && !commissioning_event.active);
- sl_zigbee_af_network_steering_complete_cb(3,0,0,0);assert(!led && commissioning_event.delay==10000);
- network=SL_ZIGBEE_JOINED_NETWORK;tubeszb_router_stack_status_cb(SL_STATUS_NETWORK_UP);assert(led && !commissioning_event.active && announcements==1);
- tubeszb_router_init(0);assert(led && !commissioning_event.active);
+ assert(joining_led_event.active && joining_led_event.delay==500);
+ joining_led_event.handler(&joining_led_event);assert(!led && joining_led_event.delay==500);
+ joining_led_event.handler(&joining_led_event);assert(led && joining_led_event.delay==500);
+ sl_zigbee_af_network_steering_complete_cb(3,0,0,0);assert(!led && commissioning_event.delay==10000 && !joining_led_event.active);
+ commissioning_event.handler(&commissioning_event);assert(joining_led_event.active);
+ network=SL_ZIGBEE_JOINED_NETWORK;tubeszb_router_stack_status_cb(SL_STATUS_NETWORK_UP);assert(led && !commissioning_event.active && announcements==1 && !joining_led_event.active);
+ tubeszb_router_init(0);assert(led && !commissioning_event.active && !joining_led_event.active);
  press(100,200);press(300,400);press(100,5100); /* Exactly five seconds is still a short press. */
- assert(leaves==0 && reboots==0 && starts==1 && led==1 && !commissioning_event.active);
+ assert(leaves==0 && reboots==0 && starts==2 && led==1 && !commissioning_event.active);
  press(65000,5500);assert(leaves==1); /* Long press crossing the 16-bit timer wrap. */
- network=SL_ZIGBEE_NO_NETWORK;tubeszb_router_stack_status_cb(SL_STATUS_NETWORK_DOWN);assert(!led && commissioning_event.delay==10000);
+ network=SL_ZIGBEE_NO_NETWORK;tubeszb_router_stack_status_cb(SL_STATUS_NETWORK_DOWN);assert(!led && commissioning_event.delay==10000 && !joining_led_event.active);
  press(100,200);assert(!commissioning_event.active);
  press(300,400);assert(commissioning_event.active);
- start_result=3;commissioning_event.handler(&commissioning_event);assert(!led && commissioning_event.delay==10000);
+ start_result=3;commissioning_event.handler(&commissioning_event);assert(!led && commissioning_event.delay==10000 && !joining_led_event.active);
  press(100,6000);assert(reboots==1);
  sl_zigbee_af_basic_reset_to_factory_defaults_cb(1);assert(reboots==2); /* Intentional remote bootloader entry from Z2M. */
  sl_button_t other=0;button_event.active=false;sl_button_on_change(&other);assert(!button_event.active);
