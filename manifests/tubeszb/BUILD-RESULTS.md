@@ -141,3 +141,18 @@ button messages and the optional concentrator init callback are absent; the
 serial bootloader reboot handler remains. Runtime button and LED verification
 of these new artifacts is still pending hardware testing. See ROUTER-BEHAVIOR.md
 for the resulting behavior.
+
+
+## Joining LED blink — 2026-10-23
+
+Source commit: `9fdc3d1`. All four router build jobs passed: MGM24 HW flow,
+MGM24 SW flow, BM24, and experimental MGM24PB. Pre-commit and the host behavior
+tests passed, including 500 ms blink cadence, stopping after a failed attempt,
+and switching to solid on after joining or restoring a joined network.
+
+Run and downloadable artifacts: https://github.com/tube0013/silabs-firmware-builder/actions/runs/39967452192
+
+The final BM24 ELF on each branch contains the joining LED event handler and
+serial bootloader handler, with the optional concentrator init callback and
+custom source-route toggle messages absent. Hardware validation of the new
+blink remains pending. Button timing and automatic joining are unchanged.
