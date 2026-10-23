@@ -223,6 +223,7 @@ void sl_zigbee_af_basic_reset_to_factory_defaults_cb(uint8_t endpoint)
 {
   (void)endpoint;
 
+  // Intentional remote bootloader entry via the Basic command (for example, Z2M).
   bootloader_rebootAndInstall();
 }
 

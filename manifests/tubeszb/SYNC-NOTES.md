@@ -276,8 +276,34 @@ and Basic reset invoking the bootloader operation. These probes do not prove
 network-A→network-B migration or the underlying SDK's token/key reset behavior.
 
 Recommended follow-up: introduce an explicit commissioning-enabled state and
-a common start/stop path for button/CLI control, check leave status, and remove
-the bootloader action from Basic attribute reset. Validate cross-network leave
-and join on hardware, especially Secure Vault PB. Preserve the established
-bootloader-button gesture unless the user requests a new physical reset policy.
-No runtime/button behavior was changed as part of this assessment.
+a common start/stop path for button/CLI control, and check leave status. Validate
+cross-network leave and join on hardware, especially Secure Vault PB. Preserve
+the established bootloader-button gesture and intentional Basic-command remote
+bootloader entry. No runtime/button behavior was changed in this assessment.
+
+
+## Button and remote bootloader behavior clarified — 2026-10-23
+
+Keep the joined-network short-press source-route discovery toggle. First press
+disables discovery and the next enables it; this does not disable normal packet
+forwarding. Keep the Basic-cluster Reset to Factory Defaults callback entering
+the bootloader: this is intentional remote access, including from Z2M. A host
+regression test now checks that callback as well as the existing button toggle.
+
+The downloaded router ELFs for all three branches (four router variants each),
+plus the PB cache-fix ELF, contain the version handler, bootloader info/reboot
+handlers, and both source-route toggle messages. The shared router project
+includes upstream `router_bootloader_cli`. No executable firmware changes were
+needed for this clarification.
+
+Universal Silabs Flasher's router protocol sends `version` and `bootloader reboot`:
+https://github.com/NabuCasa/universal-silabs-flasher/blob/main/universal_silabs_flasher/router.py
+Our router UART is 460800 baud and bootloader UART is 115200. Upstream's default
+router probe is 115200, so specify `router:460800` when probing these applications.
+The current flasher also waits for a `Gecko Bootloader` banner at the application
+baud before switching to bootloader probing. The differing baud rates can cause
+that wait to time out despite successful reboot. End-to-end automatic flashing
+has not been hardware-tested. If this occurs, reconnect to the bootloader at
+115200 and flash with `--probe-methods bootloader:115200`, or explicitly issue
+`bootloader reboot` from a 460800-baud console, close it, and use that bootloader
+probe. The Basic command offers another intentional route into the bootloader.

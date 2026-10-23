@@ -80,6 +80,7 @@ int main(void){
  press(300,400);assert(commissioning_event.active);
  start_result=3;commissioning_event.handler(&commissioning_event);assert(!led && commissioning_event.delay==10000);
  press(100,6000);assert(reboots==1);
+ sl_zigbee_af_basic_reset_to_factory_defaults_cb(1);assert(reboots==2); /* Intentional remote bootloader entry from Z2M. */
  sl_button_t other=0;button_event.active=false;sl_button_on_change(&other);assert(!button_event.active);
  puts("Router LED, join/retry, restored network, and button tests passed");
 }
