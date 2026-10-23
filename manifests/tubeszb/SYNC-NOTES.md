@@ -186,3 +186,15 @@ has not been hardware-tested. If this occurs, reconnect to the bootloader at
 115200 and flash with `--probe-methods bootloader:115200`, or explicitly issue
 `bootloader reboot` from a 460800-baud console, close it, and use that bootloader
 probe. The Basic command offers another intentional route into the bootloader.
+
+
+## Remove customer source-route controls — 2026-10-23
+
+Supersedes the earlier instruction to keep the joined-network button toggle.
+Remove its state, source-route API calls/header, and the TubeZB router manifests'
+optional concentrator component and concentrator-specific overrides. Retain
+standard source-route support from the upstream shared project. No custom
+cluster hook is needed now. Joined short presses now do nothing. Preserve
+long presses, joining/retry behavior, LED behavior, Basic-command bootloader
+entry, and serial bootloader commands. See ROUTER-BEHAVIOR.md for the exact
+button and LED behavior, including BM24's working LED and MGM24's missing trace.

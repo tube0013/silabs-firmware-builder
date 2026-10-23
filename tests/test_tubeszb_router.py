@@ -17,7 +17,6 @@ headers = [
     "sl_simple_led_instances.h",
     "sl_simple_button.h",
     "sl_simple_button_instances.h",
-    "stack/include/source-route.h",
 ]
 for h in headers:
     p = root / h
@@ -37,14 +36,12 @@ common = r"""
 #define SL_ZIGBEE_NO_NETWORK 0
 #define SL_ZIGBEE_JOINED_NETWORK 1
 #define SL_ZIGBEE_LEAVE_NWK_WITH_NO_OPTION 0
-#define SL_ZIGBEE_SOURCE_ROUTE_DISCOVERY_ON 1
-#define SL_ZIGBEE_SOURCE_ROUTE_DISCOVERY_OFF 0
 #define SL_SIMPLE_BUTTON_PRESSED 1
 #define SL_SIMPLE_BUTTON_RELEASED 0
 #define sl_zigbee_app_debug_println(...) ((void)0)
 typedef int sl_status_t, sl_zigbee_network_status_t, sl_button_state_t, sl_button_t;
 typedef struct Event { bool active; int delay; void (*handler)(struct Event*); } sl_zigbee_af_event_t;
-static int network,led,starts,start_result,leaves,reboots,announcements,route_mode;
+static int network,led,starts,start_result,leaves,reboots,announcements;
 static uint16_t ticks;
 static int button_state,sl_led_led0,sl_button_btn1;
 static void sl_led_turn_on(int *p){(void)p;led=1;}
@@ -58,7 +55,6 @@ static bool sl_zigbee_af_event_is_scheduled(sl_zigbee_af_event_t *e){return e->a
 static void sl_zigbee_af_event_init(sl_zigbee_af_event_t *e,void(*f)(sl_zigbee_af_event_t*)){e->active=false;e->delay=0;e->handler=f;}
 #define sl_zigbee_af_isr_event_init sl_zigbee_af_event_init
 static void sl_zigbee_leave_network(int v){(void)v;leaves++;}
-static void sl_zigbee_set_source_route_discovery_mode(int v){route_mode=v;}
 static void bootloader_rebootAndInstall(void){reboots++;}
 static void sl_zigbee_send_device_announcement(void){announcements++;}
 static int sl_button_get_state(const sl_button_t*p){(void)p;return button_state;}
@@ -72,8 +68,8 @@ int main(void){
  sl_zigbee_af_network_steering_complete_cb(3,0,0,0);assert(!led && commissioning_event.delay==10000);
  network=SL_ZIGBEE_JOINED_NETWORK;tubeszb_router_stack_status_cb(SL_STATUS_NETWORK_UP);assert(led && !commissioning_event.active && announcements==1);
  tubeszb_router_init(0);assert(led && !commissioning_event.active);
- press(100,200);assert(route_mode==SL_ZIGBEE_SOURCE_ROUTE_DISCOVERY_OFF);
- press(300,400);assert(route_mode==SL_ZIGBEE_SOURCE_ROUTE_DISCOVERY_ON);
+ press(100,200);press(300,400);press(100,5100); /* Exactly five seconds is still a short press. */
+ assert(leaves==0 && reboots==0 && starts==1 && led==1 && !commissioning_event.active);
  press(65000,5500);assert(leaves==1); /* Long press crossing the 16-bit timer wrap. */
  network=SL_ZIGBEE_NO_NETWORK;tubeszb_router_stack_status_cb(SL_STATUS_NETWORK_DOWN);assert(!led && commissioning_event.delay==10000);
  press(100,200);assert(!commissioning_event.active);
