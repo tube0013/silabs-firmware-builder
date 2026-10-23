@@ -4,7 +4,8 @@
 
 [Build and artifacts](https://github.com/tube0013/silabs-firmware-builder/actions/runs/39901169755); tested source `d3fa4ac1e44ab768f7efbd271722be0683613040`.
 The PB router build and complete workflow pass. On 2026-10-23 the user confirmed
-that this firmware boots on the PB device and enters joining mode.
+that this firmware boots, joins the network, serves Basic attributes correctly,
+and remains online overnight.
 
 - Investigating the user's repeating legacy-token-manager assertion on a PB
   device after a full erase. The original serial line was truncated before its
@@ -20,9 +21,10 @@ that this firmware boots on the PB device and enters joining mode.
 - Host router behavior checks pass. Assertions remain enabled.
 - User hardware feedback confirms startup and entry into joining mode. This
   strongly supports cache exhaustion as the cause of the earlier reset loop,
-  although the original assertion line was not captured. Successful network
-  joining and sustained routing have not yet been reported. Other builds are
-  unchanged pending those checks.
+  although the original assertion line was not captured. The user subsequently
+  confirmed successful joining, Basic-attribute reads, and overnight online
+  operation. Forwarded routing volume and RF range remain unverified; PB was
+  beside the coordinator without an antenna. Other builds are unchanged.
 
 ## Simple identities and experimental PB router — 2026-10-22
 

@@ -225,3 +225,59 @@ On 2026-10-23 the user confirmed that this SDK 2026.6.2 PB test firmware
 boots and enters joining mode. This strongly supports the cache-capacity
 diagnosis. Successful network joining and sustained routing remain unverified;
 the change has not been propagated to other branches.
+
+## Overnight operation and issue #239 assessment — 2026-10-23
+
+The user reports that MGM24 and the cache-adjusted PB router remained online
+overnight. PB joined successfully and its Basic-cluster attributes read as
+expected. The supplied serial excerpt has 42 Trust Center Keep-Alive responses
+with next delays of 601–881 seconds, normal device-announcement traffic, one
+successful manufacturer-attribute read, and two `0x004C` CCA/channel-busy transmit
+failures. Keep-Alive responses continue after those errors. No assertion, reset,
+network-down, or new commissioning markers appear in this excerpt. The excerpt
+has no useful elapsed timestamps, so it does not independently establish uptime
+or forwarded traffic volume. PB had no antenna and was beside the coordinator.
+
+Upstream reference: https://github.com/NabuCasa/silabs-firmware-builder/issues/239
+(open, no maintainer comments at review time). Its reported factory-reset root
+cause is still a hypothesis, not a confirmed SDK defect. The cited release is
+`v2026.02.23` / Zigbee 8.2.2.
+
+TubeZB uses the shipped nerivec-derived callback extension, while the issue
+investigates Nabu Casa's separate ZBT-2 reset-button/LED callback code. All
+three TubeZB branches currently have identical button callback source.
+
+- TubeZB startup uses runtime `sl_zigbee_af_network_state()`. It does not use
+  ZBT-2's stored PAN/channel gate, so the proposed stale PAN-ID gate in #239
+  does not directly apply.
+- TubeZB handles `SL_STATUS_NETWORK_DOWN` by scheduling commissioning after
+  10 seconds, unlike the cited ZBT-2 handler, which only updates LED state.
+  A successful button-triggered leave is therefore expected to restart joining.
+- The physical button is not a full factory-reset operation. A press over five
+  seconds, acted on at release, requests a network leave when joined and enters
+  the bootloader when unjoined. Leave status is currently ignored. Removing a
+  router only from a host database is not proof it received a Zigbee leave.
+- Retry control is a shared concern: the SDK steering-stop routine invokes the
+  completion callback with NOT_JOINED; our callback schedules another attempt.
+  A short button press cancels a pending app event but does not stop an active
+  SDK scan, and can instead schedule another attempt during that scan.
+- The Basic-cluster factory-default command resets framework attributes, then
+  our callback calls `bootloader_rebootAndInstall()`. It does not explicitly
+  reset network/security state. Basic attribute reset should be distinguished
+  from a physical network factory reset and from entering the bootloader.
+- Router-over-router reflashing generally preserves NVM. The shared role-change
+  reset extension is conditional on non-router state; reflashing is not an
+  unconditional network factory reset.
+
+Validation: existing host router checks pass. Additional temporary probes
+compiled the actual TubeZB callbacks and demonstrated leave→network-down→retry,
+retry rearming after stop/failure completion, the short-press active-scan case,
+and Basic reset invoking the bootloader operation. These probes do not prove
+network-A→network-B migration or the underlying SDK's token/key reset behavior.
+
+Recommended follow-up: introduce an explicit commissioning-enabled state and
+a common start/stop path for button/CLI control, check leave status, and remove
+the bootloader action from Basic attribute reset. Validate cross-network leave
+and join on hardware, especially Secure Vault PB. Preserve the established
+bootloader-button gesture unless the user requests a new physical reset policy.
+No runtime/button behavior was changed as part of this assessment.
