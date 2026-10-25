@@ -220,3 +220,22 @@ The final BM24 ELF on each branch contains the joining LED event handler and
 serial bootloader handler, with the optional concentrator init callback and
 custom source-route toggle messages absent. Hardware validation of the new
 blink remains pending. Button timing and automatic joining are unchanged.
+
+
+## Router button reliability — 2026-10-25
+
+Source commit: `55d3abf`. All four router build jobs passed: MGM24 HW flow,
+MGM24 SW flow, BM24, and experimental MGM24PB. Pre-commit and host behavior
+tests passed. Regression coverage includes repeated held samples, unmatched
+releases, startup-held buttons, exact five-second classification, 32-bit tick
+wrap, holds longer than 65.536 seconds, joining LED behavior, and Basic-command
+bootloader entry. The host stub supplies debounced states; it does not simulate
+the physical switch or prove electrical noise rejection.
+
+Run and artifacts: https://github.com/tube0013/silabs-firmware-builder/actions/runs/40245892995
+
+The SDK 2026.6.2 PB ELF was inspected: its button context selects polling with
+debounce (mode 1), GPIO initialization uses filtered input pull (mode 3) and
+DOUT=1 for pull-up, the polling handler is present, serial bootloader entry
+remains, and the earlier 4,096-byte NVM cache is preserved. Hardware validation
+of the button reliability fix remains pending.
