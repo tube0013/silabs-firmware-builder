@@ -229,3 +229,8 @@ held at boot. Use 32-bit sleeptimer ticks instead of the 16-bit millisecond
 counter. Keep the established release-time actions, joining LED, automatic
 joining/retry policy, and Basic/serial bootloader access. Hardware testing is
 needed to confirm the observed PB issue is resolved.
+
+The user subsequently confirmed that the PA0-to-ground button wiring, without
+an external pull-up, is the same across all devices. The shared fix therefore
+applies to all four router variants. All twelve router build jobs passed across
+the three branches; see BUILD-RESULTS.md for the source commits and artifacts.
