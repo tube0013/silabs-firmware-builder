@@ -57,10 +57,15 @@
 #if defined(SL_CATALOG_SIMPLE_BUTTON_PRESENT)
 #include "sl_simple_button.h"
 #include "sl_simple_button_instances.h"
+#include "sl_sleeptimer.h"
 
 #define BUTTON_LONG_PRESS_TIME_MS 5000
+#define BUTTON_POLL_INTERVAL_MS 10
 
 static bool button_long_press = false;
+static bool button_pressed;
+static bool button_press_seen;
+static uint32_t button_press_time;
 static sl_zigbee_af_event_t button_event;
 #endif // SL_CATALOG_SIMPLE_BUTTON_PRESENT
 
@@ -118,11 +123,8 @@ static void commissioning_event_handler(sl_zigbee_af_event_t *event)
 }
 
 #if defined(SL_CATALOG_SIMPLE_BUTTON_PRESENT)
-static void button_event_handler(sl_zigbee_af_event_t *event)
+static void button_release_handler(void)
 {
-  (void)event;
-
-  sl_zigbee_af_event_set_inactive(event);
   sl_zigbee_network_status_t state = sl_zigbee_af_network_state();
 
   if (state == SL_ZIGBEE_JOINED_NETWORK) {
@@ -144,6 +146,29 @@ static void button_event_handler(sl_zigbee_af_event_t *event)
       }
     }
   }
+}
+
+// Sample in the application context. The SDK requires explicit polling for
+// POLL_AND_DEBOUNCE; it does not call sl_button_on_change in this mode.
+static void button_event_handler(sl_zigbee_af_event_t *event)
+{
+  sl_button_poll_step(&sl_button_btn1);
+  bool pressed = sl_button_get_state(&sl_button_btn1) == SL_SIMPLE_BUTTON_PRESSED;
+
+  if (pressed != button_pressed) {
+    button_pressed = pressed;
+    if (pressed) {
+      button_press_time = sl_sleeptimer_get_tick_count();
+      button_press_seen = true;
+    } else if (button_press_seen) {
+      button_press_seen = false;
+      uint32_t held_ticks = sl_sleeptimer_get_tick_count() - button_press_time;
+      button_long_press = held_ticks > sl_sleeptimer_ms_to_tick(BUTTON_LONG_PRESS_TIME_MS);
+      button_release_handler();
+    }
+  }
+
+  sl_zigbee_af_event_set_delay_ms(event, BUTTON_POLL_INTERVAL_MS);
 }
 #endif // SL_CATALOG_SIMPLE_BUTTON_PRESENT
 
@@ -184,7 +209,10 @@ void tubeszb_router_init(uint8_t init_level)
   #endif
 
   #if defined(SL_CATALOG_SIMPLE_BUTTON_PRESENT)
-  sl_zigbee_af_isr_event_init(&button_event, button_event_handler);
+  button_pressed = sl_button_get_state(&sl_button_btn1) == SL_SIMPLE_BUTTON_PRESSED;
+  button_press_seen = false; // A button held at startup must be released first.
+  sl_zigbee_af_event_init(&button_event, button_event_handler);
+  sl_zigbee_af_event_set_delay_ms(&button_event, BUTTON_POLL_INTERVAL_MS);
   #endif // SL_CATALOG_SIMPLE_BUTTON_PRESENT
 
   if (sl_zigbee_af_network_state() == SL_ZIGBEE_JOINED_NETWORK) {
@@ -248,39 +276,5 @@ void sl_zigbee_af_basic_reset_to_factory_defaults_cb(uint8_t endpoint)
   bootloader_rebootAndInstall();
 }
 
-
-#if defined(SL_CATALOG_SIMPLE_BUTTON_PRESENT)
-/***************************************************************************//**
- * A callback called in interrupt context whenever a button changes its state.
- *
- * @remark Can be implemented by the application if required. This function
- * can contain the functionality to be executed in response to changes of state
- * in each of the buttons, or callbacks to appropriate functionality.
- *
- * @note The button state should not be updated in this function, it is updated
- * by specific button driver prior to arriving here
- *
-   @param[out] handle             Pointer to button instance
- ******************************************************************************/
-void sl_button_on_change(const sl_button_t *handle)
-{
-  if (handle != &sl_button_btn1) {
-    return;
-  }
-
-  static uint16_t button_press_time;
-  uint16_t current_time = 0;
-  sl_button_state_t button_state = sl_button_get_state(handle);
-
-  if (button_state == SL_SIMPLE_BUTTON_PRESSED) {
-    button_press_time = halCommonGetInt16uMillisecondTick();
-  } else if (button_state == SL_SIMPLE_BUTTON_RELEASED) {
-    current_time = halCommonGetInt16uMillisecondTick();
-    button_long_press = (uint16_t)(current_time - button_press_time) > BUTTON_LONG_PRESS_TIME_MS;
-
-    sl_zigbee_af_event_set_active(&button_event);
-  }
-}
-#endif // SL_CATALOG_SIMPLE_BUTTON_PRESENT
 
 #endif //#if (LARGE_NETWORK_TESTING == 0)
