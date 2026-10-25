@@ -17,6 +17,7 @@ headers = [
     "sl_simple_led_instances.h",
     "sl_simple_button.h",
     "sl_simple_button_instances.h",
+    "sl_sleeptimer.h",
 ]
 for h in headers:
     p = root / h
@@ -42,7 +43,7 @@ common = r"""
 typedef int sl_status_t, sl_zigbee_network_status_t, sl_button_state_t, sl_button_t;
 typedef struct Event { bool active; int delay; void (*handler)(struct Event*); } sl_zigbee_af_event_t;
 static int network,led,starts,start_result,leaves,reboots,announcements;
-static uint16_t ticks;
+static uint32_t ticks;
 static int button_state,sl_led_led0,sl_button_btn1;
 static void sl_led_turn_on(int *p){(void)p;led=1;}
 static void sl_led_turn_off(int *p){(void)p;led=0;}
@@ -59,12 +60,18 @@ static void sl_zigbee_leave_network(int v){(void)v;leaves++;}
 static void bootloader_rebootAndInstall(void){reboots++;}
 static void sl_zigbee_send_device_announcement(void){announcements++;}
 static int sl_button_get_state(const sl_button_t*p){(void)p;return button_state;}
-static uint16_t halCommonGetInt16uMillisecondTick(void){return ticks;}
+static void sl_button_poll_step(const sl_button_t*p){(void)p;}
+static uint32_t sl_sleeptimer_get_tick_count(void){return ticks;}
+static uint32_t sl_sleeptimer_ms_to_tick(uint16_t ms){return ms;}
 """
 tests = r"""
-static void press(uint16_t start,uint16_t end){ticks=start;button_state=1;sl_button_on_change(&sl_button_btn1);ticks=end;button_state=0;sl_button_on_change(&sl_button_btn1);button_event.handler(&button_event);}
+/* Input states here represent SDK-debounced samples, not raw contact edges. */
+static void sample(uint32_t now,int pressed){ticks=now;button_state=pressed;button_event.handler(&button_event);}
+static void press(uint32_t start,uint32_t end){sample(start,1);sample(end,0);}
 int main(void){
  network=SL_ZIGBEE_NO_NETWORK;tubeszb_router_init(0);assert(commissioning_event.active);
+ sample(60000,0);sample(70000,0);assert(reboots==0 && leaves==0 && commissioning_event.active);
+ assert(button_event.active && button_event.delay==10);
  commissioning_event.handler(&commissioning_event);assert(starts==1 && led==1 && !commissioning_event.active);
  assert(joining_led_event.active && joining_led_event.delay==500);
  joining_led_event.handler(&joining_led_event);assert(!led && joining_led_event.delay==500);
@@ -75,15 +82,20 @@ int main(void){
  tubeszb_router_init(0);assert(led && !commissioning_event.active && !joining_led_event.active);
  press(100,200);press(300,400);press(100,5100); /* Exactly five seconds is still a short press. */
  assert(leaves==0 && reboots==0 && starts==2 && led==1 && !commissioning_event.active);
- press(65000,5500);assert(leaves==1); /* Long press crossing the 16-bit timer wrap. */
+ sample(1000,1);sample(5000,1);sample(7001,0);assert(leaves==1); /* Duplicate held samples must not restart the timer. */
+ sample(15000,0);assert(leaves==1); /* An unmatched release cannot create another action. */
+ press(UINT32_MAX-1000,5000);assert(leaves==2); /* Unsigned 32-bit tick wrap. */
+ press(100,70100);assert(leaves==3); /* Holds beyond the former 16-bit millisecond wrap. */
  network=SL_ZIGBEE_NO_NETWORK;tubeszb_router_stack_status_cb(SL_STATUS_NETWORK_DOWN);assert(!led && commissioning_event.delay==10000 && !joining_led_event.active);
  press(100,200);assert(!commissioning_event.active);
  press(300,400);assert(commissioning_event.active);
  start_result=3;commissioning_event.handler(&commissioning_event);assert(!led && commissioning_event.delay==10000 && !joining_led_event.active);
  press(100,6000);assert(reboots==1);
  sl_zigbee_af_basic_reset_to_factory_defaults_cb(1);assert(reboots==2); /* Intentional remote bootloader entry from Z2M. */
- sl_button_t other=0;button_event.active=false;sl_button_on_change(&other);assert(!button_event.active);
- puts("Router LED, join/retry, restored network, and button tests passed");
+ network=SL_ZIGBEE_JOINED_NETWORK;button_state=1;tubeszb_router_init(0);
+ sample(8000,0);assert(leaves==3); /* Held at boot: first release must be ignored. */
+ press(9000,15001);assert(leaves==4); /* A fresh press works after that startup release. */
+ puts("Router LED, join/retry, restored network, and debounced-button transition tests passed");
 }
 """
 src = (
