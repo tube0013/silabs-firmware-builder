@@ -1,12 +1,19 @@
 # TubeZB router button and LED behavior
 
-Updated 2026-10-23. Applies to MGM24, MGM24 SW-flow/router, BM24, and
+Updated 2026-10-25. Applies to MGM24, MGM24 SW-flow/router, BM24, and
 experimental MGM24PB router manifests on this branch.
 
-The PA0 button acts on **release**. A hold strictly longer than 5,000 ms is
-a long press; exactly 5,000 ms is a short press. The network state at the time
-the button event runs determines the action. Timekeeping uses a 16-bit
-millisecond counter; avoid holds of 65.536 seconds or more because they wrap.
+The active-low PA0-to-ground button uses the internal filtered pull-up;
+no external pull-up is required. The SDK debounce driver is sampled every
+10 ms with five debounce bits (about 50–60 ms of stable input per transition).
+The button acts on **debounced release**. A hold strictly longer than 5,000 ms
+between debounced press/release transitions is a long press; exactly 5,000 ms
+is short. Timing is quantized by polling and application scheduling. The network
+state when the release is processed determines the action. A button held during
+startup must be released and pressed again before it can trigger an action.
+Repeated samples in the same state and releases without a tracked press are
+ignored. Hold duration uses wrap-safe subtraction of the 32-bit sleeptimer tick
+counter, eliminating the former 65.536-second millisecond-counter limitation.
 
 | Network state | Short press (up to 5 seconds) | Long press (over 5 seconds) |
 | --- | --- | --- |

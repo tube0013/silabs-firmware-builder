@@ -230,3 +230,24 @@ NETWORK_DOWN while waiting for the next automatic attempt. Keep button and
 commissioning timing unchanged: an unjoined startup starts joining immediately,
 and a successful leave schedules joining after ten seconds. The host test now
 checks blink cadence, failure cleanup, and the transition to solid on.
+
+
+## PB button reliability — 2026-10-25
+
+The user confirms PA0 is switched to ground with no external pull-up. The old
+manifest used the SDK's unpulled input default and raw interrupt mode. That
+leaves the released line floating. The old callback also overwrote the hold
+start on every pressed notification and accepted releases without a tracked
+press, explaining mechanisms for missed holds and phantom long presses. The
+console excerpt contains repeated unsolicited button actions and steering
+requests while an SDK scan is active; it later joins successfully. It does not
+record raw GPIO timing, so electrical noise/bounce details remain unmeasured.
+
+All four router variants now enable the internal filtered pull-up, active-low
+polarity, and SDK POLL_AND_DEBOUNCE mode (five bits), sampled by a single 10 ms
+application event. Handle only debounced transitions; repeated pressed samples
+do not reset timing. Ignore unmatched releases and the first release of a button
+held at boot. Use 32-bit sleeptimer ticks instead of the 16-bit millisecond
+counter. Keep the established release-time actions, joining LED, automatic
+joining/retry policy, and Basic/serial bootloader access. Hardware testing is
+needed to confirm the observed PB issue is resolved.

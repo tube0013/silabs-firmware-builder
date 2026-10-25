@@ -11,6 +11,7 @@ provides:
 requires:
   - name: simple_led
   - name: simple_button
+  - name: sleeptimer
   - name: zigbee_network_steering
   - name: bootloader_interface
 template_contribution:
