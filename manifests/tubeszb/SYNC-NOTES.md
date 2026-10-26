@@ -355,3 +355,13 @@ The user subsequently confirmed that the PA0-to-ground button wiring, without
 an external pull-up, is the same across all devices. The shared fix therefore
 applies to all four router variants. All twelve router build jobs passed across
 the three branches; see BUILD-RESULTS.md for the source commits and artifacts.
+
+
+## BM24 beta feed baud compatibility — 2026-10-26
+
+Add a separate 460800-baud BM24 NCP target for the relocated GitHub Pages beta
+feed. Keep the existing 115200-baud target. The new manifest changes only its
+display name and application/metadata baud rate; part, pin routing, hardware
+flow control, PD02 activity LED, PTI, DLK policy, and identity are unchanged.
+The user confirmed that both the MGM24 and BM24 beta feed should remain at
+460800 baud and that the intended firmware version is 9.1.2.1.
