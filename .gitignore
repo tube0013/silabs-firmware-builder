@@ -17,3 +17,5 @@ misc/**/*.bak
 /.venv
 var/
 *.zap~
+__pycache__/
+*.py[cod]
