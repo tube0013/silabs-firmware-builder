@@ -266,3 +266,50 @@ as NCP9.1.2.1 at460800 and passed GBL CRC checks before copying. The existing
 8.2.2 images were retained for legacy feed URLs. All four populated local update
 feeds passed URL-to-local-file, size, and MD5 checks, and MkDocs built a temporary
 Pages preview successfully.
+
+
+## Experimental router OTA — 2026-10-26
+
+Branch: `codex/tubeszb-router-ota-2026.6.2`, based on `dd4dae3` of the SDK
+2026.6.2 branch. No PR, release, OTA feed publication or HA configuration change.
+
+- [Router build run 40379270559](https://github.com/tube0013/silabs-firmware-builder/actions/runs/40379270559),
+  source `0f2e03c`: MGM24 hardware flow, MGM24 software flow, MGM24PB and BM24
+  all built successfully with GBL, HEX, ELF and Zigbee OTA outputs.
+- [Combined UART/OTA bootloader run 40380359745](https://github.com/tube0013/silabs-firmware-builder/actions/runs/40380359745),
+  source `41dd191`: all three modules built successfully as Gecko bootloader
+  **3.2.1** (customer version 1).
+- CI includes the OTA file/manifest and FORCE reset tests plus the existing
+  button/LED tests with OTA both disabled and enabled. All passed.
+- Independent zigpy **2.3.0** parsing accepted all four OTA images, recovered each
+  exact GBL, and confirmed manufacturer 0x1002, distinct image types 0x5424–0x5427,
+  file version 2026102601, and file lengths. The manufacturer code is provisional.
+- All four router ELFs reserve OTA flash starting at **0x080C0000**, ending at
+  **0x08176000**, with the existing NVM region **0x08176000–0x0817E000** unchanged.
+- All three compiled bootloader `storageLayout` tables specify internal flash,
+  one slot, start **0x080C0000**, size **0xB4000**. Thus the application writes
+  the GBL where the bootloader reads it. The SDK stores the OTA header/progress
+  metadata near the end of the same slot.
+- Bootloader tables advertise **both storage and communication** (capabilities
+  0x001104F0) and application start **0x08006000**. Installed bootloader size
+  including CRC is 0x3688 for MGM24/BM24 and 0x36A8 for PB, safely below that start.
+- PB compiled-code inspection confirmed FORCE (0x0205) for the existing button,
+  Basic command and CLI recovery paths, with the normal SDK install path retained
+  for OTA. Its `defaultCache` is still 4096 bytes (512 NVM3 cache entries).
+
+Artifacts inspected locally under `/private/tmp/tubeszb-router-ota-artifacts`:
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `tubeszb-bm24-zigbee_router_2026.6.2_460800_sw_flow.ota` | 362138 | `aa0cffe520b61c4b9eee9e0874aefc2735418fb7624d2a0ae35d0460fca32c76` |
+| `tubeszb-bm24_bootloader-uart-ota_3.2.1.gbl` | 14172 | `36b1b5eced6bf94ec0a3a551af9b99e4553c6145368eee175aefd2c93f02950a` |
+| `tubeszb-mgm24-zigbee_router_2026.6.2_460800_hw_flow.ota` | 353918 | `9bf5eac289661d4a7ba230e74f146f0668e45eb537132d8204574531eee9b10f` |
+| `tubeszb-mgm24PB-zigbee_router_2026.6.2_460800_hw_flow.ota` | 368478 | `219d80c82b2609efdf3c053217eb48e74d2ee15c794c3bad396d68319267d07b` |
+| `tubeszb-mgm24PB_bootloader-uart-ota_3.2.1.gbl` | 14204 | `529746faadfa401478d1b5adf4b0fec25078eb63516d0e19c880a329064677f5` |
+| `tubeszb-mgm24_bootloader-uart-ota_3.2.1.gbl` | 14172 | `36b1b5eced6bf94ec0a3a551af9b99e4553c6145368eee175aefd2c93f02950a` |
+| `tubeszb-mgm24router-zigbee_router_2026.6.2_460800_sw_flow.ota` | 353854 | `9b4b40ef6d84ab6368d8ccf0ce11da9b0f5adc946b800867f3920cc79a2319db` |
+
+Hardware OTA installation, interrupted-download recovery, retention through an
+OTA install, and UART recovery with a staged image have not yet been exercised
+on physical devices. Use the matching new bootloader before the first OTA test.
+See [ROUTER-OTA.md](ROUTER-OTA.md) for the setup and test sequence.

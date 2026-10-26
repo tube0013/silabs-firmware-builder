@@ -96,10 +96,10 @@ uses the server's normal upgrade-end scheduling. Failed downloads are cleared.
 
 ## First hardware test
 
-1. Install the matching combined bootloader **and** OTA-capable router using SWD
-   or the appropriate UART update process. Do not erase NVM/user data merely to
-   add OTA. Confirm the bootloader fits below the application's existing start
-   address before flashing; do not use a full-chip erase as an update method.
+1. For initial testing, program the matching combined bootloader **and** OTA-capable
+   router HEX files over SWD, preserving NVM/user data. The verified bootloaders
+   fit below the existing application start at 0x08006000. Do not use a full-chip
+   erase as an update method. UART/XMODEM remains available afterward.
 2. In the router CLI, run `plugin slot-manager slots-info` and `plugin ota-client
    info`. Confirm slot 0 starts at 0x080C0000 with size 0xB4000, and check the
    manufacturer's ID, image type and current file version.
