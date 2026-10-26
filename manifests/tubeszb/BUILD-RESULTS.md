@@ -239,3 +239,30 @@ debounce (mode 1), GPIO initialization uses filtered input pull (mode 3) and
 DOUT=1 for pull-up, the polling handler is present, serial bootloader entry
 remains, and the earlier 4,096-byte NVM cache is preserved. Hardware validation
 of the button reliability fix remains pending.
+
+
+## BM24 NCP 460800 beta-feed build — 2026-10-26
+
+Source commit: `7564029`. Successful targeted build:
+https://github.com/tube0013/silabs-firmware-builder/actions/runs/40327073654
+
+The new `tubeszb-BM-MG24B2-hw-max_ncp-uart-hw_460800.yaml` target retains the
+existing BM24 hardware configuration and changes the application baud to
+460800. The original 115200 target remains available. The ELF contains the
+strong DLK negotiation policy callback and BM24 identity. The GBL end-tag CRC
+checks correctly; metadata confirms Zigbee NCP 9.1.2.1, SDK 2026.6.2, baud460800.
+Hardware testing of the new BM24 baud variant is still pending.
+
+The local tube_gateways beta feed was updated (not committed/deployed) with:
+
+| Variant | Public filename | Bytes | MD5 |
+| --- | --- | ---: | --- |
+| BM24 | `tubeszb-bm24-zigbee_ncp_9.1.2.1_460800_hw_flow.gbl` | 263184 | `781f6f0746688118ee58710f414ec226` |
+| MGM24 | `tubeszb-mgm24-zigbee_ncp_9.1.2.1_460800_hw_flow.gbl` | 264200 | `8a0e8ba93dc610f4ef417c1f2586afa9` |
+
+MGM24 is the unchanged, previously validated NCP artifact from run39833461370,
+source `ef6e5241ff2322567fa65ffb9bffa42ac263cc8a`. Both images were verified
+as NCP9.1.2.1 at460800 and passed GBL CRC checks before copying. The existing
+8.2.2 images were retained for legacy feed URLs. All four populated local update
+feeds passed URL-to-local-file, size, and MD5 checks, and MkDocs built a temporary
+Pages preview successfully.
