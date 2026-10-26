@@ -3,6 +3,8 @@
 import copy
 import json
 import struct
+import subprocess
+import tempfile
 import unittest
 import zlib
 from pathlib import Path
@@ -124,12 +126,59 @@ class TestRouterOta(unittest.TestCase):
         )
         self.assertEqual(len(bootloaders), 3)
         for path in bootloaders:
-            defines = yaml.load(path)["c_defines"]
-            self.assertEqual(defines["SLOT0_START"]["value"], 0x080C0000)
-            self.assertLessEqual(
-                defines["SLOT0_START"]["value"] + defines["SLOT0_SIZE"]["value"],
-                0x08176000,
+            config = yaml.load(path)["config_file"][0]
+            self.assertEqual(config["file_id"], "btl_storage_slot_cfg")
+            header = (path.parent / config["path"]).read_text()
+            self.assertIn("#define SLOT0_START 0x080C0000UL", header)
+            self.assertIn("#define SLOT0_SIZE 0x000B4000UL", header)
+
+    def test_recovery_sets_force_instead_of_install(self):
+        with tempfile.TemporaryDirectory(prefix="tubeszb-ota-recovery-") as directory:
+            root = Path(directory)
+            (root / "btl_interface.h").write_text(
+                "#include <stdint.h>\n"
+                "typedef struct { uint16_t reason, signature; } BootloaderResetCause_t;\n"
+                "#define BOOTLOADER_RESET_REASON_FORCE 0x0205\n"
+                "#define BOOTLOADER_RESET_SIGNATURE_VALID 0xF00F\n"
             )
+            (root / "em_device.h").write_text(
+                "void test_system_reset(void);\n"
+                "#define NVIC_SystemReset test_system_reset\n"
+            )
+            (root / "main.c").write_text(
+                '#include "btl_interface.h"\n#include <assert.h>\n'
+                '#include <string.h>\n#include "tubeszb_router_ota.h"\n'
+                "uint32_t __ResetReasonStart__;\nstatic int resets;\n"
+                "void test_system_reset(void) { resets++; }\n"
+                "int main(void) {\n"
+                "  BootloaderResetCause_t cause;\n"
+                "  tubeszb_router_reboot_to_uart();\n"
+                "  memcpy(&cause, &__ResetReasonStart__, sizeof(cause));\n"
+                "  assert(cause.reason == BOOTLOADER_RESET_REASON_FORCE);\n"
+                "  assert(cause.signature == BOOTLOADER_RESET_SIGNATURE_VALID);\n"
+                "  assert(resets == 1);\n}\n"
+            )
+            extension = ROOT / "src/zigbee_router/extension/tubeszb_router_extension"
+            executable = root / "test"
+            subprocess.run(
+                [
+                    "cc",
+                    "-std=c11",
+                    "-Wall",
+                    "-Wextra",
+                    "-Werror",
+                    "-I",
+                    str(root),
+                    "-I",
+                    str(extension / "inc"),
+                    str(root / "main.c"),
+                    str(extension / "src/tubeszb_router_ota.c"),
+                    "-o",
+                    str(executable),
+                ],
+                check=True,
+            )
+            subprocess.run([str(executable)], check=True)
 
 
 if __name__ == "__main__":

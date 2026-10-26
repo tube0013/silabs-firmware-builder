@@ -34,6 +34,7 @@ add_components:
 - id: tubeszb_router_ota
   vendor: TubesZB
   package: tubeszb_router
+- id: zigbee_ota_storage_simple
 c_defines:
   SL_ZIGBEE_BROADCAST_TABLE_SIZE: 30
   SL_ZIGBEE_NEIGHBOR_TABLE_SIZE: 26

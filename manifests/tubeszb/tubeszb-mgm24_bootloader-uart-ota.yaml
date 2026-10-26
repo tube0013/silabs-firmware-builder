@@ -27,32 +27,12 @@ c_defines:
     type: c_flag
     value: 1
   BOOTLOADER_VERSION_MAIN_CUSTOMER: 1
-  SLOT_CUSTOM_CONFIG:
-    type: config
-    value: 1
-    error_on_duplicate: false
-  SLOT0_ENABLE:
-    type: config
-    value: 1
-    error_on_duplicate: false
-  SLOT0_START:
-    type: config
-    value: 135004160
-    error_on_duplicate: false
-  SLOT0_SIZE:
-    type: config
-    value: 737280
-    error_on_duplicate: false
-  SLOT1_ENABLE:
-    type: config
-    value: 0
-    error_on_duplicate: false
-  SLOT2_ENABLE:
-    type: config
-    value: 0
-    error_on_duplicate: false
 add_components:
 - id: bootloader_internal_storage
 - id: bootloader_common_storage_single
 sdk_patches:
 - uart-ota-recovery.patch
+config_file:
+- path: config/bootloader/btl_storage_slot_cfg.h
+  file_id: btl_storage_slot_cfg
+  directory: config
