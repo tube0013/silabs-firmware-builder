@@ -10,6 +10,7 @@ headers = [
     "app/framework/include/af.h",
     "sl_component_catalog.h",
     "btl_interface.h",
+    "tubeszb_router_ota.h",
     "network-steering.h",
     "stack/include/zigbee-device-stack.h",
     "app/framework/plugin/basic/basic.h",
@@ -57,7 +58,11 @@ static bool sl_zigbee_af_event_is_scheduled(sl_zigbee_af_event_t *e){return e->a
 static void sl_zigbee_af_event_init(sl_zigbee_af_event_t *e,void(*f)(sl_zigbee_af_event_t*)){e->active=false;e->delay=0;e->handler=f;}
 #define sl_zigbee_af_isr_event_init sl_zigbee_af_event_init
 static void sl_zigbee_leave_network(int v){(void)v;leaves++;}
+#if defined(SL_CATALOG_TUBESZB_ROUTER_OTA_PRESENT)
+static void tubeszb_router_reboot_to_uart(void){reboots++;}
+#else
 static void bootloader_rebootAndInstall(void){reboots++;}
+#endif
 static void sl_zigbee_send_device_announcement(void){announcements++;}
 static int sl_button_get_state(const sl_button_t*p){(void)p;return button_state;}
 static void sl_button_poll_step(const sl_button_t*p){(void)p;}
@@ -103,22 +108,24 @@ src = (
     / "src/zigbee_router/extension/tubeszb_router_extension/src/tubeszb_router_callbacks.c"
 )
 test = root / "test.c"
-test.write_text(common + '\n#include "' + str(src) + '"\n' + tests)
-out = root / "test"
-subprocess.run(
-    [
-        "cc",
-        "-std=c11",
-        "-Wall",
-        "-Wextra",
-        "-Werror",
-        "-I",
-        str(root),
-        str(test),
-        "-o",
-        str(out),
-    ],
-    check=True,
-)
-subprocess.run([str(out)], check=True)
+for ota_enabled in (False, True):
+    feature = "#define SL_CATALOG_TUBESZB_ROUTER_OTA_PRESENT 1\n" if ota_enabled else ""
+    test.write_text(feature + common + '\n#include "' + str(src) + '"\n' + tests)
+    out = root / "test"
+    subprocess.run(
+        [
+            "cc",
+            "-std=c11",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "-I",
+            str(root),
+            str(test),
+            "-o",
+            str(out),
+        ],
+        check=True,
+    )
+    subprocess.run([str(out)], check=True)
 temporary.cleanup()

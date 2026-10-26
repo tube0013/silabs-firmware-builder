@@ -6,6 +6,10 @@
 
 #include "router_bootloader_cli.h"
 #include "btl_interface.h"
+#include "sl_component_catalog.h"
+#if defined(SL_CATALOG_TUBESZB_ROUTER_OTA_PRESENT)
+#include "tubeszb_router_ota.h"
+#endif
 #include "sl_cli.h"
 #include "app/framework/include/af.h"
 #include <stdio.h>
@@ -45,5 +49,9 @@ void router_bootloader_cli_info(sl_cli_command_arg_t *arguments)
 void router_bootloader_cli_reboot(sl_cli_command_arg_t *arguments)
 {
   (void)arguments;
+#if defined(SL_CATALOG_TUBESZB_ROUTER_OTA_PRESENT)
+  tubeszb_router_reboot_to_uart();
+#else
   bootloader_rebootAndInstall();
+#endif
 }

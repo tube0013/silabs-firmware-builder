@@ -1,0 +1,24 @@
+id: tubeszb_router_ota
+label: TubesZB Router OTA
+package: custom
+description: Standard Zigbee OTA client with internal flash storage and explicit UART recovery.
+category: Zigbee|Router
+quality: experimental
+source:
+  - path: src/tubeszb_router_ota.c
+include:
+  - path: inc
+    file_list:
+      - path: tubeszb_router_ota.h
+provides:
+  - name: tubeszb_router_ota
+requires:
+  - name: zigbee_ota_client
+  - name: zigbee_ota_client_policy
+  - name: zigbee_ota_bootload
+  - name: zigbee_ota_storage_simple_eeprom
+  - name: flash_storage
+  - name: bootloader_interface
+template_contribution:
+  - name: component_catalog
+    value: tubeszb_router_ota

@@ -1,0 +1,40 @@
+name: TubesZB MGM24 UART and OTA Bootloader
+device: MGM240PA32VNN
+base_project: src/bootloader
+filename: '{manifest_name}_{gecko_bootloader_version}'
+sdk: simplicity_sdk:2026.6.2
+toolchain: 14.2.1.20241119
+gbl:
+  fw_type: gecko-bootloader
+  gecko_bootloader_version: dynamic
+  baudrate: 115200
+c_defines:
+  SL_SERIAL_UART_FLOW_CONTROL: 1
+  SL_SERIAL_UART_PERIPHERAL: USART0
+  SL_SERIAL_UART_PERIPHERAL_NO: 0
+  SL_SERIAL_UART_TX_PORT: gpioPortA
+  SL_SERIAL_UART_TX_PIN: 6
+  SL_SERIAL_UART_RX_PORT: gpioPortA
+  SL_SERIAL_UART_RX_PIN: 5
+  SL_SERIAL_UART_CTS_PORT: gpioPortA
+  SL_SERIAL_UART_CTS_PIN: 7
+  SL_SERIAL_UART_RTS_PORT: gpioPortA
+  SL_SERIAL_UART_RTS_PIN: 8
+  SL_GPIO_ACTIVATION_POLARITY: LOW
+  SL_BTL_BUTTON_PORT: gpioPortA
+  SL_BTL_BUTTON_PIN: 0
+  TUBESZB_UART_OTA_BOOTLOADER:
+    type: c_flag
+    value: 1
+  BOOTLOADER_VERSION_MAIN_CUSTOMER: 1
+  SLOT_CUSTOM_CONFIG: 1
+  SLOT0_ENABLE: 1
+  SLOT0_START: 135004160
+  SLOT0_SIZE: 737280
+  SLOT1_ENABLE: 0
+  SLOT2_ENABLE: 0
+add_components:
+- id: bootloader_internal_storage
+- id: bootloader_common_storage_single
+sdk_patches:
+- uart-ota-recovery.patch

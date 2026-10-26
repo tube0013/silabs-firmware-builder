@@ -1,0 +1,29 @@
+--- a/bootloader/platform/bootloader/core/btl_main.c
++++ b/bootloader/platform/bootloader/core/btl_main.c
+@@ -254,6 +254,16 @@
+ 
+   btl_init();
+ 
++#if defined(TUBESZB_UART_OTA_BOOTLOADER)
++  // Preserve explicit UART recovery even when a valid OTA image remains in flash.
++  // Capture the request before the SDK invalidates the reset signature below.
++  if ((reset_classifyReset() == BOOTLOADER_RESET_REASON_FORCE)
++      || gpio_enterBootloader()) {
++    reset_invalidateResetReason();
++    goto tubeszb_uart_recovery;
++  }
++#endif
++
+ #ifdef BOOTLOADER_SUPPORT_STORAGE
+   if (!reset_resetCounterEnabled()) {
+     // Storage bootloaders might use part of the reason signature as a counter,
+@@ -346,6 +356,9 @@
+ #endif
+ 
+ #ifdef BOOTLOADER_SUPPORT_COMMUNICATION
++#if defined(TUBESZB_UART_OTA_BOOTLOADER)
++tubeszb_uart_recovery:
++#endif
+   communication_init();
+ 
+   ret = communication_start();

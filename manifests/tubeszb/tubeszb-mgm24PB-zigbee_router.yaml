@@ -32,6 +32,9 @@ add_components:
   package: tubeszb_router
 - id: rail_util_rssi
 - id: zigbee_identify
+- id: tubeszb_router_ota
+  vendor: TubesZB
+  package: tubeszb_router
 c_defines:
   # The large router token tables need headroom for Secure Vault/PSA objects.
   NVM3_DEFAULT_CACHE_SIZE: 512
@@ -84,6 +87,17 @@ c_defines:
   SL_ZIGBEE_DISCOVERY_TABLE_SIZE:
     type: c_flag
     value: 16
+  SL_BOOTLOADER_STORAGE_USE_CUSTOM_SIZE: 1
+  SL_BOOTLOADER_STORAGE_SIZE: 745472
+  SL_ZIGBEE_AF_PLUGIN_OTA_CLIENT_POLICY_IMAGE_TYPE_ID: 21542
+  SL_ZIGBEE_AF_PLUGIN_OTA_CLIENT_POLICY_FIRMWARE_VERSION: 2026102601
+  SL_ZIGBEE_AF_PLUGIN_OTA_CLIENT_POLICY_GBL_VERIFICATION: 1
+  SL_ZIGBEE_AF_PLUGIN_OTA_CLIENT_POLICY_DELETE_FAILED_DOWNLOADS: 1
+  SL_ZIGBEE_AF_PLUGIN_OTA_STORAGE_SIMPLE_EEPROM_GECKO_BOOTLOADER_STORAGE_SUPPORT: USE_SPECIFIC_SLOT
+  SL_ZIGBEE_AF_PLUGIN_OTA_STORAGE_SIMPLE_EEPROM_SLOT_TO_USE: 0
+  SL_ZIGBEE_AF_PLUGIN_OTA_STORAGE_SIMPLE_EEPROM_SOC_BOOTLOADING_SUPPORT: 1
+  SL_ZIGBEE_AF_PLUGIN_OTA_STORAGE_SIMPLE_EEPROM_READ_MODIFY_WRITE_SUPPORT: 0
+  SL_ZIGBEE_AF_PLUGIN_OTA_CLIENT_QUERY_DELAY_MINUTES: 1440
 config_file:
 - path: config/zcl/mgm24pb/zcl_config.zap
   file_id: zap_configuration_file_id
@@ -91,3 +105,8 @@ config_file:
 
 sdk_patches:
 - short_assert_filename.patch
+ota:
+  manufacturer_id: 4098
+  image_type: 21542
+  file_version: 2026102601
+  header_string: mgm24PB router

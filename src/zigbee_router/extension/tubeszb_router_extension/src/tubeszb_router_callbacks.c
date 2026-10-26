@@ -36,6 +36,12 @@
 #if (LARGE_NETWORK_TESTING == 0)
 
 #include "btl_interface.h"
+#if defined(SL_CATALOG_TUBESZB_ROUTER_OTA_PRESENT)
+#include "tubeszb_router_ota.h"
+#define router_enter_bootloader tubeszb_router_reboot_to_uart
+#else
+#define router_enter_bootloader bootloader_rebootAndInstall
+#endif
 #include "network-steering.h"
 #include "stack/include/zigbee-device-stack.h"
 #include "app/framework/plugin/basic/basic.h"
@@ -135,7 +141,7 @@ static void button_release_handler(void)
   } else if (state == SL_ZIGBEE_NO_NETWORK) {
     if (button_long_press) {
       sl_zigbee_app_debug_println("Btn long press: nwk down: reboot btl");
-      bootloader_rebootAndInstall();
+      router_enter_bootloader();
     } else {
       if (sl_zigbee_af_event_is_scheduled(&commissioning_event)) {
         sl_zigbee_app_debug_println("Btn press: nwk down: stop nwk steering");
@@ -273,7 +279,7 @@ void sl_zigbee_af_basic_reset_to_factory_defaults_cb(uint8_t endpoint)
   (void)endpoint;
 
   // Intentional remote bootloader entry via the Basic command (for example, Z2M).
-  bootloader_rebootAndInstall();
+  router_enter_bootloader();
 }
 
 

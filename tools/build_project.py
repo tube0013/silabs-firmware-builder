@@ -24,6 +24,7 @@ from elftools.elf.elffile import ELFFile
 from ruamel.yaml import YAML
 
 from .create_gbl import create_gbl
+from .create_ota import create_ota_image, validate_ota_layout, validate_ota_manifest
 
 LOGGER = logging.getLogger(__name__)
 
@@ -1280,6 +1281,25 @@ def main() -> None:
     )
 
     output_artifact = (build.cmake_dir / build.base_project_name).with_suffix(".gbl")
+    if "ota" in build.manifest.config:
+        validate_ota_manifest(build.manifest.config)
+        zap_config = next(
+            item
+            for item in build.manifest.config["config_file"]
+            if item.get("file_id") == "zap_configuration_file_id"
+        )
+        zap = json.loads((build.manifest_dir / zap_config["path"]).read_text())
+        manufacturer = next(
+            item["value"]
+            for item in zap["keyValuePairs"]
+            if item["key"] == "manufacturerCodes"
+        )
+        if int(manufacturer, 0) != build.manifest.config["ota"]["manufacturer_id"]:
+            raise ValueError("OTA manufacturer does not match the ZAP configuration")
+        validate_ota_layout(output_artifact.with_suffix(".out"))
+        output_artifact.with_suffix(".ota").write_bytes(
+            create_ota_image(output_artifact.read_bytes(), build.manifest.config["ota"])
+        )
     verify_build_reproducibility(build, output_artifact)
 
     base_filename = build.manifest.output_stem(
@@ -1296,6 +1316,12 @@ def main() -> None:
         shutil.copy(
             src=output_artifact.with_suffix(f".{extension}"),
             dst=args.output_dir / output_path,
+        )
+
+    if "ota" in build.manifest.config:
+        shutil.copy(
+            output_artifact.with_suffix(".ota"),
+            args.output_dir / f"{base_filename}.ota",
         )
 
     if args.clean_build_dir:

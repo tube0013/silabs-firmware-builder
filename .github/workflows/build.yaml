@@ -349,10 +349,12 @@ jobs:
           GITHUB_EVENT_RELEASE_TAG_NAME: ${{ github.event.release.tag_name }}
         run: |
           set -euo pipefail
+          shopt -s nullglob
           gh release upload "${GITHUB_EVENT_RELEASE_TAG_NAME}" \
             --repo "${{ github.repository }}" \
             --clobber \
             artifacts/*.gbl \
+            artifacts/*.ota \
             artifacts/manifest.json
 
   sync-releases-branch:
