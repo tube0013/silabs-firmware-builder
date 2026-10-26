@@ -125,9 +125,10 @@ class TestRouterOta(unittest.TestCase):
         self.assertEqual(len(bootloaders), 3)
         for path in bootloaders:
             defines = yaml.load(path)["c_defines"]
-            self.assertEqual(defines["SLOT0_START"], 0x080C0000)
+            self.assertEqual(defines["SLOT0_START"]["value"], 0x080C0000)
             self.assertLessEqual(
-                defines["SLOT0_START"] + defines["SLOT0_SIZE"], 0x08176000
+                defines["SLOT0_START"]["value"] + defines["SLOT0_SIZE"]["value"],
+                0x08176000,
             )
 
 

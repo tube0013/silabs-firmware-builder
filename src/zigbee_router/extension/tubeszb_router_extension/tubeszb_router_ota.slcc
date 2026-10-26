@@ -17,6 +17,7 @@ requires:
   - name: zigbee_ota_client_policy
   - name: zigbee_ota_bootload
   - name: zigbee_ota_storage_simple_eeprom
+  - name: zigbee_ota_storage_simple
   - name: flash_storage
   - name: bootloader_interface
 template_contribution:
