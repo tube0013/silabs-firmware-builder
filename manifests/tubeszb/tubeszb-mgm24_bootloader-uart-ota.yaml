@@ -34,5 +34,8 @@ sdk_patches:
 - uart-ota-recovery.patch
 config_file:
 - path: config/bootloader/btl_storage_slot_cfg.h
-  file_id: btl_storage_slot_cfg
   directory: config
+  override:
+    component: bootloader_storage_slots
+    file_id: btl_storage_slot_cfg
+    vendor: silabs
