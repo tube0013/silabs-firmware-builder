@@ -129,8 +129,8 @@ class TestRouterOta(unittest.TestCase):
             config = yaml.load(path)["config_file"][0]
             self.assertEqual(config["file_id"], "btl_storage_slot_cfg")
             header = (path.parent / config["path"]).read_text()
-            self.assertIn("#define SLOT0_START 0x080C0000UL", header)
-            self.assertIn("#define SLOT0_SIZE 0x000B4000UL", header)
+            self.assertIn("#define SLOT0_START 0x080C0000", header)
+            self.assertIn("#define SLOT0_SIZE 0x000B4000", header)
 
     def test_recovery_sets_force_instead_of_install(self):
         with tempfile.TemporaryDirectory(prefix="tubeszb-ota-recovery-") as directory:
