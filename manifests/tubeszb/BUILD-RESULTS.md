@@ -266,3 +266,22 @@ as NCP9.1.2.1 at460800 and passed GBL CRC checks before copying. The existing
 8.2.2 images were retained for legacy feed URLs. All four populated local update
 feeds passed URL-to-local-file, size, and MD5 checks, and MkDocs built a temporary
 Pages preview successfully.
+
+
+## Complete BM24 baseline build set — 2026-11-02
+
+Source commit: `289526a`. All six BM24 firmware build jobs passed:
+https://github.com/tube0013/silabs-firmware-builder/actions/runs/41494386938
+
+- Zigbee NCP 9.1.2.1, hardware flow control: 115200 and 460800 baud.
+- Zigbee router, SDK 2026.6.2: software and hardware flow control, both 460800 baud.
+- OpenThread RCP 3.1.2.0_GitHub-fb274efe6, hardware flow control, 460800 baud.
+- UART XMODEM bootloader 3.2.0, 115200 baud.
+
+The hardware-flow router manifest is `tubeszb-bm24-hw-zigbee_router.yaml`.
+It preserves the software-flow target's BM24 device, pins, identity, button, LED,
+and stack settings, changing only the display name and serial flow control.
+Pre-commit and the local router behavior tests passed. All six downloaded GBLs
+passed end-tag CRC and SDK metadata checks and have matching HEX and ELF files.
+Hardware validation of these new builds is pending. Router OTA and the combined
+UART+OTA bootloader remain on the separate OTA branch, as requested.
